@@ -1,0 +1,53 @@
+from flask import Blueprint, jsonify, request
+from modules.admin.databases.mydb import get_database_connection
+
+delete_user_modules_api = Blueprint('delete_user_modules_api', __name__)
+
+@delete_user_modules_api.route('/delete_user_modules', methods=['DELETE'])
+def delete_user_modules():
+    mydb = get_database_connection()
+
+    # Retrieve user_id and modules from the request
+    user_id = request.json.get('user_id', None)
+    modules = request.json.get('modules', [])
+    print(user_id)
+    print(modules)
+    if user_id is None:
+        return jsonify({'error': 'user_id must be provided'}), 400
+
+    if not modules:
+        return jsonify({'error': 'modules must be provided as a list of module names'}), 400
+
+    # Check if the provided user_id exists in the database
+    query = "SELECT * FROM adm.users WHERE id = %s"
+    mycursor = mydb.cursor()
+    mycursor.execute(query, (user_id,))
+    existing_user = mycursor.fetchone()
+
+    if not existing_user:
+        return jsonify({'error': 'User does not exist for the given user_id'}), 404
+
+    # Loop through the list of modules and delete the corresponding rows
+    for module in modules:
+        # Check if the provided module exists in the database
+        query = "SELECT * FROM adm.user_module_permissions WHERE user_id = %s AND module = %s"
+        mycursor.execute(query, (user_id, module))
+        existing_permission = mycursor.fetchone()
+
+        if not existing_permission:
+            # If the combination does not exist, skip this module and proceed with the next one
+            continue
+
+        # If the combination exists, delete the row
+        delete_query = "DELETE FROM adm.user_module_permissions WHERE user_id = %s AND module = %s"
+        mycursor.execute(delete_query, (user_id, module))
+        mydb.commit()
+
+    # Close the cursor
+    mycursor.close()
+
+    # Close the connection
+    mydb.close()
+
+    # Return success message
+    return jsonify({'message': 'User module permissions deleted successfully'})

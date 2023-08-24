@@ -1,0 +1,43 @@
+from flask import Blueprint, jsonify, request
+from modules.admin.databases.mydb import get_database_connection
+
+create_user_role_data_api = Blueprint('create_user_role_data_api', __name__)
+
+@create_user_role_data_api.route('/create_user_role', methods=['POST'])
+def create_user_role():
+    mydb = get_database_connection()
+
+    # Retrieve user_role data from the request
+    user_id = request.json.get('user_id', None)
+    role_id = request.json.get('role_id', None)
+
+    if user_id is None or role_id is None:
+        return jsonify({'error': 'user_id and role_id must be provided'}), 400
+
+    # Check if the provided user_id and role_id exist in the respective tables (users and roles)
+    user_query = "SELECT id FROM adm.users WHERE id = %s"
+    role_query = "SELECT id FROM adm.roles WHERE id = %s"
+    mycursor = mydb.cursor()
+    mycursor.execute(user_query, (user_id,))
+    user_result = mycursor.fetchone()
+    mycursor.execute(role_query, (role_id,))
+    role_result = mycursor.fetchone()
+
+    if user_result is None:
+        return jsonify({'error': 'User with provided user_id not found'}), 404
+
+    if role_result is None:
+        return jsonify({'error': 'Role with provided role_id not found'}), 404
+
+    # Create the user_role entry in the database
+    query = "INSERT INTO adm.user_roles (user_id, role_id) VALUES (%s, %s)"
+    values = (user_id, role_id)
+    mycursor.execute(query, values)
+    mydb.commit()
+
+    # Close the cursor and connection
+    mycursor.close()
+    mydb.close()
+
+    # Return success message
+    return jsonify({'message': 'User Role created successfully'})
