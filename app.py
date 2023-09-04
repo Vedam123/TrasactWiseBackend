@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager, current_user
 from blueprints import register_blueprints
 from config import JWT_SECRET_KEY, JWT_ACCESS_TOKEN_EXPIRES
-from modules.security.refresh_token import refresh_expiring_jwts
+from modules.security.refresh_token import refresh_token
 from authorization import authorize_user
 
 app = Flask(__name__)

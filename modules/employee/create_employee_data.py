@@ -7,6 +7,8 @@ create_employee_data_api = Blueprint('create_employee_data_api', __name__)
 @create_employee_data_api.route('/employee/create_employee_data', methods=['POST'])
 def create_employee_data():
     mydb = get_database_connection()
+
+   
     
     if request.content_type == 'application/json':
         data = request.get_json()

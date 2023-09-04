@@ -1,13 +1,15 @@
-from flask import Blueprint, jsonify, request,current_app
-import bcrypt, json
+from flask import Blueprint, jsonify, request, current_app
+import bcrypt
+import json
 from datetime import datetime, timedelta, timezone
 from modules.admin.databases.mydb import get_database_connection
-from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
-                               unset_jwt_cookies, jwt_required, JWTManager
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt, get_jwt_identity, \
+    unset_jwt_cookies, jwt_required, JWTManager
 
-from config import JWT_ACCESS_TOKEN_EXPIRES, APPLICATION_CREDENTIALS
+from config import JWT_ACCESS_TOKEN_EXPIRES, APPLICATION_CREDENTIALS, JWT_REFRESH_TOKEN_EXPIRES
 
 login_data_api = Blueprint('login_data_api', __name__)
+
 
 @login_data_api.route('/login', methods=['POST'])
 def login():
@@ -23,14 +25,26 @@ def login():
             password.encode('utf-8'), user_info["password"].encode('utf-8')
         ):
             # Passwords match, generate and return a session token or JWT
-            print("The User is in the Password Pair list in the config file : credential are matched",int(user_info["userid"]))
+            print("The User is in the Password Pair list in the config file : credential are matched", int(
+                user_info["userid"]))
             access_token = create_access_token(
                 identity=username, expires_delta=current_app.config["JWT_ACCESS_TOKEN_EXPIRES"]
             )
+
+            refresh_token = create_refresh_token(
+                identity=username,
+                expires_delta=JWT_REFRESH_TOKEN_EXPIRES
+            )
+
+            # refresh_token = create_refresh_token(identity=username)
+            print("Application user details --> ", username,
+                  int(user_info["userid"]), access_token)
+            print(refresh_token)
             return jsonify({
                 "access_token": access_token,
-                "username" : username,
-                "userid" : int(user_info["userid"])
+                "refresh_token": refresh_token,
+                "username": username,
+                "userid": int(user_info["userid"])
             })
 
     # If the username-password pair is not found in the array, check the database
@@ -47,18 +61,29 @@ def login():
         stored_password = result[1]
         emailid = result[2]
         empid = result[3]
-        userid=result[4]
+        userid = result[4]
 
         if bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
             # Passwords match, generate and return a session token or JWT
-            print("Config JWT ACCESS TOKEN EXPIRE TIME : ", JWT_ACCESS_TOKEN_EXPIRES)
+            print("Config JWT ACCESS TOKEN EXPIRE TIME : ",
+                  JWT_ACCESS_TOKEN_EXPIRES)
             access_token = create_access_token(
                 identity=stored_username, expires_delta=current_app.config["JWT_ACCESS_TOKEN_EXPIRES"]
             )
+
+            refresh_token = create_refresh_token(
+                identity=username,
+                expires_delta=JWT_REFRESH_TOKEN_EXPIRES
+            )
+            # refresh_token = create_refresh_token(identity=username)
+            print("Stored user details --> ",
+                  access_token, stored_username, userid)
+            print(refresh_token)
             return jsonify({
                 "access_token": access_token,
-                "username" : stored_username,
-                "userid" : userid 
+                "refresh_token": refresh_token,
+                "username": stored_username,
+                "userid": userid
             })
 
     # Close the cursor and connection
@@ -67,15 +92,17 @@ def login():
     # Invalid credentials
     return jsonify({'error': 'Invalid username or password'}), 401
 
+
 @login_data_api.route('/profile', methods=['GET'])
 @jwt_required()
 def profile():
     response_body = {
         "name": "Vedam",
-        "about" :"Hello! I'm a full stack developer that loves python and javascript"
+        "about": "Hello! I'm a full stack developer that loves python and javascript"
     }
 
     return response_body
+
 
 @login_data_api.route('/generate_password_hash', methods=['POST'])
 def generate_password_hash():

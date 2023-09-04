@@ -7,7 +7,9 @@ SECRET_KEY = "FLASKVEDSECKEY"
 
 # JWT configuration
 JWT_SECRET_KEY = "JWTVEDSECKEY"
+#JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=3600)
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=60)
+JWT_REFRESH_TOKEN_EXPIRES = timedelta(minutes=5)
 
 # config.py
 APPLICATION_CREDENTIALS = [

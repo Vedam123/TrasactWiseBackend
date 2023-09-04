@@ -4,6 +4,9 @@ from modules.common.list_exchange_rates import list_exchange_rate_data
 from modules.common.list_tax_codes import list_tax_data
 from modules.common.explode_bom import explode_bom_data
 from modules.common.process_bom import process_exploded_bom
+from modules.common.get_partner_data import get_partner_data
+from modules.common.create_partner_data import create_partner_data
+
 
 list_common_module = Blueprint('list_common_module', __name__)
 
@@ -34,7 +37,17 @@ def process_bom():
     print("Already exploded BOM is now being processed")
     return process_exploded_bom()
 
+@list_common_module.route('/get_partner_data', methods=['GET'])
+def list_business_partners():
+    print("List business parters")
+    return get_partner_data()
+
 #POST Methods ----------------------------------------------------------
+
+@list_common_module.route('/create_partner_data', methods=['POST'])
+def create_business_partners():
+    print("Create business parters")
+    return create_partner_data()
 
 #PUT Methods -----------------------------------------------------------
 

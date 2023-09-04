@@ -2,6 +2,7 @@ from flask import jsonify, Blueprint,json
 from modules.security.create_role import create_role
 #from modules.security.login_user import login, profile,refresh_expiring_jwts
 from modules.security.login_user import login, profile,generate_password_hash
+from modules.security.refresh_token import refresh_token
 from modules.security.logout_user import logout
 from modules.security.register_user import register
 from modules.security.create_user_role import create_user_role
@@ -44,6 +45,12 @@ def create_user_role_data():
 def login_user():
     print("User is going to be Logged in")
     return login()
+
+@post_user_roles_routes.route('/refresh_token', methods=['POST'])
+def refresh_login_token():
+    print("User token is being refreshed in")
+    return refresh_token()
+
 
 @post_user_roles_routes.route('/generate_password_hash', methods=['POST'])
 def generate_password_hash_user():
