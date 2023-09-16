@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request, current_app
 import bcrypt
 import json
+import base64
 from datetime import datetime, timedelta, timezone
 from modules.admin.databases.mydb import get_database_connection
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt, get_jwt_identity, \
@@ -44,7 +45,8 @@ def login():
                 "username": username,
                 "userid": int(user_info["userid"]),
                 "empid": 0,
-                "name" : user_info["name"]
+                "name" : user_info["name"],
+                "emp_img" : "None"
                 })
     # If the username-password pair is not found in the array, check the database
     print("The User is not in the Password Pair list in the config file : credential will be checked in the db")
@@ -79,22 +81,29 @@ def login():
                   access_token, stored_username, userid)
             print(refresh_token)
 
-            query1 = "SELECT name FROM com.employee WHERE empid = %s"
+            query1 = "SELECT name,pic FROM com.employee WHERE empid = %s"
             values = (int(empid),)
             mycursor1 = mydb.cursor()
             mycursor1.execute(query1, values)
             result1 = mycursor1.fetchone()
             print("Input Employee id is -->",empid)
-            if result1:
-                fetched_name = result1[0]
-                mycursor1.close()
+            fetched_name = result1[0]
+            fetched_image = result1[1]
+            if isinstance(fetched_image, bytes):
+                pic = base64.b64encode(fetched_image).decode('utf-8')
+            else:
+                pic = "None"
+            mycursor1.close()
+
+            if fetched_name:
                 return jsonify({
                     "access_token": access_token,
                     "refresh_token": refresh_token,
                     "username": stored_username,
                     "userid": userid,
                     "empid" : empid,
-                    "name" : fetched_name
+                    "name" : fetched_name,
+                    "emp_img" : pic 
                 })
             else:
                 # Handle the case when result1 is not truthy
@@ -104,7 +113,8 @@ def login():
                     "username": stored_username,
                     "userid": userid,
                     "empid": empid,
-                    "name": "NO NAME IN DB"  # You can specify a default value here, such as None
+                    "name": "NO NAME IN DB", # You can specify a default value here, such as None
+                    "emp_img" : pic 
                 })
     # Close the cursor and connection
     mycursor.close()
