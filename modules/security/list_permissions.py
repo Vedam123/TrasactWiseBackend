@@ -26,6 +26,7 @@ def list_permissions():
             'delete_permission': bool(data[6])
         }
         user_module_permissions_list.append(user_module_permissions_dict)
+        ##print(user_module_permissions_list)
         
     # Close the cursor and connection
     mycursor.close()

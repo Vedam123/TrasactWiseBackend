@@ -53,12 +53,14 @@ def login():
     mydb = get_database_connection()
     query = "SELECT username, password, emailid, empid,id FROM adm.users WHERE username = %s"
     values = (username,)
+    print("User name is used to fetch db ",username)
     mycursor = mydb.cursor()
     mycursor.execute(query, values)
     result = mycursor.fetchone()
 
     if result:
         stored_username = result[0]
+        print("Stored user name ",stored_username)
         stored_password = result[1]
         emailid = result[2]
         empid = result[3]
@@ -79,7 +81,7 @@ def login():
             # refresh_token = create_refresh_token(identity=username)
             print("Stored user details --> ",
                   access_token, stored_username, userid)
-            print(refresh_token)
+            print("Refresh Token ----->",refresh_token)
 
             query1 = "SELECT name,pic FROM com.employee WHERE empid = %s"
             values = (int(empid),)

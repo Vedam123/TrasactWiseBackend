@@ -1,13 +1,59 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify,request
 import base64
 from modules.admin.databases.mydb import get_database_connection
 from flask_jwt_extended import decode_token
-from modules.security.check_user_permissions import check_user_permissions  # Import the check_permission function
-from config import READ_ACCESS_TYPE
+from config import READ_ACCESS_TYPE  # Import the ACCESS_TYPE constant
 
 get_employee_data_api = Blueprint('get_employee_data_api', __name__)
 
 @get_employee_data_api.route('/employee/get_employee_data', methods=['GET'])
+def check_permission(current_user_id, usernamex, module, access_type):
+    try:
+        print(current_user_id, usernamex, module, access_type)
+        db_connection = get_database_connection()
+        permission_cursor = db_connection.cursor()
+        user_id = ""
+        permission_cursor.execute("SELECT id FROM adm.users WHERE username = %s", (usernamex,))
+        result = permission_cursor.fetchone()
+        if result:
+            user_id = result[0]  # Access the first (and only) element of the tuple
+        else:
+            print("No user found in the user table")
+            return False  # User not found
+
+        print(user_id)
+
+        if int(current_user_id) != int(user_id):
+            print("user id don't match")
+            return False
+
+        # Step 2: Check permissions in adm.user_module_permissions
+        permission_cursor.execute(
+            f"SELECT {access_type}_permission FROM adm.user_module_permissions "
+            "WHERE user_id = %s AND module = %s",
+            (user_id, module)
+        )
+
+        permission = permission_cursor.fetchone()
+
+        print("Found Permission-->",permission)
+
+        if not permission:
+            print("NO PERMISSION IN PERMISSION MODULE")
+            return False  # No permission record found
+
+        print("Now returning the permission from db")
+
+        permission_cursor.close()
+        db_connection.close()
+
+        return bool(permission[0])  # Access the first (and only) element of the tuple
+
+    except Exception as e:
+        print("Error checking permissions:", str(e))
+        return False
+
+
 def get_employee_data():
     token = request.headers.get('Authorization')
     token_data = ""
@@ -28,12 +74,14 @@ def get_employee_data():
     print("Current User id ",current_user_id)
     ##print("Current Token ",current_token)
 
-    has_permission = check_user_permissions(current_user_id, token_user, module, READ_ACCESS_TYPE)
+    mydb = get_database_connection()
+
+    has_permission = check_permission(current_user_id, token_user, module, READ_ACCESS_TYPE)
 
     if not has_permission:
         print("Check permission returned False")
         return jsonify({'message': 'Permission denied'}), 403
-    mydb = get_database_connection()
+
     mycursor = mydb.cursor()
     mycursor.execute("SELECT * FROM com.employee")
     result = mycursor.fetchall()
