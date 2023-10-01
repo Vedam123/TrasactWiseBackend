@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, current_app
 import os
 from modules.admin.databases.mydb import get_database_connection
+from modules.security.permission_required import permission_required  # Import the decorator
+from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
 
 fetch_module_data_api = Blueprint('fetch_module_data_api', __name__)
 
@@ -54,6 +56,7 @@ def store_module_names(folder_names):
         return False
 
 @fetch_module_data_api.route('/fetch_module', methods=['GET'])
+@permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def fetch_module():
     try:
         folders = get_module_names()

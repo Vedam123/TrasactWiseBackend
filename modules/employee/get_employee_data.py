@@ -1,44 +1,21 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 import base64
 from modules.admin.databases.mydb import get_database_connection
-from flask_jwt_extended import decode_token
-from modules.security.check_user_permissions import check_user_permissions  # Import the check_permission function
-from config import READ_ACCESS_TYPE
+from modules.security.permission_required import permission_required  # Import the decorator
+from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
 
 get_employee_data_api = Blueprint('get_employee_data_api', __name__)
 
 @get_employee_data_api.route('/employee/get_employee_data', methods=['GET'])
+@permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def get_employee_data():
-    token = request.headers.get('Authorization')
-    token_data = ""
-    token_user = ""
-    module = "employee"
-    print("Received Token --> ",token)
-    if token:
-        token = token.replace('Bearer ', '')  # Remove 'Bearer ' prefix
-        try:
-            token_data = decode_token(token)
-            print("Decoded Token Data -- full--> ",token_data)
-            print("Decoded Token Data:", token_data.get('sub'))
-            token_user = token_data.get('sub')
-        except Exception as e:
-            print("Error decoding token:", str(e))
-            
-    current_user_id = request.headers.get('userid')
-    print("Current User id ",current_user_id)
-    ##print("Current Token ",current_token)
-
-    has_permission = check_user_permissions(current_user_id, token_user, module, READ_ACCESS_TYPE)
-
-    if not has_permission:
-        print("Check permission returned False")
-        return jsonify({'message': 'Permission denied'}), 403
     mydb = get_database_connection()
     mycursor = mydb.cursor()
     mycursor.execute("SELECT * FROM com.employee")
     result = mycursor.fetchall()
     employees = []
     print("Employee Array defined")
+
     for row in result:
         empid, name, manager, supervisor, pic, salary, role, dob, doj = row
 

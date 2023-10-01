@@ -2,10 +2,13 @@ from flask import Blueprint, jsonify
 from modules.admin.databases.mydb import get_database_connection
 import base64
 from datetime import datetime
+from modules.security.permission_required import permission_required  # Import the decorator
+from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
 
 list_item_categories_api = Blueprint('list_item_categories_api', __name__)
 
 @list_item_categories_api.route('/list_item_categories', methods=['GET'])
+@permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def list_item_categories():
     mydb = get_database_connection()
 

@@ -1,8 +1,9 @@
 from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
+from modules.security.permission_required import permission_required  # Import the decorator
+from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
 
 exchange_rate_api = Blueprint('exchange_rate_api', __name__)
-
 
 def fetch_exchange_rate(mycursor, from_currency, to_currency):
     try:
@@ -27,6 +28,7 @@ def fetch_exchange_rate(mycursor, from_currency, to_currency):
 
 
 @exchange_rate_api.route('/currency_conversion', methods=['GET'])
+@permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def currency_conversion():
     try:
         from_currency = request.args.get('from_currency')

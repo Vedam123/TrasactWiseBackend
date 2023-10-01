@@ -1,15 +1,14 @@
 from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
+from modules.security.permission_required import permission_required  # Import the decorator
+from config import WRITE_ACCESS_TYPE    # Import WRITE_ACCESS_TYPE
 
 create_permission_api = Blueprint('create_permission_api', __name__)
 
 @create_permission_api.route('/create_permissions', methods=['POST'])
+@permission_required(WRITE_ACCESS_TYPE ,  __file__)  # Pass WRITE_ACCESS_TYPE as an argument
 def create_permissions():
     mydb = get_database_connection()
-
-    print("Control reached create Permissions function")
-    # Retrieve user module permission data from the request
-    #permissions = request.json.get('permissions', [])
     permissions = request.json
     print(permissions)
     if not permissions:
@@ -23,7 +22,6 @@ def create_permissions():
         write_permission = permission.get('write_permission', False)
         update_permission = permission.get('update_permission', False)
         delete_permission = permission.get('delete_permission', False)
-        print("Got the permissions all")
         if user_id is None or module is None:
             return jsonify({'error': 'user_id and module must be provided'}), 400
         

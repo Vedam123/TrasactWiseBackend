@@ -1,8 +1,12 @@
 from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
+from modules.security.permission_required import permission_required  # Import the decorator
+from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
+
 
 explode_bom_api = Blueprint('explode_bom_api', __name__)
 
+@permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def explode_bom(mycursor, model_item, revision, required_quantity):
     results = []
     queue = [(model_item, revision, 1)]
@@ -35,6 +39,7 @@ def explode_bom(mycursor, model_item, revision, required_quantity):
     return results
 
 @explode_bom_api.route('/explode_bom', methods=['GET'])
+@permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def explode_bom_data():
     try:
         model_item = request.args.get('model_item')

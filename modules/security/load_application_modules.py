@@ -1,11 +1,14 @@
 from flask import Blueprint, jsonify, request, current_app
 import os
 from modules.admin.databases.mydb import get_database_connection
+from modules.security.permission_required import permission_required  # Import the decorator
+from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
 
 fetch_appl_modules_api = Blueprint('fetch_appl_modules_api', __name__)
 load_appl_modules_api =  Blueprint('load_appl_modules_api', __name__)
 
 @fetch_appl_modules_api.route('/fetch_application_modules', methods=['GET'])
+@permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def fetch_application_module():
     print("Inside fetch_application_module")
     module_names = get_module_names_from_react_app()

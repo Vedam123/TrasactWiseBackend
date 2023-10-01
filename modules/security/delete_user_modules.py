@@ -1,9 +1,12 @@
 from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
+from modules.security.permission_required import permission_required  # Import the decorator
+from config import DELETE_ACCESS_TYPE    # Import WRITE_ACCESS_TYPE
 
 delete_user_modules_api = Blueprint('delete_user_modules_api', __name__)
 
 @delete_user_modules_api.route('/delete_user_modules', methods=['DELETE'])
+@permission_required(DELETE_ACCESS_TYPE ,  __file__)  # Pass WRITE_ACCESS_TYPE as an argument
 def delete_user_modules():
     mydb = get_database_connection()
 

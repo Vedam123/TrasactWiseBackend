@@ -1,10 +1,13 @@
 import json
 from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
+from modules.security.permission_required import permission_required  # Import the decorator
+from config import WRITE_ACCESS_TYPE    # Import WRITE_ACCESS_TYPE
 
 create_ui_config_data_api = Blueprint('create_ui_config_data_api', __name__)
 
 @create_ui_config_data_api.route('/create_ui_config_data', methods=['POST'])
+@permission_required(WRITE_ACCESS_TYPE ,  __file__)  # Pass WRITE_ACCESS_TYPE as an argument
 def create_ui_config_data():
     mydb = get_database_connection() 
 

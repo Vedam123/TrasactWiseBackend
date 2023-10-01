@@ -1,9 +1,12 @@
 from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
+from modules.security.permission_required import permission_required  # Import the decorator
+from config import WRITE_ACCESS_TYPE    # Import WRITE_ACCESS_TYPE
 
 create_partner_data_api = Blueprint('create_partner_data_api', __name__)
 
 @create_partner_data_api.route('/create_partner_data', methods=['POST'])
+@permission_required(WRITE_ACCESS_TYPE ,  __file__)  # Pass WRITE_ACCESS_TYPE as an argument
 def create_partner_data():
     mydb = get_database_connection()
 

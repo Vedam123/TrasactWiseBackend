@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 from modules.admin.databases.mydb import get_database_connection
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt, get_jwt_identity, \
     unset_jwt_cookies, jwt_required, JWTManager
+from modules.security.permission_required import permission_required  # Import the decorator
 
 from config import JWT_ACCESS_TOKEN_EXPIRES, APPLICATION_CREDENTIALS, JWT_REFRESH_TOKEN_EXPIRES
 
@@ -24,14 +25,15 @@ def login():
         if user_info["username"] == username and bcrypt.checkpw(
             password.encode('utf-8'), user_info["password"].encode('utf-8')
         ):
+            userid = user_info["userid"]
             # Passwords match, generate and return a session token or JWT
             print("The User is in the Password Pair list in the config file : credential are matched", int(user_info["userid"]))
             access_token = create_access_token(
-                identity=username, expires_delta=current_app.config["JWT_ACCESS_TOKEN_EXPIRES"]
+                identity=username, additional_claims={"Userid": userid}, expires_delta=current_app.config["JWT_ACCESS_TOKEN_EXPIRES"]
                 )
 
             refresh_token = create_refresh_token(
-                identity=username,
+                identity=username,additional_claims={"Userid": userid},
                     expires_delta=JWT_REFRESH_TOKEN_EXPIRES
             )
 
@@ -71,11 +73,11 @@ def login():
             print("Config JWT ACCESS TOKEN EXPIRE TIME : ",
                   JWT_ACCESS_TOKEN_EXPIRES)
             access_token = create_access_token(
-                identity=stored_username, expires_delta=current_app.config["JWT_ACCESS_TOKEN_EXPIRES"]
+                identity=stored_username, additional_claims={"Userid": userid}, expires_delta=current_app.config["JWT_ACCESS_TOKEN_EXPIRES"]
             )
 
             refresh_token = create_refresh_token(
-                identity=username,
+                identity=username, additional_claims={"Userid": userid},
                 expires_delta=JWT_REFRESH_TOKEN_EXPIRES
             )
             # refresh_token = create_refresh_token(identity=username)

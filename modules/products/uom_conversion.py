@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
+from modules.security.permission_required import permission_required  # Import the decorator
+from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
 
 conversion_api = Blueprint('conversion_api', __name__)
 
@@ -33,6 +35,7 @@ def convert_quantity(source_quantity, source_uom, target_uom, mycursor):
     return converted_quantity
 
 @conversion_api.route('/uom_conversion', methods=['GET'])
+@permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def convert_quantity_endpoint():
     try:
         source_uom = request.args.get('source_uom')

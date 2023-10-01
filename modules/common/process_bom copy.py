@@ -124,7 +124,7 @@ def process_exploded_bom():
         print("Exploded URL ", explode_bom_url)
 
         # Use the requests library to send a GET request
-        response = requests.get(explode_bom_url,headers=request.headers)
+        response = requests.get(explode_bom_url)
         print("Response from Exploded BOM url ", response)
 
         exploded_bom_data = response.json().get('exploded_bom', [])

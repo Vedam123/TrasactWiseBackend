@@ -1,9 +1,12 @@
 from flask import Blueprint, jsonify
 from modules.admin.databases.mydb import get_database_connection
+from modules.security.permission_required import permission_required  # Import the decorator
+from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
 
 list_user_roles_api = Blueprint('list_user_roles_api', __name__)
 
 @list_user_roles_api.route('/user_roles', methods=['GET'])
+@permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def list_user_roles():
     mydb = get_database_connection()
     print("Latest User roles code is running")

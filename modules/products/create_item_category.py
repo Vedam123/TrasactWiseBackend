@@ -1,10 +1,13 @@
 from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
 import base64
+from modules.security.permission_required import permission_required  # Import the decorator
+from config import WRITE_ACCESS_TYPE    # Import WRITE_ACCESS_TYPE
 
 create_item_category_api = Blueprint('create_item_category_api', __name__)
 
 @create_item_category_api.route('/create_item_category', methods=['POST'])
+@permission_required(WRITE_ACCESS_TYPE ,  __file__)  # Pass WRITE_ACCESS_TYPE as an argument
 def create_item_category():
     mydb = get_database_connection()
 
@@ -12,14 +15,10 @@ def create_item_category():
     
     # Get the data from the request's JSON payload
 
-    
-
     if request.content_type == 'application/json':
         data = request.get_json()
     else:
         data = request.form
-
-    
 
     category_name = data.get('category_name')
     description = data.get('description')

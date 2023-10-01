@@ -1,9 +1,12 @@
 from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
+from modules.security.permission_required import permission_required  # Import the decorator
+from config import WRITE_ACCESS_TYPE    # Import WRITE_ACCESS_TYPE
 
 create_role_data_api = Blueprint('create_role_data_api', __name__)
 
 @create_role_data_api.route('/create_role', methods=['POST'])
+@permission_required(WRITE_ACCESS_TYPE ,  __file__)  # Pass WRITE_ACCESS_TYPE as an argument
 def create_role():
     mydb = get_database_connection()
 
