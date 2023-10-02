@@ -6,6 +6,6 @@ def get_database_connection():
         host="localhost",
         user="vedam10",
         password="Welcome@123",
-        database="crmdb"
+        database="adm"
     )
     return mydb

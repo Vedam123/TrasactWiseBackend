@@ -17,7 +17,7 @@ def get_employee_data():
     print("Employee Array defined")
 
     for row in result:
-        empid, name, manager, supervisor, pic, salary, role, dob, doj = row
+        empid, name, manager, supervisor, pic, salary, role, dob, doj,created_at,updated_at,created_by,updated_by = row
 
         # Convert pic to base64 if it is of BLOB type, otherwise leave it as is
         if isinstance(pic, bytes):
@@ -33,6 +33,7 @@ def get_employee_data():
             'role': role,
             'dob': str(dob),
             'doj': str(doj)
+
         })
     # Close the cursor and connection
     mycursor.close()

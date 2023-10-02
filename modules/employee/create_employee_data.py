@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required  # Import the decorator
 from config import WRITE_ACCESS_TYPE   #Import WRITE_ACCESS_TYPE
+from flask_jwt_extended import decode_token
 
 create_employee_data_api = Blueprint('create_employee_data_api', __name__)
 
@@ -10,8 +11,9 @@ create_employee_data_api = Blueprint('create_employee_data_api', __name__)
 @permission_required(WRITE_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def create_employee_data():
     mydb = get_database_connection()
-
-   
+    
+    currentuserid = decode_token(request.headers.get('Authorization', '').replace('Bearer ', '')).get('Userid') if request.headers.get('Authorization', '').startswith('Bearer ') else None
+    ##print("In Create employee file the current user id -->",currentuserid)
     
     if request.content_type == 'application/json':
         data = request.get_json()
@@ -45,8 +47,8 @@ def create_employee_data():
     mycursor = mydb.cursor()
 
     try:
-        query = "INSERT INTO com.employee (name, manager, supervisor, pic, salary, role, dob, doj) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        values = (name, manager, supervisor, pic_data, salary, role, dob, doj)
+        query = "INSERT INTO com.employee (name, manager, supervisor, pic, salary, role, dob, doj,created_by,updated_by) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s,%s)"
+        values = (name, manager, supervisor, pic_data, salary, role, dob, doj,currentuserid,currentuserid)
 
         mycursor.execute(query, values)
         mydb.commit()

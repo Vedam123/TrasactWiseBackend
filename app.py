@@ -16,11 +16,11 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = JWT_ACCESS_TOKEN_EXPIRES
 jwt = JWTManager(app)
 
 # Authorization Middleware
-#app.before_request(authorize_user)
+# app.before_request(authorize_user)
 
-#@app.before_request
-#def before_request_handler():
-    # Call the refresh_expiring_jwts_middleware to refresh JWT tokens before accessing protected routes.
+# @app.before_request
+# def before_request_handler():
+# Call the refresh_expiring_jwts_middleware to refresh JWT tokens before accessing protected routes.
 #    response = refresh_expiring_jwts()
 #    print("response value",response)
 #    if response:
