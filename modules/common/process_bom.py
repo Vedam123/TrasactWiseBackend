@@ -106,7 +106,7 @@ def process_exploded_bom():
     try:
         model_item_code = request.args.get('item_code')
         required_quantity = float(request.args.get('required_quantity'))
-        print("Item Code and Required Qty ", model_item_code, required_quantity)
+        print("Item Code and Required Qty VEDAM VEDAM VEDAM", model_item_code, required_quantity)
         model_item_id = get_item_id_by_code(model_item_code)
         print(" Item ID , Item Code and Required Qty ",
               model_item_id, model_item_code, required_quantity)

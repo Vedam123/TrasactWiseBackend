@@ -3,6 +3,7 @@ from modules.admin.databases.mydb import get_database_connection
 import base64
 from modules.security.permission_required import permission_required  # Import the decorator
 from config import WRITE_ACCESS_TYPE    # Import WRITE_ACCESS_TYPE
+from flask_jwt_extended import decode_token
 
 create_item_category_api = Blueprint('create_item_category_api', __name__)
 
@@ -10,7 +11,12 @@ create_item_category_api = Blueprint('create_item_category_api', __name__)
 @permission_required(WRITE_ACCESS_TYPE ,  __file__)  # Pass WRITE_ACCESS_TYPE as an argument
 def create_item_category():
     mydb = get_database_connection()
-
+    current_userid = None
+    authorization_header = request.headers.get('Authorization', '')
+    if authorization_header.startswith('Bearer '):
+        token = authorization_header.replace('Bearer ', '')
+        decoded_token = decode_token(token)
+        current_userid = decoded_token.get('Userid')
     print("Before JSON parsing the incoming requests")
     
     # Get the data from the request's JSON payload
@@ -54,8 +60,8 @@ def create_item_category():
         return jsonify({'message': 'category_name, description, is_active, tax_information, and default_uom are required fields.'}), 400
 
     # Insert new item category into the database
-    query = "INSERT INTO com.itemcategory (category_name, description, is_active, tax_information, default_uom, image) VALUES (%s, %s, %s, %s, %s, %s)"
-    values = (category_name, description, is_active, tax_information, default_uom, image_data)
+    query = "INSERT INTO com.itemcategory (category_name, description, is_active, tax_information, default_uom, image,created_by,updated_by) VALUES (%s, %s, %s, %s, %s, %s,%s,%s)"
+    values = (category_name, description, is_active, tax_information, default_uom, image_data,current_userid,current_userid)
 
     mycursor = mydb.cursor()
     try:

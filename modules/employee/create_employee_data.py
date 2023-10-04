@@ -11,8 +11,8 @@ create_employee_data_api = Blueprint('create_employee_data_api', __name__)
 @permission_required(WRITE_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def create_employee_data():
     mydb = get_database_connection()
-    
     currentuserid = decode_token(request.headers.get('Authorization', '').replace('Bearer ', '')).get('Userid') if request.headers.get('Authorization', '').startswith('Bearer ') else None
+    
     ##print("In Create employee file the current user id -->",currentuserid)
     
     if request.content_type == 'application/json':

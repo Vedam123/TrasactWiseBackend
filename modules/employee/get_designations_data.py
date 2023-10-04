@@ -1,12 +1,12 @@
 from flask import Blueprint, jsonify
 from modules.admin.databases.mydb import get_database_connection
-from modules.security.permission_required import permission_required  # Import the decorator
-from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
+from modules.security.permission_required import permission_required
+from config import READ_ACCESS_TYPE
 
 get_designations_data_api = Blueprint('get_designations_data_api', __name__)
 
 @get_designations_data_api.route('/designations/get_designations_data', methods=['GET'])
-@permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
+@permission_required(READ_ACCESS_TYPE, __file__)
 def get_designations_data():
     mydb = get_database_connection()
     mycursor = mydb.cursor()
@@ -14,21 +14,19 @@ def get_designations_data():
     result = mycursor.fetchall()
     designations = []
 
-    for row in result:
-        designation_id, designation_name, description, salary_range, responsibilities, qualifications, created_at, updated_at = row
+    # Get the column names from the cursor's description
+    column_names = [desc[0] for desc in mycursor.description]
 
-        designations.append({
-            'designation_id': designation_id,
-            'designation_name': designation_name,
-            'description': description,
-            'salary_range': salary_range,
-            'responsibilities': responsibilities,
-            'qualifications': qualifications,
-            'created_at': created_at,
-            'updated_at': updated_at
-        })
+    for row in result:
+        designation_dict = {}
+        for i, value in enumerate(row):
+            column_name = column_names[i]
+            designation_dict[column_name] = value
+
+        designations.append(designation_dict)
+
     # Close the cursor and connection
     mycursor.close()
     mydb.close()
-    
+
     return jsonify(designations)

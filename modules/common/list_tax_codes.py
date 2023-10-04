@@ -1,12 +1,14 @@
 from flask import Blueprint, jsonify
 from modules.admin.databases.mydb import get_database_connection
-from modules.security.permission_required import permission_required  # Import the decorator
-from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
+from modules.security.permission_required import permission_required
+from config import READ_ACCESS_TYPE
+import decimal  # Add this import to handle DECIMAL data type
+from datetime import date
 
-list_exchange_rates_api = Blueprint('list_exchange_rates_api', __name__)
+list_taxcodes_api = Blueprint('list_taxcodes_api', __name__)
 
-@list_exchange_rates_api.route('/list_taxcodes', methods=['GET'])
-@permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
+@list_taxcodes_api.route('/list_taxcodes', methods=['GET'])
+@permission_required(READ_ACCESS_TYPE, __file__)
 def list_tax_data():
     mydb = get_database_connection()
     mycursor = mydb.cursor()
@@ -14,27 +16,25 @@ def list_tax_data():
     result = mycursor.fetchall()
     taxes = []
 
+    # Get the column names from the cursor's description
+    column_names = [desc[0] for desc in mycursor.description]
+
     for row in result:
-        tax_id, tax_code, tax_description, tax_rate, tax_type, tax_authority, tax_jurisdiction, tax_applicability, effective_date, exemption, reporting_codes, integration_info, status, notes, created_at, updated_at = row
-        taxes.append({
-            'tax_id': tax_id,
-            'tax_code': tax_code,
-            'tax_description': tax_description,
-            'tax_rate': str(tax_rate),
-            'tax_type': tax_type,
-            'tax_authority': tax_authority,
-            'tax_jurisdiction': tax_jurisdiction,
-            'tax_applicability': tax_applicability,
-            'effective_date': str(effective_date),
-            'exemption': exemption,
-            'reporting_codes': reporting_codes,
-            'integration_info': integration_info,
-            'status': status,
-            'notes': notes,
-            'created_at': str(created_at),
-            'updated_at': str(updated_at)
-        })
+        tax_dict = {}
+        for i, value in enumerate(row):
+            column_name = column_names[i]
+            if isinstance(value, bool):
+                value = str(value)
+            elif isinstance(value, decimal.Decimal):
+                value = str(value)
+            elif isinstance(value, date):
+                value = value.strftime('%Y-%m-%d')
+            tax_dict[column_name] = value
+
+        taxes.append(tax_dict)
+
     # Close the cursor and connection
     mycursor.close()
     mydb.close()
+
     return jsonify({'taxes': taxes})

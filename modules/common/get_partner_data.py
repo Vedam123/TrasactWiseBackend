@@ -1,31 +1,27 @@
 from flask import Blueprint, jsonify, request
 import base64
 from modules.admin.databases.mydb import get_database_connection
-from modules.security.permission_required import permission_required  # Import the decorator
-from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
+from modules.security.permission_required import permission_required
+from config import READ_ACCESS_TYPE
 
 get_partner_data_api = Blueprint('get_partner_data_api', __name__)
 
 @get_partner_data_api.route('/get_partner_data', methods=['GET'])
-@permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
+@permission_required(READ_ACCESS_TYPE, __file__)
 def get_partner_data():
     mydb = get_database_connection()
 
     partner_id = request.args.get('partnerid')
     partner_name = request.args.get('partnername')
-    print(request)
-    print(partner_id,partner_name)
 
     try:
         mycursor = mydb.cursor()
 
         if partner_id is not None:
             query = "SELECT * FROM com.businesspartner WHERE partnerid = %s"
-            print(query)
             mycursor.execute(query, (partner_id,))
         elif partner_name is not None:
-            query = "SELECT * FROM com.businesspartner WHERE partnername like %s"
-            print(query)
+            query = "SELECT * FROM com.businesspartner WHERE partnername LIKE %s"
             mycursor.execute(query, ('%' + partner_name + '%',))
         else:
             query = "SELECT * FROM com.businesspartner"
@@ -33,32 +29,23 @@ def get_partner_data():
 
         partner_data = mycursor.fetchall()
         partner_list = []
+
+        # Get the column names from the cursor's description
+        column_names = [desc[0] for desc in mycursor.description]
+
         for partner in partner_data:
-            decoded_image = None  # Initialize the variable
-            if isinstance(partner[16], bytes):
-                try:
-                    decoded_image = base64.b64encode(partner[16]).decode('utf-8')
-                except Exception as e:
-                    print("Error decoding image:", str(e))
-            partner_dict = {
-                'partnerid': partner[0],
-                'partnertype': partner[1],
-                'partnername': partner[2],
-                'contactperson': partner[3],
-                'email': partner[4],
-                'phone': partner[5],
-                'address': partner[6],
-                'city': partner[7],
-                'state': partner[8],
-                'postalcode': partner[9],
-                'country': partner[10],
-                'taxid': partner[11],
-                'registrationnumber': partner[12],
-                'additionalinfo': partner[13],
-                'currencycode': partner[14],
-                'status': partner[15], 
-                'customerimage' : decoded_image
-            }
+            partner_dict = {}
+            for i, value in enumerate(partner):
+                column_name = column_names[i]
+
+                if column_name == 'customerimage' and isinstance(value, bytes):
+                    try:
+                        decoded_image = base64.b64encode(value).decode('utf-8')
+                        partner_dict[column_name] = decoded_image
+                    except Exception as e:
+                        print("Error decoding image:", str(e))
+                else:
+                    partner_dict[column_name] = value
 
             partner_list.append(partner_dict)
 

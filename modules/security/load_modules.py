@@ -1,8 +1,9 @@
-from flask import Blueprint, jsonify, current_app
+from flask import Blueprint, jsonify, current_app, request
 import os
 from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required  # Import the decorator
 from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
+from flask_jwt_extended import decode_token
 
 fetch_module_data_api = Blueprint('fetch_module_data_api', __name__)
 
@@ -31,20 +32,31 @@ def store_module_names(folder_names):
         mydb = get_database_connection()
         mycursor = mydb.cursor()
 
+        current_userid = None
+        authorization_header = request.headers.get('Authorization', '')
+        if authorization_header.startswith('Bearer '):
+            token = authorization_header.replace('Bearer ', '')
+            decoded_token = decode_token(token)
+            current_userid = decoded_token.get('Userid')
+
         # Drop the adm.modules table if it exists
         mycursor.execute("DROP TABLE IF EXISTS adm.modules")
 
         # Create the adm.modules table again
         mycursor.execute("""
             CREATE TABLE adm.modules (
-                id INT PRIMARY KEY AUTO_INCREMENT,
-                folder_name VARCHAR(100) NOT NULL
-            ) AUTO_INCREMENT = 10;
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            folder_name VARCHAR(100) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            created_by INT,
+            updated_by INT
+        ) AUTO_INCREMENT = 10;
         """)
 
         for folder_name in folder_names:
-            sql = "INSERT INTO adm.modules (folder_name) VALUES (%s)"
-            values = (folder_name,)
+            sql = "INSERT INTO adm.modules (folder_name, created_by, updated_by) VALUES (%s, %s, %s)"
+            values = (folder_name, current_userid, current_userid)
             mycursor.execute(sql, values)
 
         mydb.commit()

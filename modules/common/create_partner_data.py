@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required  # Import the decorator
-from config import WRITE_ACCESS_TYPE    # Import WRITE_ACCESS_TYPE
+from config import WRITE_ACCESS_TYPE    # Import 
+from flask_jwt_extended import decode_token
 
 create_partner_data_api = Blueprint('create_partner_data_api', __name__)
 
@@ -9,6 +10,13 @@ create_partner_data_api = Blueprint('create_partner_data_api', __name__)
 @permission_required(WRITE_ACCESS_TYPE ,  __file__)  # Pass WRITE_ACCESS_TYPE as an argument
 def create_partner_data():
     mydb = get_database_connection()
+    
+    current_userid = None
+    authorization_header = request.headers.get('Authorization', '')
+    if authorization_header.startswith('Bearer '):
+        token = authorization_header.replace('Bearer ', '')
+        decoded_token = decode_token(token)
+        current_userid = decoded_token.get('Userid')
 
     if request.content_type == 'application/json':
         data = request.get_json()
@@ -58,8 +66,8 @@ def create_partner_data():
     mycursor = mydb.cursor()
 
     try:
-        query = "INSERT INTO com.businesspartner (partnertype, partnername, contactperson, email, phone, address, city, state, postalcode, country, taxid, registrationnumber, additionalinfo, currencycode, status, customerimage) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        values = (partner_type, partner_name, contact_person, email, phone, address, city, state, postal_code, country, tax_id, registration_number, additional_info, currency_code, status, partner_image_data)
+        query = "INSERT INTO com.businesspartner (partnertype, partnername, contactperson, email, phone, address, city, state, postalcode, country, taxid, registrationnumber, additionalinfo, currencycode, status, customerimage,created_by,updated_by) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        values = (partner_type, partner_name, contact_person, email, phone, address, city, state, postal_code, country, tax_id, registration_number, additional_info, currency_code, status, partner_image_data,current_userid,current_userid)
 
         mycursor.execute(query, values)
         mydb.commit()
