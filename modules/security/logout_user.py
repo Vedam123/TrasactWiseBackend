@@ -1,10 +1,19 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify,request
+#from configure_logging import configure_logging
+from modules.security.get_user_from_token import get_user_from_token
+
+# Get a logger for this module
+#logger = configure_logging()
 
 logout_data_api = Blueprint('logout_data_api', __name__)
 
 @logout_data_api.route("/logout", methods=["POST"])
 #@jwt_required()  # Require a valid JWT token to access this route
 def logout():
+    #  MODULE_NAME = __name__ 
+    # token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
+    #USER_ID = token_results['username']
+    # logger.debug(f"Logout function is called user is now logged out")    
     response = jsonify({"msg": "logout successful"})
     return response
 

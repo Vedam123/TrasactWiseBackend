@@ -7,6 +7,11 @@ from modules.admin.databases.mydb import get_database_connection
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt, get_jwt_identity, \
     unset_jwt_cookies, jwt_required, JWTManager
 from modules.security.permission_required import permission_required  # Import the decorator
+#from configure_logging import configure_logging
+from modules.security.get_user_from_token import get_user_from_token
+
+# Get a logger for this module
+#logger = configure_logging()
 
 from config import JWT_ACCESS_TOKEN_EXPIRES, APPLICATION_CREDENTIALS, JWT_REFRESH_TOKEN_EXPIRES
 
@@ -14,6 +19,10 @@ login_data_api = Blueprint('login_data_api', __name__)
 
 @login_data_api.route('/login', methods=['POST'])
 def login():
+    # MODULE_NAME = __name__ 
+    # token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
+    #USER_ID = token_results['username']
+    # logger.debug(f" Entered in Login  function")       
     username = request.json.get("username", None)
     password = request.json.get("password", None)
 
@@ -130,6 +139,10 @@ def login():
 @login_data_api.route('/profile', methods=['GET'])
 @jwt_required()
 def profile():
+    MODULE_NAME = __name__ 
+    token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
+    USER_ID = token_results['username']
+    logger.debug(f" Entered in the profile function")       
     response_body = {
         "name": "Vedam",
         "about": "Hello! I'm a full stack developer that loves python and javascript"
@@ -140,6 +153,10 @@ def profile():
 
 @login_data_api.route('/generate_password_hash', methods=['POST'])
 def generate_password_hash():
+    MODULE_NAME = __name__ 
+    token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
+    #USER_ID = token_results['username']
+    logger.debug(f"Entered in the generate password hash function")       
     username = request.json.get("username", None)
     plaintext_password = request.json.get("plaintext_password", None)
 

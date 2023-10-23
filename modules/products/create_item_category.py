@@ -4,12 +4,21 @@ import base64
 from modules.security.permission_required import permission_required  # Import the decorator
 from config import WRITE_ACCESS_TYPE    # Import WRITE_ACCESS_TYPE
 from flask_jwt_extended import decode_token
+#from logger import logger 
+from modules.security.get_user_from_token import get_user_from_token
+
+# Get a logger for this module
+#logger = configure_logging()
 
 create_item_category_api = Blueprint('create_item_category_api', __name__)
 
 @create_item_category_api.route('/create_item_category', methods=['POST'])
 @permission_required(WRITE_ACCESS_TYPE ,  __file__)  # Pass WRITE_ACCESS_TYPE as an argument
 def create_item_category():
+    MODULE_NAME = __name__ 
+    token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
+    USER_ID = token_results['username']
+    #logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the create categories data function")
     mydb = get_database_connection()
     current_userid = None
     authorization_header = request.headers.get('Authorization', '')

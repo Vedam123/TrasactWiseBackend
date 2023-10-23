@@ -3,12 +3,23 @@ from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
 from flask_jwt_extended import decode_token
+#from configure_logging import configure_logging
+from modules.security.get_user_from_token import get_user_from_token
+
+# Get a logger for this module
+#logger = configure_logging()
 
 create_permission_api = Blueprint('create_permission_api', __name__)
 
 @create_permission_api.route('/create_permissions', methods=['POST'])
 @permission_required(WRITE_ACCESS_TYPE, __file__)
 def create_permissions():
+
+   #  MODULE_NAME = __name__ 
+   #  token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
+   #  USER_ID = token_results['username']
+   #  logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the create permissions data function")
+
     try:
         mydb = get_database_connection()
         current_userid = None

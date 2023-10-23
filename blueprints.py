@@ -6,6 +6,7 @@ from modules.common.routes.common_routes import register_common_module_routes as
 from modules.admin.routes.admin_routes import register_admin_module_routes as register_admin
 
 
+
 def register_blueprints(app):
     # Registering blueprints with aliases
     register_employee(app)

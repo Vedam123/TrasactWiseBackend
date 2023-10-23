@@ -2,6 +2,11 @@
 from flask import request,jsonify
 from flask_jwt_extended import decode_token
 from modules.security.check_user_permissions import check_user_permissions  # Import the check_permission function
+##from configure_logging import configure_logging
+from modules.security.get_user_from_token import get_user_from_token
+
+# Get a logger for this module
+##logger = configure_logging()
 
 def check_module_and_token(current_file_name, module,access_type):
     if module:
@@ -9,21 +14,20 @@ def check_module_and_token(current_file_name, module,access_type):
     else:
         print(f"The file '{current_file_name}' was not found in any module and requested access is '{access_type}'.")
 
-    token = request.headers.get('Authorization')
-    token_data = ""
-    token_user = ""
-    print("Received Token --> ", token)
-    if token:
-        token = token.replace('Bearer ', '')  # Remove 'Bearer ' prefix
-        try:
-            token_data = decode_token(token)
-            print("Decoded Token Data -- full--> ", token_data)
-            token_user = token_data.get('sub')
-            current_user_id = token_data.get('Userid')
-            print("Decoded User id-->", current_user_id)
-        except Exception as e:
-            print("Error decoding token:", str(e))
-    has_permission = check_user_permissions(current_user_id, token_user, module, access_type)
+    authorization_header = request.headers.get('Authorization')
+    token_results = ""
+    USER_ID = ""
+    current_user_id = ""
+    if authorization_header:
+        token_results=get_user_from_token(authorization_header)
+
+    if token_results:
+        current_user_id = token_results["current_user_id"]
+        USER_ID = token_results["username"]
+    
+  ##  logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the Check module token function")
+    print(USER_ID,current_user_id,"--> TOKEN user and current user IN MODULE TOKEN ")
+    has_permission = check_user_permissions(current_user_id, USER_ID, module, access_type)
     if has_permission:
         return has_permission
 

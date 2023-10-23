@@ -1,8 +1,13 @@
-from flask import Blueprint, jsonify, request, current_app
+from flask import Blueprint, jsonify, request, current_app,request
 import os
 from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required  # Import the decorator
 from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
+#from configure_logging import configure_logging
+from modules.security.get_user_from_token import get_user_from_token
+
+# Get a logger for this module
+#logger = configure_logging()
 
 fetch_appl_modules_api = Blueprint('fetch_appl_modules_api', __name__)
 load_appl_modules_api =  Blueprint('load_appl_modules_api', __name__)
@@ -10,6 +15,10 @@ load_appl_modules_api =  Blueprint('load_appl_modules_api', __name__)
 @fetch_appl_modules_api.route('/fetch_application_modules', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def fetch_application_module():
+    # MODULE_NAME = __name__ 
+    # token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
+    # USER_ID = token_results['username']
+    # logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the fetch application module data function")    
     print("Inside fetch_application_module")
     module_names = get_module_names_from_react_app()
     response = {

@@ -1,3 +1,5 @@
+print("Starting app.py")  # Add this line
+
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, current_user
@@ -14,17 +16,6 @@ app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = JWT_ACCESS_TOKEN_EXPIRES
 
 jwt = JWTManager(app)
-
-# Authorization Middleware
-# app.before_request(authorize_user)
-
-# @app.before_request
-# def before_request_handler():
-# Call the refresh_expiring_jwts_middleware to refresh JWT tokens before accessing protected routes.
-#    response = refresh_expiring_jwts()
-#    print("response value",response)
-#    if response:
-#        return response
 
 if __name__ == '__main__':
     register_blueprints(app)

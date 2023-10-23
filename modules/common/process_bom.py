@@ -4,6 +4,12 @@ import requests
 from collections import OrderedDict
 from modules.security.permission_required import permission_required  # Import the decorator
 from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
+#from logger import logger 
+from modules.security.get_user_from_token import get_user_from_token
+
+# Get a logger for this module
+#logger = configure_logging()
+
 
 process_exploded_bom_api = Blueprint('process_exploded_bom_api', __name__)
 
@@ -103,6 +109,10 @@ def get_uom_details_by_id(uom_id):
 @process_exploded_bom_api.route('/process_exploded_bom', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def process_exploded_bom():
+    MODULE_NAME = __name__ 
+    token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
+    USER_ID = token_results['username']
+    #logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the explode BOM data function")    
     try:
         model_item_code = request.args.get('item_code')
         required_quantity = float(request.args.get('required_quantity'))

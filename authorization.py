@@ -2,6 +2,7 @@ from flask import request, jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from modules.admin.databases.mydb import get_database_connection
 
+
 def get_user_permissions_from_database(user_id):
     mydb = get_database_connection()
     mycursor = mydb.cursor()

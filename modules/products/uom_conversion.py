@@ -2,6 +2,11 @@ from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required  # Import the decorator
 from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
+#from logger import logger 
+from modules.security.get_user_from_token import get_user_from_token
+
+# Get a logger for this module
+#logger = configure_logging()
 
 conversion_api = Blueprint('conversion_api', __name__)
 
@@ -37,6 +42,10 @@ def convert_quantity(source_quantity, source_uom, target_uom, mycursor):
 @conversion_api.route('/uom_conversion', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def convert_quantity_endpoint():
+    MODULE_NAME = __name__ 
+    token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
+    USER_ID = token_results['username']
+    #logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the convert quantity data function")    
     try:
         source_uom = request.args.get('source_uom')
         source_quantity = float(request.args.get('source_quantity'))
