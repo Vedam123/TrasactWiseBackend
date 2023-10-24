@@ -3,38 +3,42 @@ import base64
 from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
 from config import READ_ACCESS_TYPE
-#from logger import logger 
 from modules.security.get_user_from_token import get_user_from_token
-
-# Get a logger for this module
-#logger = configure_logging()
+from modules.utilities.logger import logger  # Import the logger module
 
 get_partner_data_api = Blueprint('get_partner_data_api', __name__)
 
 @get_partner_data_api.route('/get_partner_data', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE, __file__)
 def get_partner_data():
-  
-    MODULE_NAME = __name__ 
-    token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
-    USER_ID = token_results['username']
+    authorization_header = request.headers.get('Authorization')
+    token_results = ""
+    USER_ID = ""
+    MODULE_NAME = __name__
+    if authorization_header:
+        token_results = get_user_from_token(authorization_header)
 
-    mydb = get_database_connection()
+    if token_results:
+        USER_ID = token_results["username"]
+        token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
+
+    mydb = get_database_connection(USER_ID, MODULE_NAME)
 
     partner_id = request.args.get('partnerid')
     partner_name = request.args.get('partnername')
     
-    #logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the get partner ---> data function")
+    # Log entry point
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the get partner data function")
 
     try:
         mycursor = mydb.cursor()
 
         if partner_id is not None:
-            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request Parameters: partnerid={partner_id}")  # Include request variables
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request Parameters: partnerid={partner_id}")  # Log request variables
             query = "SELECT * FROM com.businesspartner WHERE partnerid = %s"
             mycursor.execute(query, (partner_id,))
         elif partner_name is not None:
-            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request Parameters: partnername={partner_name}")  # Include request variables
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request Parameters: partnername={partner_name}")  # Log request variables
             query = "SELECT * FROM com.businesspartner WHERE partnername LIKE %s"
             mycursor.execute(query, ('%' + partner_name + '%',))
         else:
@@ -57,6 +61,7 @@ def get_partner_data():
                         decoded_image = base64.b64encode(value).decode('utf-8')
                         partner_dict[column_name] = decoded_image
                     except Exception as e:
+                        # Log an error message
                         logger.error(f"{USER_ID} --> {MODULE_NAME}: Error decoding image: {str(e)}")
                 else:
                     partner_dict[column_name] = value
@@ -66,9 +71,12 @@ def get_partner_data():
         mycursor.close()
         mydb.close()
 
-        #logger.info(f"{USER_ID} --> {MODULE_NAME}: Successfully fetched partner data")
+        # Log successful completion
+        logger.info(f"{USER_ID} --> {MODULE_NAME}: Successfully fetched partner data")
+
         return jsonify(partner_list)
     except Exception as e:
         mydb.close()
+        # Log an error message
         logger.error(f"{USER_ID} --> {MODULE_NAME}: Error fetching partner data: {str(e)}")
         return jsonify({'error': str(e)}), 500

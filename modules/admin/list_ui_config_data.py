@@ -2,13 +2,24 @@ from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required  # Import the decorator
 from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
+from modules.security.get_user_from_token import get_user_from_token
 
 config_data_api = Blueprint('config_data_api', __name__)
 
 @config_data_api.route('/list_ui_config_data', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def list_ui_config_data():
-    mydb = get_database_connection()  # Replace with your database connection function
+
+    authorization_header = request.headers.get('Authorization')
+    token_results = ""
+    USER_ID = ""
+    MODULE_NAME = __name__
+    if authorization_header:
+        token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
+
+    if token_results:
+        USER_ID = token_results["username"]
+    mydb = get_database_connection(USER_ID, MODULE_NAME)
 
     config_key = request.args.get('config_key')  # Get the config_key query parameter
 

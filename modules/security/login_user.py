@@ -7,27 +7,23 @@ from modules.admin.databases.mydb import get_database_connection
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt, get_jwt_identity, \
     unset_jwt_cookies, jwt_required, JWTManager
 from modules.security.permission_required import permission_required  # Import the decorator
-#from configure_logging import configure_logging
 from modules.security.get_user_from_token import get_user_from_token
-
-# Get a logger for this module
-#logger = configure_logging()
+from modules.utilities.logger import logger  # Import the logger module
 
 from config import JWT_ACCESS_TOKEN_EXPIRES, APPLICATION_CREDENTIALS, JWT_REFRESH_TOKEN_EXPIRES
 
 login_data_api = Blueprint('login_data_api', __name__)
 
 @login_data_api.route('/login', methods=['POST'])
+@login_data_api.route('/login', methods=['POST'])
 def login():
-    # MODULE_NAME = __name__ 
-    # token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
-    #USER_ID = token_results['username']
-    # logger.debug(f" Entered in Login  function")       
+    MODULE_NAME = __name__
+  
     username = request.json.get("username", None)
     password = request.json.get("password", None)
 
-    print("Username Arrived to login function ", username)
-    print("Password Arrived to login function ", password)
+    logger.debug(f"{MODULE_NAME}: Username Arrived to login function: {username}")
+    logger.debug(f"{MODULE_NAME}: Password Arrived to login function")
 
     # Check if the provided username and password match any entry in USERNAME_PASSWORD_PAIRS
     for user_info in APPLICATION_CREDENTIALS:
@@ -36,42 +32,41 @@ def login():
         ):
             userid = user_info["userid"]
             # Passwords match, generate and return a session token or JWT
-            print("The User is in the Password Pair list in the config file : credential are matched", int(user_info["userid"]))
+            logger.debug(f"{MODULE_NAME}: The User is in the Password Pair list in the config file: credentials are matched")
             access_token = create_access_token(
                 identity=username, additional_claims={"Userid": userid}, expires_delta=current_app.config["JWT_ACCESS_TOKEN_EXPIRES"]
-                )
-
-            refresh_token = create_refresh_token(
-                identity=username,additional_claims={"Userid": userid},
-                    expires_delta=JWT_REFRESH_TOKEN_EXPIRES
             )
 
-            # refresh_token = create_refresh_token(identity=username)
-            print("Application user details --> ", username,
-              int(user_info["userid"]), access_token)
-            print(refresh_token)
+            refresh_token = create_refresh_token(
+                identity=username, additional_claims={"Userid": userid},
+                expires_delta=JWT_REFRESH_TOKEN_EXPIRES
+            )
+
+            logger.debug(f"{MODULE_NAME}: Application user details: {username}, {userid}, {access_token}")
+            logger.debug(f"{MODULE_NAME}: Refresh Token: {refresh_token}")
+
             return jsonify({
                 "access_token": access_token,
                 "refresh_token": refresh_token,
                 "username": username,
                 "userid": int(user_info["userid"]),
                 "empid": 0,
-                "name" : user_info["name"],
-                "emp_img" : "None"
-                })
+                "name": user_info["name"],
+                "emp_img": "None"
+            })
     # If the username-password pair is not found in the array, check the database
-    print("The User is not in the Password Pair list in the config file : credential will be checked in the db")
-    mydb = get_database_connection()
-    query = "SELECT username, password, emailid, empid,id FROM adm.users WHERE username = %s"
+    logger.debug(f"{MODULE_NAME}: The User is not in the Password Pair list in the config file: credentials will be checked in the db")
+    mydb = get_database_connection(username,MODULE_NAME)
+    query = "SELECT username, password, emailid, empid, id FROM adm.users WHERE username = %s"
     values = (username,)
-    print("User name is used to fetch db ",username)
+    logger.debug(f"{MODULE_NAME}: User name is used to fetch db: {username}")
     mycursor = mydb.cursor()
     mycursor.execute(query, values)
     result = mycursor.fetchone()
 
     if result:
         stored_username = result[0]
-        print("Stored user name ",stored_username)
+        logger.debug(f"{MODULE_NAME}: Stored user name: {stored_username}")
         stored_password = result[1]
         emailid = result[2]
         empid = result[3]
@@ -79,8 +74,7 @@ def login():
 
         if bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
             # Passwords match, generate and return a session token or JWT
-            print("Config JWT ACCESS TOKEN EXPIRE TIME : ",
-                  JWT_ACCESS_TOKEN_EXPIRES)
+            logger.debug(f"{MODULE_NAME}: Config JWT ACCESS TOKEN EXPIRE TIME: {JWT_ACCESS_TOKEN_EXPIRES}")
             access_token = create_access_token(
                 identity=stored_username, additional_claims={"Userid": userid}, expires_delta=current_app.config["JWT_ACCESS_TOKEN_EXPIRES"]
             )
@@ -89,17 +83,15 @@ def login():
                 identity=username, additional_claims={"Userid": userid},
                 expires_delta=JWT_REFRESH_TOKEN_EXPIRES
             )
-            # refresh_token = create_refresh_token(identity=username)
-            print("Stored user details --> ",
-                  access_token, stored_username, userid)
-            print("Refresh Token ----->",refresh_token)
+            logger.debug(f"{MODULE_NAME}: Stored user details: {access_token}, {stored_username}, {userid}")
+            logger.debug(f"{MODULE_NAME}: Refresh Token: {refresh_token}")
 
-            query1 = "SELECT name,pic FROM com.employee WHERE empid = %s"
+            query1 = "SELECT name, pic FROM com.employee WHERE empid = %s"
             values = (int(empid),)
             mycursor1 = mydb.cursor()
             mycursor1.execute(query1, values)
             result1 = mycursor1.fetchone()
-            print("Input Employee id is -->",empid)
+            logger.debug(f"{MODULE_NAME}: Input Employee id is: {empid}")
             fetched_name = result1[0]
             fetched_image = result1[1]
             if isinstance(fetched_image, bytes):
@@ -114,9 +106,9 @@ def login():
                     "refresh_token": refresh_token,
                     "username": stored_username,
                     "userid": userid,
-                    "empid" : empid,
-                    "name" : fetched_name,
-                    "emp_img" : pic 
+                    "empid": empid,
+                    "name": fetched_name,
+                    "emp_img": pic 
                 })
             else:
                 # Handle the case when result1 is not truthy
@@ -126,42 +118,35 @@ def login():
                     "username": stored_username,
                     "userid": userid,
                     "empid": empid,
-                    "name": "NO NAME IN DB", # You can specify a default value here, such as None
-                    "emp_img" : pic 
+                    "name": "NO NAME IN DB",
+                    "emp_img": pic 
                 })
     # Close the cursor and connection
     mycursor.close()
     mydb.close()
     # Invalid credentials
+    logger.warning(f"{MODULE_NAME}: Invalid username or password")
     return jsonify({'error': 'Invalid username or password'}), 401
-
 
 @login_data_api.route('/profile', methods=['GET'])
 @jwt_required()
 def profile():
     MODULE_NAME = __name__ 
-    token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
-    USER_ID = token_results['username']
-    logger.debug(f" Entered in the profile function")       
+    logger.debug(f"{MODULE_NAME}: Entered in the profile function")       
     response_body = {
         "name": "Vedam",
         "about": "Hello! I'm a full stack developer that loves python and javascript"
     }
-
     return response_body
-
 
 @login_data_api.route('/generate_password_hash', methods=['POST'])
 def generate_password_hash():
     MODULE_NAME = __name__ 
-    token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
-    #USER_ID = token_results['username']
-    logger.debug(f"Entered in the generate password hash function")       
+    logger.debug(f"{MODULE_NAME}: Entered in the generate password hash function")       
     username = request.json.get("username", None)
     plaintext_password = request.json.get("plaintext_password", None)
-
-    print("Username Arrived to login function ", username)
-    print("Password Arrived to login function ", plaintext_password)
+    
+    logger.debug(f"{MODULE_NAME}: Username Arrived to generate password hash function: {username}")
 
     # Generate a new random salt
     salt = bcrypt.gensalt()
