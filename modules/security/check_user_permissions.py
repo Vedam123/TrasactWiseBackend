@@ -5,14 +5,28 @@ from modules.utilities.logger import logger  # Import the logger module
 def check_user_permissions(current_user_id, usernamex, module, access_type):
     try:       
         # Check if usernamex is present in APPLICATION_CREDENTIALS
+        logger.debug(f"current_user_id '{current_user_id}'")
+        logger.debug(f"usernamex '{usernamex}'")
+        logger.debug(f"module '{module}'")
+        logger.debug(f"access_type '{access_type}'")    
+
+        if current_user_id is None or current_user_id == "":
+            # Fetch user_info based on usernamex
+            user_info = next((user for user in APPLICATION_CREDENTIALS if user["username"] == usernamex), None)
+            
+            if user_info:
+                logger.debug(f"User '{usernamex}' found in Super user list.")
+                return True
+
+        # Continue with the rest of the function as before
         current_user_id = str(current_user_id).strip()
         user_info = next((user for user in APPLICATION_CREDENTIALS if user["userid"] == current_user_id), None)
         
         if user_info:
-            logger.debug(f"User '{current_user_id}' is in APPLICATION_CREDENTIALS super user list.")
+            logger.debug(f"User '{current_user_id}' is in Super user list super user list.")
             return True
 
-        logger.debug("User is not in super user list")
+        logger.debug(f"User '{usernamex}' not found in Super user list .")
 
         db_connection = get_database_connection(usernamex,module)
         permission_cursor = db_connection.cursor()
@@ -25,10 +39,8 @@ def check_user_permissions(current_user_id, usernamex, module, access_type):
             user_id = result[0]
         else:
             return False
-        if int(current_user_id) != int(user_id):
-            logger.debug("User id doesn't match")
-            return False
-        
+    
+           
         permission_cursor.execute(
             "SELECT 1 FROM adm.user_module_permissions WHERE module = %s LIMIT 1",
             (module,)

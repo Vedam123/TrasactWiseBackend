@@ -153,9 +153,31 @@ def delete_user_module():
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the delete_user_module route")
     return delete_user_modules()
 
+def refresh_expiring_jwts(response):
+    try:
+        exp_timestamp = get_jwt()["exp"]
+        now = datetime.now(timezone.utc)
+        target_timestamp = datetime.timestamp(now + timedelta(seconds=30))
+        MODULE_NAME = __name__
+        USER_ID = ""  # Replace with the appropriate user ID or identifier
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the refresh_expiring_jwts route")
+
+        if target_timestamp > exp_timestamp:
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the refresh_expiring_jwts route")
+            access_token = create_access_token(identity=get_jwt_identity())
+            data = response.get_json()
+            if type(data) is dict:
+                data["access_token"] = access_token
+                response.data = json.dumps(data)
+        return response
+    except (RuntimeError, KeyError):
+        # Case where there is not a valid JWT. Just return the original response
+        return response
+
 def register_security_routes(app):
     app.register_blueprint(get_user_roles_routes)
     app.register_blueprint(post_user_roles_routes)
     app.register_blueprint(put_user_roles_routes)
     app.register_blueprint(delete_user_roles_routes)
 
+    app.after_request(refresh_expiring_jwts)
