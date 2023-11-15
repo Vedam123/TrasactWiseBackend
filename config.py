@@ -2,7 +2,7 @@ from datetime import  timedelta
 DEBUG = True
 SECRET_KEY = "FLASKVEDSECKEY"
 JWT_SECRET_KEY = "JWTVEDSECKEY"
-JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=1)
+JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=60)
 JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7)
 READ_ACCESS_TYPE = "read"  # You can change this value as needed
 DELETE_ACCESS_TYPE = "delete"  # You can change this value as needed

@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, json
 from modules.security.create_role import create_role
 from modules.security.login_user import login, profile, generate_password_hash
 from modules.security.refresh_token import refresh_token
+from modules.security.get_new_token import get_new_token
 from modules.security.logout_user import logout
 from modules.security.register_user import register
 from modules.security.create_user_role import create_user_role
@@ -59,6 +60,14 @@ def refresh_login_token():
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the refresh_login_token route")
     return refresh_token()
+
+@post_user_roles_routes.route('/get_new_token', methods=['GET'])
+def get_new_access_token():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the refresh_login_token route")
+    print("new access token creation function is called")
+    return get_new_token()
 
 @post_user_roles_routes.route('/generate_password_hash', methods=['POST'])
 def generate_password_hash_user():
