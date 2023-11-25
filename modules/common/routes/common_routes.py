@@ -3,6 +3,7 @@ from modules.common.list_currencies import list_currency_data
 from modules.common.list_exchange_rates import list_exchange_rate_data
 from modules.common.list_tax_codes import list_tax_data
 from modules.common.explode_bom import explode_bom_data
+from modules.common.list_bom import list_bom_data
 from modules.common.process_bom import process_exploded_bom
 from modules.common.get_partner_data import get_partner_data
 from modules.common.create_partner_data import create_partner_data
@@ -52,6 +53,13 @@ def list_business_partners():
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: List business partners")
     return get_partner_data()
+
+@list_common_module.route('/list_bom', methods=['GET'])
+def list_bom():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Bill of Materials are going to be retrieved")
+    return list_bom_data()
 
 # POST Methods ----------------------------------------------------------
 
