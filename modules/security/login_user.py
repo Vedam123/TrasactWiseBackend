@@ -69,6 +69,7 @@ def login():
             })
     # If the username-password pair is not found in the array, check the database
     logger.debug(f"{MODULE_NAME}: The User is not in the Password Pair list in the config file: credentials will be checked in the db")
+
     mydb = get_database_connection(username,MODULE_NAME)
     query = "SELECT username, password, emailid, empid, id FROM adm.users WHERE username = %s"
     values = (username,)
@@ -80,6 +81,7 @@ def login():
     refresh_token_expires_seconds = int(JWT_REF_TOKEN_EXPIRES.total_seconds())
     logger.debug(f"{MODULE_NAME}: Token Expires Delta : {expires_in_seconds}")
     logger.debug(f"{MODULE_NAME}: Refresh Expires Delta : {refresh_token_expires_seconds}")
+    
     if result:
         stored_username = result[0]
         logger.debug(f"{MODULE_NAME}: Stored user name: {stored_username}")
