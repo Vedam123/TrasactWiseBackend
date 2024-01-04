@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
 import bcrypt
+import datetime
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
 from flask_jwt_extended import decode_token
@@ -34,16 +35,22 @@ def register():
 
     logger.debug(f"Email ID: {emailid}")
     logger.debug(f"Emp ID: {empid}")
-
+    
     # Hash and store the user's password securely in the database
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
     mydb = get_database_connection(username,MODULE_NAME)
+    
+    status_value = request.json['status_value']
+    start_date_value = request.json['start_date_value']
+    expiry_date_value = request.json['expiry_date_value']
+    #status_value = 'Active'  # You can set the initial status based on your business rules
+    #start_date_value = datetime.date.today()  # Set the start date to the current date
+    #expiry_date_value = None  # Set expiry_date_value to None if it can be null
 
-    # Save the user data to the database
-    # Assuming you have a 'users' table with columns 'username', 'password', 'empid', and 'emailid'
-    query = "INSERT INTO adm.users (username, password, empid, emailid, created_by, updated_by) VALUES (%s, %s, %s, %s, %s, %s)"
-    values = (username, hashed_password, empid, emailid, currentuserid, currentuserid)
+    query = "INSERT INTO adm.users (username, password, empid, emailid, status, start_date, expiry_date, created_by, updated_by) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    values = (username, hashed_password, empid, emailid, status_value, start_date_value, expiry_date_value, currentuserid, currentuserid)
+
     mycursor = mydb.cursor()
     mycursor.execute(query, values)
     mydb.commit()

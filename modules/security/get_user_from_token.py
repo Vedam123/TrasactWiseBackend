@@ -3,12 +3,10 @@ from modules.utilities.logger import logger  # Import the logger module
 
 def get_user_from_token(authorization_header):
     MODULE_NAME = __name__
-
     if not authorization_header:
         return None
 
     token = authorization_header.replace('Bearer ', '')
-
     if token:
         try:
             token_data = decode_token(token)

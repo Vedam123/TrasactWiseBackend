@@ -8,38 +8,29 @@ from modules.utilities.logger import logger
 
 list_users_api = Blueprint('list_users_api', __name__)
 
-@list_users_api.route('/users', methods=['GET'])
-@permission_required(READ_ACCESS_TYPE, __file__)
-def list_users():
+@list_users_api.route('/list_users_pwd_change', methods=['GET'])
+def list_users_pwd_change():
     try:
-        # Extract user information from the authorization token
-        authorization_header = request.headers.get('Authorization')
-        token_results = ""
-        USER_ID = ""
         MODULE_NAME = __name__
-        if authorization_header:
-            token_results = get_user_from_token(authorization_header)
-
-        if token_results:
-            USER_ID = token_results["username"]    
+        identifier = request.args.get('identifier')  # 'identifier' can be empid, emailid, or username
+        if identifier is None:
+            return jsonify({'error': 'Missing identifier parameter'}), 400
         
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the list users data function")    
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Getting the list of users")
+        logger.debug(f"{identifier} --> {MODULE_NAME}: Entered in the list users data function")    
+        mydb = get_database_connection(identifier, MODULE_NAME)
+        logger.debug(f"{identifier} --> {MODULE_NAME}: Getting the list of users")
 
-        # Define parameters
-        empid = request.args.get('empid')
-        username = request.args.get('username')
-
-        # Build the SQL query based on parameters
+        # Build the SQL query based on the identifier
         query = "SELECT id, username, empid, emailid, status, start_date, expiry_date FROM adm.users"
         conditions = []
 
-        if empid:
-            conditions.append(f"empid = '{empid}'")
-
-        if username:
-            conditions.append(f"username = '{username}'")
+        if identifier:
+            if identifier.isdigit():  # Check if it's a numeric value (empid)
+                conditions.append(f"empid = '{identifier}'")
+            elif '@' in identifier:  # Check if it's an email address (emailid)
+                conditions.append(f"emailid = '{identifier}'")
+            else:  # Default to username
+                conditions.append(f"username = '{identifier}'")
 
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
@@ -48,7 +39,7 @@ def list_users():
         mycursor.execute(query)
         users = mycursor.fetchall()
         
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Retrieved user data: {users}")
+        logger.debug(f"{identifier} --> {MODULE_NAME}: Retrieved user data: {users}")
 
         # Convert user data into a list of dictionaries with field names
         user_list = []
@@ -69,5 +60,5 @@ def list_users():
 
     except Exception as e:
         # Log any exceptions
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: {str(e)}")
+        logger.error(f"{identifier} --> {MODULE_NAME}: An error occurred: {str(e)}")
         return jsonify({'error': 'Internal Server Error'}), 500

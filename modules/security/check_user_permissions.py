@@ -8,7 +8,8 @@ def check_user_permissions(current_user_id, usernamex, module, access_type):
         logger.debug(f"current_user_id '{current_user_id}'")
         logger.debug(f"usernamex '{usernamex}'")
         logger.debug(f"module '{module}'")
-        logger.debug(f"access_type '{access_type}'")    
+        logger.debug(f"access_type '{access_type}'") 
+
 
         if current_user_id is None or current_user_id == "":
             # Fetch user_info based on usernamex
@@ -27,7 +28,6 @@ def check_user_permissions(current_user_id, usernamex, module, access_type):
             return True
 
         logger.debug(f"User '{usernamex}' not found in Super user list .")
-
         db_connection = get_database_connection(usernamex,module)
         permission_cursor = db_connection.cursor()
         user_id = ""
@@ -39,14 +39,15 @@ def check_user_permissions(current_user_id, usernamex, module, access_type):
             user_id = result[0]
         else:
             return False
-    
-           
+        
+        print("Seems user found  adm.users",user_id)
         permission_cursor.execute(
             "SELECT 1 FROM adm.user_module_permissions WHERE module = %s LIMIT 1",
             (module,)
             )
-
+        
         module_exists = bool(permission_cursor.fetchone())
+        print("Seems user found  adm.users",module, module_exists,access_type)
 
         if not module_exists:
             logger.debug(f"Module '{module}' not found in user_module_permissions")

@@ -16,6 +16,9 @@ from modules.security.list_modules import list_modules
 from modules.security.load_application_modules import load_application_modules
 from modules.security.load_application_modules import fetch_application_module
 from modules.security.load_modules import fetch_module
+from modules.security.modify_user import modify_user
+from modules.security.list_users_pwd_change import list_users_pwd_change
+from modules.security.modify_user_pwd_change import modify_user_pwd_change
 from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
 from modules.utilities.logger import logger  # Import the logger module
@@ -161,6 +164,28 @@ def delete_user_module():
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the delete_user_module route")
     return delete_user_modules()
+
+@get_user_roles_routes.route('/list_users_pwd_change', methods=['GET'])
+def list_users_for_pwd_change():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the list_users_data route")
+    return list_users_pwd_change()
+
+# PUT / DELETE methods ----------------------------------------------------
+@post_user_roles_routes.route('/modify_user', methods=['PUT'])
+def modify_users():
+    MODULE_NAME = __name__
+    USER_ID = "" 
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}:With this function call you can deactivate or update a user")
+    return modify_user()
+
+@post_user_roles_routes.route('/modify_user_pwd_change', methods=['PUT'])
+def modify_modify_user_for_pwd_changeusers():
+    MODULE_NAME = __name__
+    USER_ID = "" 
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}:Just to reset pwd for  a user")
+    return modify_user_pwd_change()
 
 def register_security_routes(app):
     app.register_blueprint(get_user_roles_routes)

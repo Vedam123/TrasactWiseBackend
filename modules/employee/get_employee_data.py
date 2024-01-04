@@ -9,7 +9,7 @@ from modules.utilities.logger import logger  # Import the logger module
 
 get_employee_data_api = Blueprint('get_employee_data_api', __name__)
 
-@get_employee_data_api.route('/employee/get_employee_data', methods=['GET'])
+@get_employee_data_api.route('/employee', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE, __file__)
 def get_employee_data():
     try:
@@ -22,7 +22,7 @@ def get_employee_data():
 
         if token_results:
             USER_ID = token_results["username"]
-        
+        print("Inside get Employee data function")
         # Log entry point
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the get employee data function")
 
@@ -31,7 +31,7 @@ def get_employee_data():
         mycursor.execute("SELECT * FROM com.employee")
         result = mycursor.fetchall()
         employees = []
-
+        #print("results",result)
         # Get the column names from the cursor's description
         column_names = [desc[0] for desc in mycursor.description]
 

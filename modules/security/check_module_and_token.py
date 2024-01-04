@@ -24,7 +24,6 @@ def check_module_and_token(current_file_name, module, access_type):
 
     authorization_header = request.headers.get('Authorization')   
    
-    
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the Check module token function")
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: TOKEN user and current user IN MODULE TOKEN: {USER_ID}, {current_user_id}")
 

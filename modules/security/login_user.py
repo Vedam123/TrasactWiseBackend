@@ -13,48 +13,64 @@ from modules.utilities.logger import logger  # Import the logger module
 from config import JWT_ACCESS_TOKEN_EXPIRES, APPLICATION_CREDENTIALS
 
 login_data_api = Blueprint('login_data_api', __name__)
+JWT_REF_TOKEN_EXPIRES = timedelta(days=7)
 
+@staticmethod
+def get_user_info(username,mydb,active_status):
+    print(username,active_status)
+    query = "SELECT username, password, emailid, empid, id FROM adm.users WHERE username = %s and status = %s"
+    values = (username,active_status,)
+    try:
+        with mydb.cursor() as mycursor:
+            mycursor.execute(query, values)
+            return mycursor.fetchone()
+    except Exception as e:
+        logger.error(f"An Error occuered in selecting data from adm.users table: {e}")
+        return jsonify({'message': 'An Error occuered in selecting data from adm.users table:'}), 500
+    finally:
+        mycursor.close()
+
+@staticmethod
+def fetch_employee_details(empid,mydb):
+    query = "SELECT name, pic FROM com.employee WHERE empid = %s"
+    values = (int(empid),)
+    try:
+        with mydb.cursor() as mycursor:
+            mycursor.execute(query, values)
+            return mycursor.fetchone()
+    except Exception as e:
+        logger.error(f"An Error occuered in selecting data from com.employee table: {e}")
+        return jsonify({'message': 'An Error occuered in selecting data from com.employee table:'}), 500
+    finally:
+        mycursor.close()    
 
 @login_data_api.route('/login', methods=['POST'])
 def login():
     MODULE_NAME = __name__
-    JWT_REF_TOKEN_EXPIRES = timedelta(days=7) 
     username = request.json.get("username", None)
     password = request.json.get("password", None)
+    active_status = request.json.get("name", None)
 
-    logger.debug(f"{MODULE_NAME}: Username Arrived to login function: {username}")
-    logger.debug(f"{MODULE_NAME}: Password Arrived to login function")
-
-    # Check if the provided username and password match any entry in USERNAME_PASSWORD_PAIRS
-    for user_info in APPLICATION_CREDENTIALS:
-        if user_info["username"] == username and bcrypt.checkpw(
-            password.encode('utf-8'), user_info["password"].encode('utf-8')
-        ):
-            userid = user_info["userid"]
-            # Passwords match, generate and return a session token or JWT
-            logger.debug(f"{MODULE_NAME}: The User is in the Password Pair list in the config file: credentials are matched")
-
-
+    try:
+        user_info = next(
+            (info for info in APPLICATION_CREDENTIALS
+             if info["username"] == username and info["status"] == active_status and bcrypt.checkpw(password.encode('utf-8'), info["password"].encode('utf-8'))),
+            None
+        )
+        print("User Info",user_info)
+        if user_info:
             expires_in_seconds = int(current_app.config["JWT_ACCESS_TOKEN_EXPIRES"].total_seconds())
 
             access_token = create_access_token(
-                identity=username, additional_claims={"Userid": userid, "expires_in": expires_in_seconds}
-            )
-            logger.debug(f"{MODULE_NAME}: Token Expires Delta : {expires_in_seconds}")
-            #refresh_token_expires_seconds = int(current_app.config["JWT_REF_ACCESS_TOKEN"].total_seconds())
-            # for some reason the import of JWT_REF_ACCESS_TOKEN from config file is not working , hence assigned 7 days with in this code
-            refresh_token_expires_seconds = int(JWT_REF_TOKEN_EXPIRES.total_seconds())
-            logger.debug(f"{MODULE_NAME}: Config JWT ACCESS TOKEN EXPIRE TIME: {JWT_REF_TOKEN_EXPIRES}")
-            logger.debug(f"{MODULE_NAME}: Token Expires Delta : {expires_in_seconds}")
-            logger.debug(f"{MODULE_NAME}: Refresh Expires Delta : {refresh_token_expires_seconds}")
-            refresh_token = create_refresh_token(
-                identity=username, additional_claims={"Userid": userid, "expires_in": refresh_token_expires_seconds}
+                identity=username, additional_claims={"Userid": user_info["userid"], "expires_in": expires_in_seconds}
             )
 
-            logger.debug(f"{MODULE_NAME}: Token Expires Delta : {expires_in_seconds}")
-            logger.debug(f"{MODULE_NAME}: Refresh Expires Delta : {refresh_token_expires_seconds}")
-            logger.debug(f"{MODULE_NAME}: Application user details: {username}, {userid}, {access_token}")
-            logger.debug(f"{MODULE_NAME}: Refresh Token: {refresh_token}")
+            refresh_token = create_refresh_token(
+                identity=username, additional_claims={"Userid": user_info["userid"], "expires_in": JWT_REF_TOKEN_EXPIRES.total_seconds()}
+            )
+
+            logger.debug(f"{MODULE_NAME}: Token Expires Delta: {expires_in_seconds}")
+            logger.debug(f"{MODULE_NAME}: Refresh Expires Delta: {int(JWT_REF_TOKEN_EXPIRES.total_seconds())}")
 
             return jsonify({
                 "access_token": access_token,
@@ -64,123 +80,77 @@ def login():
                 "empid": 0,
                 "name": user_info["name"],
                 "emp_img": "None",
-                "token_expires_delta":expires_in_seconds,
-                "refresh_token_expires_delta":refresh_token_expires_seconds
+                "token_expires_delta": expires_in_seconds,
+                "refresh_token_expires_delta": int(JWT_REF_TOKEN_EXPIRES.total_seconds())
             })
-    # If the username-password pair is not found in the array, check the database
-    logger.debug(f"{MODULE_NAME}: The User is not in the Password Pair list in the config file: credentials will be checked in the db")
+        else:
+            print("Entered in else condition")
+            mydb = get_database_connection(username,MODULE_NAME)
+            result = get_user_info(username,mydb,active_status)
+            print("Result db",result)
 
-    mydb = get_database_connection(username,MODULE_NAME)
-    query = "SELECT username, password, emailid, empid, id FROM adm.users WHERE username = %s"
-    values = (username,)
-    logger.debug(f"{MODULE_NAME}: User name is used to fetch db: {username}")
-    mycursor = mydb.cursor()
-    mycursor.execute(query, values)
-    result = mycursor.fetchone()
-    expires_in_seconds = int(current_app.config["JWT_ACCESS_TOKEN_EXPIRES"].total_seconds())
-    refresh_token_expires_seconds = int(JWT_REF_TOKEN_EXPIRES.total_seconds())
-    logger.debug(f"{MODULE_NAME}: Token Expires Delta : {expires_in_seconds}")
-    logger.debug(f"{MODULE_NAME}: Refresh Expires Delta : {refresh_token_expires_seconds}")
-    
-    if result:
-        stored_username = result[0]
-        logger.debug(f"{MODULE_NAME}: Stored user name: {stored_username}")
-        stored_password = result[1]
-        emailid = result[2]
-        empid = result[3]
-        userid = result[4]
+            if result:
+                stored_username, stored_password, emailid, empid, userid = result
 
-        if bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
-            # Passwords match, generate and return a session token or JWT
-            logger.debug(f"{MODULE_NAME}: Config JWT ACCESS TOKEN EXPIRE TIME: {JWT_ACCESS_TOKEN_EXPIRES}")
-            expires_in_seconds = int(current_app.config["JWT_ACCESS_TOKEN_EXPIRES"].total_seconds())
+                if bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8')):
+                    expires_in_seconds = int(current_app.config["JWT_ACCESS_TOKEN_EXPIRES"].total_seconds())
+                    logger.debug(f"{MODULE_NAME}: Config JWT ACCESS TOKEN EXPIRE TIME: {JWT_ACCESS_TOKEN_EXPIRES}")
 
-            access_token = create_access_token(
-                identity=username, additional_claims={"Userid": userid, "expires_in": expires_in_seconds}
-            )
-            logger.debug(f"{MODULE_NAME}: Config JWT ACCESS TOKEN EXPIRE TIME: {JWT_REF_TOKEN_EXPIRES}")
-            # ... (other code)
-            refresh_token_expires_seconds = int(JWT_REF_TOKEN_EXPIRES.total_seconds())
-            # ... (other code)
+                    access_token = create_access_token(
+                        identity=username, additional_claims={"Userid": userid, "expires_in": expires_in_seconds}
+                    )
 
-            refresh_token = create_refresh_token(
-                identity=username, additional_claims={"Userid": userid, "expires_in": refresh_token_expires_seconds}
-            )
-            logger.debug(f"{MODULE_NAME}: Stored user details: {access_token}, {stored_username}, {userid}")
-            logger.debug(f"{MODULE_NAME}: Refresh Token: {refresh_token}")
+                    refresh_token = create_refresh_token(
+                        identity=username, additional_claims={"Userid": userid, "expires_in": JWT_REF_TOKEN_EXPIRES.total_seconds()}
+                    )
 
-            query1 = "SELECT name, pic FROM com.employee WHERE empid = %s"
-            values = (int(empid),)
-            mycursor1 = mydb.cursor()
-            mycursor1.execute(query1, values)
-            result1 = mycursor1.fetchone()
-            logger.debug(f"{MODULE_NAME}: Input Employee id is: {empid}")
-            fetched_name = result1[0]
-            fetched_image = result1[1]
-            if isinstance(fetched_image, bytes):
-                pic = base64.b64encode(fetched_image).decode('utf-8')
-            else:
-                pic = "None"
-            mycursor1.close()
+                    logger.debug(f"{MODULE_NAME}: Token Expires Delta: {expires_in_seconds}")
+                    logger.debug(f"{MODULE_NAME}: Refresh Expires Delta: {int(JWT_REF_TOKEN_EXPIRES.total_seconds())}")
 
-            if fetched_name:
-                return jsonify({
-                    "access_token": access_token,
-                    "refresh_token": refresh_token,
-                    "username": stored_username,
-                    "userid": userid,
-                    "empid": empid,
-                    "name": fetched_name,
-                    "emp_img": pic,
-                    "token_expires_delta":expires_in_seconds,
-                    "refresh_token_expires_delta":refresh_token_expires_seconds                    
-                })
-            else:
-                # Handle the case when result1 is not truthy
-                return jsonify({
-                    "access_token": access_token,
-                    "refresh_token": refresh_token,
-                    "username": stored_username,
-                    "userid": userid,
-                    "empid": empid,
-                    "name": "NO NAME IN DB",
-                    "emp_img": pic,
-                    "token_expires_delta":expires_in_seconds,
-                    "refresh_token_expires_delta":refresh_token_expires_seconds 
-                })
-    # Close the cursor and connection
-    mycursor.close()
-    mydb.close()
-    # Invalid credentials
-    logger.warning(f"{MODULE_NAME}: Invalid username or password")
-    logger.debug(f"{MODULE_NAME}: Token Expires Delta : {expires_in_seconds}")
-    logger.debug(f"{MODULE_NAME}: Refresh Expires Delta : {refresh_token_expires_seconds}")
+                    result1 = fetch_employee_details(empid,mydb)
+
+                    fetched_name, fetched_image = result1[0], result1[1]
+
+                    pic = base64.b64encode(fetched_image).decode('utf-8') if isinstance(fetched_image, bytes) else "None"
+                    mydb.close()
+                    return jsonify({
+                        "access_token": access_token,
+                        "refresh_token": refresh_token,
+                        "username": stored_username,
+                        "userid": userid,
+                        "empid": empid,
+                        "name": fetched_name or "NO NAME IN DB",
+                        "emp_img": pic,
+                        "token_expires_delta": expires_in_seconds,
+                        "refresh_token_expires_delta": int(JWT_REF_TOKEN_EXPIRES.total_seconds())
+                    })
+            mydb.close()
+    except Exception as e:
+        logger.error(f"{MODULE_NAME}: An error occurred - {str(e)}")
+
     return jsonify({'error': 'Invalid username or password'}), 401
 
 @login_data_api.route('/profile', methods=['GET'])
 @jwt_required()
 def profile():
-    MODULE_NAME = __name__ 
-    logger.debug(f"{MODULE_NAME}: Entered in the profile function")       
+    MODULE_NAME = __name__
+    logger.debug(f"{MODULE_NAME}: Entered in the profile function")
+    username = request.json.get("username", None)
     response_body = {
-        "name": "Vedam",
-        "about": "Hello! I'm a full stack developer that loves python and javascript"
+        "name": {username},
+        "about": "Hello! You are an employee of this organization to access the Application"
     }
     return response_body
 
 @login_data_api.route('/generate_password_hash', methods=['POST'])
 def generate_password_hash():
-    MODULE_NAME = __name__ 
-    logger.debug(f"{MODULE_NAME}: Entered in the generate password hash function")       
+    MODULE_NAME = __name__
     username = request.json.get("username", None)
     plaintext_password = request.json.get("plaintext_password", None)
-    
+
     logger.debug(f"{MODULE_NAME}: Username Arrived to generate password hash function: {username}")
 
-    # Generate a new random salt
     salt = bcrypt.gensalt()
-
-    # Hash the plaintext password using the generated salt
     hashed_password = bcrypt.hashpw(plaintext_password.encode('utf-8'), salt)
 
     return jsonify({"hashed_password": hashed_password.decode('utf-8')})
