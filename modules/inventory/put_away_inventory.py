@@ -58,12 +58,12 @@ def put_away_inventory():
         # Validate mandatory parameters
         if not (item_id and uom_id and quantity and transaction_id and transaction_type):
             logger.error(f"{USER_ID} --> {MODULE_NAME}: Missing mandatory parameters in the request")
-            return jsonify({'error': 'Missing mandatory parameters in the request'}), 400
+            return f"Error :Missing mandatory parameters in the request ", 400
         
         # Check if at least one ID is provided
         if not any(ids.values()):
             logger.error(f"{USER_ID} --> {MODULE_NAME}: At least one ID (bin_id, rack_id, row_id, aisle_id, zone_id, location_id, warehouse_id) is mandatory for insert")
-            return jsonify({'error': 'At least one warehouse location is mandatory for put Away material'}), 400
+            return f"Error :At least one warehouse location is mandatory for put Away material ", 400
 
         # Check if the row with the given transaction_id already exists in inv.item_inventory
         if inventory_id is not None:
@@ -74,7 +74,6 @@ def put_away_inventory():
 
             if existing_row:
                 # Row with the given transaction_id and inventory_id already exists, update the quantity
-                print("Existing record")
                 update_query = """
                      UPDATE inv.item_inventory
                     SET quantity = %s, updated_at = NOW(), updated_by = %s, additional_info = %s
@@ -83,10 +82,9 @@ def put_away_inventory():
                 mycursor.execute(update_query, (quantity, current_userid, additional_info, transaction_id, inventory_id, item_id, uom_id))
                 logger.info(f"{USER_ID} --> {MODULE_NAME}: Item inventory updated successfully. transaction_id: {transaction_id}, inventory_id: {inventory_id}, Quantity: {quantity}")
                 mydb.commit()
-                return jsonify({'message': 'Item inventory updated successfully'})
+                return f"Success:Item inventory Inserted at transaction id {transaction_id} in the inventory id {inventory_id}", 200
             else:
-                return jsonify({'message': 'There is no combination of transaction_id, inventory_id, uom_id & item_id'})
-        print("New  record")
+                return f"There is no combination of {transaction_id} in the inventory id {inventory_id} , uom_id {uom_id}, item_id {item_id}", 422
         insert_query = """
             INSERT INTO inv.item_inventory
             (item_id, uom_id, quantity, transaction_id, transaction_type, bin_id, rack_id, row_id, aisle_id, zone_id, location_id, warehouse_id, created_at, updated_at, created_by, updated_by, additional_info)
@@ -100,11 +98,11 @@ def put_away_inventory():
         ))
         logger.info(f"{USER_ID} --> {MODULE_NAME}: New item inventory row inserted successfully. transaction_id: {transaction_id}, inventory_id: {inventory_id}")
         mydb.commit()
-        return jsonify({'message': 'Item inventory Inserted successfully'})
+        return f"Success:Item inventory Inserted at transaction id {transaction_id} in the inventory id {inventory_id}", 200
 
     except Exception as e:
         logger.error(f"{USER_ID} --> {MODULE_NAME}: Error updating item inventory - {str(e)}, Request variables: {data}")
-        return jsonify({'error': 'Internal Server Error'}), 500
+        return 'Internal Server Error', 500
     finally:
         mycursor.close()
         mydb.close()

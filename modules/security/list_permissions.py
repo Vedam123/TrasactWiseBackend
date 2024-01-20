@@ -19,12 +19,23 @@ def list_permissions():
 
     token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the list permissions data function")
+    
+    # Get user_id from the query parameter
+    user_id = request.args.get('user_id')
+    
     mydb = get_database_connection(USER_ID, MODULE_NAME)
 
-    # Retrieve all user module permissions from the database
-    query = "SELECT * FROM adm.user_module_permissions"
-    mycursor = mydb.cursor()
-    mycursor.execute(query)
+    # Retrieve user module permissions based on user_id if provided
+    if user_id:
+        query = "SELECT * FROM adm.user_module_permissions WHERE user_id = %s"
+        mycursor = mydb.cursor()
+        mycursor.execute(query, (user_id,))
+    else:
+        # Retrieve all user module permissions from the database
+        query = "SELECT * FROM adm.user_module_permissions"
+        mycursor = mydb.cursor()
+        mycursor.execute(query)
+
     user_module_permissions = mycursor.fetchall()
 
     # Convert the user module permissions data into a list of dictionaries

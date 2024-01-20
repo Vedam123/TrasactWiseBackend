@@ -35,21 +35,31 @@ def get_companies():
                 c.group_company_id,
                 c.name AS company_name,
                 c.description AS company_description,
-                c.local_cur,
-                c.home_cur,
-                c.reporting_cur,
+                c.local_cur_id,
+                c.home_cur_id,
+                c.reporting_cur_id,
                 g.name AS group_company_name,
                 g.description AS group_company_description,
-                cu.currencycode,
-                cu.currencyname,
-                cu.currencysymbol,
+                cu_local.currencycode AS local_currency_code,
+                cu_local.currencyname AS local_currency_name,
+                cu_local.currencysymbol AS local_currency_symbol,
+                cu_home.currencycode AS home_currency_code,
+                cu_home.currencyname AS home_currency_name,
+                cu_home.currencysymbol AS home_currency_symbol,
+                cu_reporting.currencycode AS reporting_currency_code,
+                cu_reporting.currencyname AS reporting_currency_name,
+                cu_reporting.currencysymbol AS reporting_currency_symbol,
+                ctc.description AS company_tax_codes_description,
                 c.created_at,
                 c.updated_at,
                 c.created_by,
                 c.updated_by
             FROM com.company c
             JOIN com.group_company g ON c.group_company_id = g.id
-            LEFT JOIN com.currency cu ON c.local_cur = cu.currencycode
+            LEFT JOIN com.currency cu_local ON c.local_cur_id = cu_local.currency_id
+            LEFT JOIN com.currency cu_home ON c.home_cur_id = cu_home.currency_id
+            LEFT JOIN com.currency cu_reporting ON c.reporting_cur_id = cu_reporting.currency_id
+            LEFT JOIN com.company_tax_codes ctc ON c.default_tax_code_id = ctc.id
         """
 
         params = {}
@@ -61,6 +71,7 @@ def get_companies():
             query += " WHERE c.name REGEXP %(company_name)s"
             params['company_name'] = company_name
 
+        print("PARAMETERS MUST BE NULL ",params)
         mycursor.execute(query, params)
 
         result = mycursor.fetchall()

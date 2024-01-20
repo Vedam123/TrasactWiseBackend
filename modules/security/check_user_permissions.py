@@ -40,14 +40,13 @@ def check_user_permissions(current_user_id, usernamex, module, access_type):
         else:
             return False
         
-        print("Seems user found  adm.users",user_id)
         permission_cursor.execute(
             "SELECT 1 FROM adm.user_module_permissions WHERE module = %s LIMIT 1",
             (module,)
             )
         
         module_exists = bool(permission_cursor.fetchone())
-        print("Seems user found  adm.users",module, module_exists,access_type)
+        logger.debug("Seems user found  adm.users")
 
         if not module_exists:
             logger.debug(f"Module '{module}' not found in user_module_permissions")

@@ -56,7 +56,7 @@ def create_partner_data():
         tax_id = data.get('taxid')
         registration_number = data.get('registrationnumber')
         additional_info = data.get('additionalinfo')
-        currency_code = data.get('currencycode')
+        currency_id = data.get('currency_id')
         status = data['status']
         partner_image = request.files['partnerimage'] if 'partnerimage' in request.files else None
         partner_image_data = partner_image.read() if partner_image else None
@@ -75,7 +75,7 @@ def create_partner_data():
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Tax ID: {tax_id}")
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Registration Number: {registration_number}")
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Additional Info: {additional_info}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Currency Code: {currency_code}")
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Currency Code: {currency_id}")
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Status: {status}")
         if partner_image:
             logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Partner Image: File detected")
@@ -85,8 +85,8 @@ def create_partner_data():
         mycursor = mydb.cursor()
 
         try:
-            query = "INSERT INTO com.businesspartner (partnertype, partnername, contactperson, email, phone, address, city, state, postalcode, country, taxid, registrationnumber, additionalinfo, currencycode, status, customerimage, created_by, updated_by) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            values = (partner_type, partner_name, contact_person, email, phone, address, city, state, postal_code, country, tax_id, registration_number, additional_info, currency_code, status, partner_image_data, current_userid, current_userid)
+            query = "INSERT INTO com.businesspartner (partnertype, partnername, contactperson, email, phone, address, city, state, postalcode, country, taxid, registrationnumber, additionalinfo, currency_id, status, customerimage, created_by, updated_by) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            values = (partner_type, partner_name, contact_person, email, phone, address, city, state, postal_code, country, tax_id, registration_number, additional_info, currency_id, status, partner_image_data, current_userid, current_userid)
             
             mycursor.execute(query, values)
             mydb.commit()

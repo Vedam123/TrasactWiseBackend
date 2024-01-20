@@ -37,7 +37,6 @@ def create_department():
 
         if request.content_type == 'application/json':
             data = request.get_json()
-            print(data)
         else:
             data = request.form
 

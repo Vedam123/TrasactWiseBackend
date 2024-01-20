@@ -9,7 +9,7 @@ from modules.utilities.logger import logger  # Import the logger module
 list_uom_api = Blueprint('list_uom_api', __name__)
 
 @list_uom_api.route('/list_uoms', methods=['GET'])
-@permission_required(READ_ACCESS_TYPE, __file__)  # Pass READ_ACCESS_TYPE as an argument
+@permission_required(READ_ACCESS_TYPE, __file__)
 def list_uoms():
     authorization_header = request.headers.get('Authorization')
     token_results = ""
@@ -25,8 +25,20 @@ def list_uoms():
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the list UOM data function")
     mydb = get_database_connection(USER_ID, MODULE_NAME)
 
-    # Retrieve all UOMs from the database
-    query = "SELECT * FROM com.uom"
+    # Retrieve to_convert_uom_list from query parameters
+    find_uom_id = request.args.get('find_uom_id', None)
+
+    # Build the SQL query based on the presence of to_convert_uom_list
+    if find_uom_id:
+        query = f"""
+            SELECT *
+            FROM com.uom
+            WHERE uom_id IN (SELECT base_unit FROM com.uom WHERE uom_id = {find_uom_id})
+            OR base_unit IN (SELECT uom_id FROM com.uom WHERE uom_id = {find_uom_id});
+        """
+    else:
+        query = "SELECT * FROM com.uom"
+
     mycursor = mydb.cursor()
     mycursor.execute(query)
     uom_data = mycursor.fetchall()

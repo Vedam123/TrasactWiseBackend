@@ -46,7 +46,7 @@ def create_account():
 
         # Assuming your accounts table has columns like account_number, account_name, etc.
         insert_query = """
-            INSERT INTO fin.accounts (account_number, account_name, account_type, opening_balance, currency_code, bank_name, branch_name, account_holder_name, contact_number, email, address, is_active, department_id, company_id, created_by, updated_by)
+            INSERT INTO fin.accounts (account_number, account_name, account_type, opening_balance, currency_id, bank_name, branch_name, account_holder_name, contact_number, email, address, is_active, department_id, company_id, created_by, updated_by)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
@@ -56,7 +56,7 @@ def create_account():
             data.get('account_name'),
             data.get('account_type'),
             data.get('opening_balance'),
-            data.get('currency_code'),
+            int(data.get('currency_id')),
             data.get('bank_name'),
             data.get('branch_name'),
             data.get('account_holder_name'),

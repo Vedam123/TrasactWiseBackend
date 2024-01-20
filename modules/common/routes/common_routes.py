@@ -18,11 +18,20 @@ from modules.common.create_company import create_company
 from modules.common.get_departments import get_departments
 from modules.common.create_department import create_department
 
+from modules.common.get_company_tax_codes import get_company_tax_codes
+
 from modules.utilities.logger import logger  # Import the logger module
 
 list_common_module = Blueprint('list_common_module', __name__)
 
 # GET Methods ---------------------------------------------------------
+@list_common_module.route('/get_company_tax_codes', methods=['GET'])
+def get_company_tax_codes_All():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get Company Tax codes")
+    return get_company_tax_codes()
+
 @list_common_module.route('/list_currencies', methods=['GET'])
 def list_currencies():
     MODULE_NAME = __name__

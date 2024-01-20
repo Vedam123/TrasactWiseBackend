@@ -31,10 +31,14 @@ def convert_quantity(source_quantity, source_uom, target_uom, mycursor, USER_ID,
     target_conversion_factor = fetch_conversion_factor(mycursor, target_uom, USER_ID, MODULE_NAME)
     
     if source_conversion_factor is None or target_conversion_factor is None:
-        return None
-        
-    converted_quantity = (source_quantity * source_conversion_factor) / target_conversion_factor
-    return converted_quantity
+        return None, None
+    
+    # Calculate quotient and remainder
+    quotient = source_quantity * source_conversion_factor // target_conversion_factor
+    remainder = source_quantity * source_conversion_factor % target_conversion_factor
+    
+    return quotient, remainder
+
 
 @conversion_api.route('/uom_conversion', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE, __file__)  # Pass READ_ACCESS_TYPE as an argument
@@ -61,7 +65,7 @@ def convert_quantity_endpoint():
         mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
 
-        converted_quantity = convert_quantity(source_quantity, source_uom, target_uom, mycursor, USER_ID, MODULE_NAME)
+        converted_quantity, reminder_quantity = convert_quantity(source_quantity, source_uom, target_uom, mycursor, USER_ID, MODULE_NAME)
         if converted_quantity is None:
             mycursor.close()
             mydb.close()
@@ -71,7 +75,10 @@ def convert_quantity_endpoint():
         mycursor.close()
         mydb.close()
 
-        return jsonify({'target_uom': target_uom, 'converted_quantity': converted_quantity})
+        return jsonify({'target_uom': target_uom, 
+                        'converted_quantity': converted_quantity,
+                        'reminder_quantity':reminder_quantity,
+                        'source_uom':source_uom})
 
     except Exception as e:
         logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: %s", str(e))

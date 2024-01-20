@@ -28,7 +28,32 @@ def get_employee_data():
 
         mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
-        mycursor.execute("SELECT * FROM com.employee")
+
+        empid_param = request.args.get('empid')
+
+        # Validate empid_param to ensure it is a valid integer
+        if empid_param and not empid_param.isdigit():
+            return jsonify({'error': 'Invalid empid parameter'}), 400
+
+        if empid_param:
+            query = f"""
+                SELECT e.*, m.name AS manager_name, s.name AS supervisor_name, d.designation_name
+                FROM com.employee e
+                LEFT JOIN com.employee m ON e.manager_id = m.empid
+                LEFT JOIN com.employee s ON e.supervisor_id = s.empid
+                LEFT JOIN com.designations d ON e.designation_id = d.designation_id
+                WHERE e.empid = {empid_param}
+            """
+        else:
+            query = """
+                SELECT e.*, m.name AS manager_name, s.name AS supervisor_name, d.designation_name
+                FROM com.employee e
+                LEFT JOIN com.employee m ON e.manager_id = m.empid
+                LEFT JOIN com.employee s ON e.supervisor_id = s.empid
+                LEFT JOIN com.designations d ON e.designation_id = d.designation_id
+            """
+
+        mycursor.execute(query)
         result = mycursor.fetchall()
         employees = []
         #print("results",result)

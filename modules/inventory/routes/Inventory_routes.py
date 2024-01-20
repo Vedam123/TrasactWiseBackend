@@ -26,6 +26,9 @@ from modules.inventory.update_inspection import update_inspection
 from modules.inventory.put_away_inventory import put_away_inventory
 from modules.inventory.get_receipts_to_putaway import get_receipts_to_putaway
 from modules.inventory.update_ir_status import update_ir_status
+from modules.inventory.pack_or_unpack   import pack_or_unpack
+from modules.inventory.bulk_pack_or_unpack   import bulk_pack_or_unpack
+from modules.inventory.move_item_inventory  import move_item_inventory
 from modules.utilities.logger import logger
 
 # Create blueprints
@@ -211,6 +214,27 @@ def put_away_inventories():
     USER_ID = ""
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to put away inventory")
     return put_away_inventory()
+
+@inventory_put_routes.route('/pack_or_unpack', methods=['POST'])
+def pack_all_or_unpack_all():
+    MODULE_NAME = __name__
+    USER_ID = ""
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request pack or unpack")
+    return pack_or_unpack()
+
+@inventory_put_routes.route('/bulk_pack_or_unpack', methods=['POST'])
+def bulk_pack_or_unpack_all():
+    MODULE_NAME = __name__
+    USER_ID = ""
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request Bulk pack or unpack")
+    return bulk_pack_or_unpack()
+
+@inventory_put_routes.route('/move_item_inventory', methods=['POST'])
+def move_item_inventory_all():
+    MODULE_NAME = __name__
+    USER_ID = ""
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request Move inventory")
+    return move_item_inventory()
 
 # PUT Methods -----------------------------------------------------------
 @inventory_put_routes.route('/update_inspection', methods=['PUT'])

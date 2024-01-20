@@ -26,7 +26,35 @@ def list_exchange_rate_data():
 
     mydb = get_database_connection(USER_ID, MODULE_NAME)
     mycursor = mydb.cursor()
-    mycursor.execute("SELECT * FROM com.exchangerate")
+
+    # Update the SQL query to join with com.currency
+    mycursor.execute("""
+        SELECT
+            er.exchange_rate_id,
+            er.from_currency_id,
+            er.to_currency_id,
+            er.exchangerate,
+            er.valid_from,
+            er.valid_to,
+            er.conversion_type,
+            er.provider_id,
+            er.status,
+            er.version,
+            er.created_at,
+            er.updated_at,
+            er.created_by,
+            er.updated_by,
+            c1.currencycode AS from_currency_code,
+            c1.currencyname AS from_currency_name,
+            c1.currencysymbol AS from_currency_symbol,
+            c2.currencycode AS to_currency_code,
+            c2.currencyname AS to_currency_name,
+            c2.currencysymbol AS to_currency_symbol
+        FROM com.exchange_rates er
+        JOIN com.currency c1 ON er.from_currency_id = c1.currency_id
+        JOIN com.currency c2 ON er.to_currency_id = c2.currency_id
+    """)
+
     result = mycursor.fetchall()
     exchangerates = []
 

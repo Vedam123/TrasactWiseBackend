@@ -6,6 +6,7 @@ from modules.products.create_item_category import create_item_category
 from modules.products.create_item import create_item
 from modules.products.create_uom import create_uom
 from modules.products.uom_conversion import convert_quantity_endpoint
+from modules.products.baseunit_uom_conversion import baseunit_uom_conversion
 from modules.products.currency_conversion import currency_conversion
 from modules.utilities.logger import logger  # Import the logger module
 
@@ -48,6 +49,13 @@ def currency_route_conversion():
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request for currency conversion")
     return currency_conversion()
+
+@item_create_routes.route('/baseunit_uom_conversion', methods=['GET'])
+def baseunit_conversion():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Base unit conversion ")
+    return baseunit_uom_conversion()
 
 # POST routes -----------------------------------------------------
 @item_create_routes.route('/create_item', methods=['POST'])

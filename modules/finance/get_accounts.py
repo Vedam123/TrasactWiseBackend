@@ -24,13 +24,9 @@ def get_accounts():
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'get accounts' function")
 
         invalid_params_present = any(param for param in request.args.keys() if param not in ['account_id', 'account_number', 'account_name', 'account_type', 'company_name', 'company_id', 'department_name', 'department_id'])
-
-        # If any invalid parameters are present, return an error response
         if invalid_params_present:
             return jsonify({'error': 'Invalid query parameter(s) detected'}), 400
 
-
-        # Extracting query parameters
         account_id = request.args.get('account_id', None)
         account_number = request.args.get('account_number', None)
         account_name = request.args.get('account_name', None)
@@ -43,29 +39,24 @@ def get_accounts():
         mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
 
-        # Constructing the dynamic SQL query
-     # ... (previous code)
-
-        # Constructing the dynamic SQL query
-       # ... (previous code)
-
-        # Constructing the dynamic SQL query
         query = """
             SELECT 
                 a.account_id, a.account_number, a.account_name, a.account_type, 
-                a.opening_balance, a.current_balance, a.currency_code, a.bank_name, 
+                a.opening_balance, a.current_balance, a.currency_id, a.bank_name, 
                 a.branch_name, a.account_holder_name, a.contact_number, a.email, 
                 a.address, a.is_active, a.department_id, a.company_id, 
                 a.created_at, a.updated_at, a.created_by, a.updated_by,
                 d.department_name,
-                c.name AS company_name
+                c.name AS company_name,
+                cur.currencycode,
+                cur.currencyname,
+                cur.currencysymbol
             FROM fin.accounts a
             LEFT JOIN com.department d ON a.department_id = d.id
             LEFT JOIN com.company c ON a.company_id = c.id
+            LEFT JOIN com.currency cur ON a.currency_id = cur.currency_id
             WHERE 1=1
         """
-
-        # Adding conditions based on provided parameters
         if account_id:
             query += f" AND a.account_id = '{account_id}'"
         if account_number:
@@ -84,12 +75,6 @@ def get_accounts():
             query += f" AND a.department_id = '{department_id}'"
 
         mycursor.execute(query)
-
-# ... (remaining code)
-
-
-# ... (remaining code)
-
 
         result = mycursor.fetchall()
         accounts_list = []

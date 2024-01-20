@@ -75,11 +75,9 @@ def explode_bom_data():
             logger.debug(f"{USER_ID} --> {MODULE_NAME}: No BOM for this item and revision {model_item}, {revision}")
             return jsonify({'message': 'No BOM defined for this item and '})
         
-        print("Yes BOM for this item and revision", model_item, revision, required_quantity)
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: No BOM for this item and revision {model_item}, {revision}")
         exploded_bom = explode_bom(mycursor, model_item, revision, required_quantity)
-        print("After iterative call")
-
+ 
         mycursor.close()
         mydb.close()
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Base URL {request.url_root} ")

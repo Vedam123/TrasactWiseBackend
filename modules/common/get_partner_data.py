@@ -35,14 +35,28 @@ def get_partner_data():
 
         if partner_id is not None:
             logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request Parameters: partnerid={partner_id}")  # Log request variables
-            query = "SELECT * FROM com.businesspartner WHERE partnerid = %s"
+            query = """
+                SELECT bp.*, c.currency_id, c.currencycode, c.currencysymbol
+                FROM com.businesspartner bp
+                LEFT JOIN com.currency c ON bp.currency_id = c.currency_id
+                WHERE bp.partnerid = %s
+            """
             mycursor.execute(query, (partner_id,))
         elif partner_name is not None:
             logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request Parameters: partnername={partner_name}")  # Log request variables
-            query = "SELECT * FROM com.businesspartner WHERE partnername LIKE %s"
+            query = """
+                SELECT bp.*, c.currency_id, c.currencycode, c.currencysymbol
+                FROM com.businesspartner bp
+                LEFT JOIN com.currency c ON bp.currency_id = c.currency_id
+                WHERE bp.partnername LIKE %s
+            """
             mycursor.execute(query, ('%' + partner_name + '%',))
         else:
-            query = "SELECT * FROM com.businesspartner"
+            query = """
+                SELECT bp.*, c.currency_id, c.currencycode, c.currencysymbol
+                FROM com.businesspartner bp
+                LEFT JOIN com.currency c ON bp.currency_id = c.currency_id
+            """
             mycursor.execute(query)
 
         partner_data = mycursor.fetchall()

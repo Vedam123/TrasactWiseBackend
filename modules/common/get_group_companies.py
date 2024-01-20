@@ -27,8 +27,11 @@ def get_group_companies():
         mycursor = mydb.cursor()
 
         mycursor.execute("""
-            SELECT id, legal_entity_id, name, description, created_at, updated_at, created_by, updated_by
-            FROM com.group_company
+            SELECT gc.id, gc.legal_entity_id, gc.name AS group_company_name, gc.description, 
+                   gc.created_at, gc.updated_at, gc.created_by, gc.updated_by,
+                   le.name AS legal_entity_name
+            FROM com.group_company gc
+            JOIN com.legal_entity le ON gc.legal_entity_id = le.id
         """)
 
         result = mycursor.fetchall()

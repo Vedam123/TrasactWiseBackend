@@ -72,10 +72,8 @@ def modify_user():
             update_query += "status = %s, "
             update_values.append(status)
 
-    if expiry_date is not None:
-        if expiry_date != "":
-            update_query += "expiry_date = %s, "
-            update_values.append(expiry_date)
+    update_query += "expiry_date = %s, "
+    update_values.append(expiry_date)
 
     # Check if there are fields to update
     if not update_values:
@@ -89,6 +87,9 @@ def modify_user():
 
     logger.debug(f"Update Query: {update_query}")
     logger.debug(f"Update Values: {update_values}")
+
+    print(f"Update Query: {update_query}")
+    print(f"Update Values: {update_values}")
 
     # Execute the update query
     mycursor = mydb.cursor()

@@ -40,29 +40,31 @@ def create_employee_data():
             data = request.get_json()
         else:
             data = request.form
+        
+        print(data)
 
-        required_fields = ['name', 'manager', 'supervisor', 'role', 'dob', 'doj']
+        required_fields = ['name', 'manager_id', 'supervisor_id', 'designation_id', 'dob', 'doj']
         if not all(field in data for field in required_fields):
             return jsonify({'error': 'Missing required fields'}), 400
 
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {json.dumps(data)}")
         print("Data reached to backend", data)
         name = data['name']
-        manager = data['manager']
-        supervisor = data['supervisor']
+        manager_id = data['manager_id']
+        supervisor_id = data['supervisor_id']
         pic = request.files['pic'] if 'pic' in request.files else None
         pic_data = pic.read() if pic else None
         salary = data.get('salary')
         if salary == '' :
             salary = 0
-        role = data['role']
+        designation_id = data['designation_id']
         dob = data['dob']
         doj = data['doj']
 
         # Log parsed data
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Employee name: {name}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Employee manager: {manager}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Employee supervisor: {supervisor}")
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Employee manager: {manager_id}")
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Employee supervisor: {supervisor_id}")
 
         if pic:
             logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Employee pic: File detected")
@@ -70,14 +72,14 @@ def create_employee_data():
             logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Employee pic: Empty")
 
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Employee salary: {salary}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Employee role: {role}")
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Employee role: {designation_id}")
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Employee dob: {dob}")
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Employee doj: {doj}")
-        print("complete insert data ",name, manager, supervisor, salary, role, dob, doj, currentuserid, currentuserid)
+        print("complete insert data ",name, manager_id, supervisor_id, salary, designation_id, dob, doj, currentuserid, currentuserid)
         with mydb.cursor() as mycursor:
             try:
-                query = "INSERT INTO com.employee (name, manager, supervisor, pic, salary, role, dob, doj, created_by, updated_by) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                values = (name, manager, supervisor, pic_data, salary, role, dob, doj, currentuserid, currentuserid)
+                query = "INSERT INTO com.employee (name, manager_id, supervisor_id, pic, salary, designation_id, dob, doj, created_by, updated_by) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                values = (name, manager_id, supervisor_id, pic_data, salary, designation_id, dob, doj, currentuserid, currentuserid)
 
                 mycursor.execute(query, values)
                 mydb.commit()
