@@ -7,6 +7,8 @@ from modules.utilities.logger import logger
 
 get_receipts_api = Blueprint('get_receipts_api', __name__)
 
+# ... (Previous imports and code)
+
 @get_receipts_api.route('/get_receipts', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE, __file__)
 def get_receipts():
@@ -30,15 +32,14 @@ def get_receipts():
             'receipt_id': request.args.get('receipt_id'),
             'receiving_location_id': request.args.get('receiving_location_id'),
             'transaction_number': request.args.get('transaction_number'),
-            'transaction_header_number': request.args.get('transaction_header_number'),  # Include new parameter
             # Add other parameters as needed
         }
 
         query = """
             SELECT r.*, l.location_name, u.uom_name, u.abbreviation, i.item_code, i.item_name,
                    r.created_at, r.updated_at, r.created_by, r.updated_by,
-                   r.inspect, r.transaction_number, r.status,
-                   r.accepted_qty, r.rejected_qty, r.inspection_id, r.transaction_header_number  
+                   r.inspect, r.transaction_number, r.status,  -- Include new fields
+                   r.accepted_qty, r.rejected_qty, r.inspection_id  -- Add the new fields
             FROM inv.receipts r
             JOIN inv.locations l ON r.receiving_location_id = l.location_id
             JOIN com.uom u ON r.uom_id = u.uom_id
@@ -46,7 +47,6 @@ def get_receipts():
             WHERE (%(receipt_id)s IS NULL OR r.receipt_id = %(receipt_id)s)
               AND (%(receiving_location_id)s IS NULL OR r.receiving_location_id = %(receiving_location_id)s)
               AND (%(transaction_number)s IS NULL OR r.transaction_number = %(transaction_number)s)
-              AND (%(transaction_header_number)s IS NULL OR r.transaction_header_number = %(transaction_header_number)s) 
               -- Add other conditions using query_params
         """
 

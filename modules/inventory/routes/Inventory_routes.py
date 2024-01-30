@@ -18,7 +18,7 @@ from modules.inventory.create_item_inventory import create_item_inventory
 from modules.inventory.get_receipts import get_receipts
 from modules.inventory.create_receipt import create_receipt
 from modules.inventory.get_inspections import get_inspections
-from modules.inventory.create_inspection import create_inspection
+#from modules.inventory.create_inspection import create_inspection
 from modules.inventory.get_open_inspections import get_open_inspections
 from modules.inventory.get_shipments import get_shipments
 from modules.inventory.create_shipment import create_shipment
@@ -138,12 +138,12 @@ def create_shipment_data():
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to create shipment")
     return create_shipment()
 
-@inventory_post_routes.route('/create_inspection', methods=['POST'])
-def create_inspections():
-    MODULE_NAME = __name__
-    USER_ID = ""
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to create inspection")
-    return create_inspection()
+#@inventory_post_routes.route('/create_inspection', methods=['POST'])
+#def create_inspections():
+#    MODULE_NAME = __name__
+#    USER_ID = ""
+#    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to create inspection")
+#    return create_inspection()
 
 @inventory_post_routes.route('/create_receipt', methods=['POST'])
 def create_receipt_data():

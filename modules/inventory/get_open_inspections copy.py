@@ -6,7 +6,6 @@ from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 get_open_inspections_api = Blueprint('get_open_inspections_api', __name__)
-# Ensure to import jsonify, request, Blueprint, etc. as before
 
 @get_open_inspections_api.route('/get_open_inspections', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE, __file__)
@@ -34,7 +33,6 @@ def get_open_inspections():
         transaction_type_param = request.args.get('transaction_type_param', 'NULL')
         item_name_param = request.args.get('item_name_param', 'NULL')
         transaction_number_param = request.args.get('transaction_number_param', 'NULL')
-        transaction_header_number_param = request.args.get('transaction_header_number_param', 'NULL')  # Include new parameter
 
         query_params = {
             'inspection_id_param': inspection_id_param,
@@ -42,7 +40,6 @@ def get_open_inspections():
             'transaction_type_param': transaction_type_param,
             'item_name_param': item_name_param,
             'transaction_number_param': transaction_number_param,
-            'transaction_header_number_param': transaction_header_number_param,  # Include new parameter
             'status_params_list': status_param_string1  # Use status_params_list here
         }
 
@@ -56,9 +53,6 @@ def get_open_inspections():
         """
         if status_param_string:
             query += f" AND i.status IN (%(status_params_list)s)"
-
-        # Include condition for transaction_header_number
-        query += " AND (%(transaction_header_number_param)s IS NULL OR i.transaction_header_number = %(transaction_header_number_param)s)"
 
         print("\nFull Query:")
         print(query)

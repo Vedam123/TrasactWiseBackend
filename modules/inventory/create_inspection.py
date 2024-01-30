@@ -8,9 +8,7 @@ from modules.utilities.logger import logger
 
 create_inspection_api = Blueprint('create_inspection_api', __name__)
 
-# ... (Previous imports and code)
-
-def create_inspection_logic(data, USER_ID, current_userid,mydb):
+def create_inspection_logic(data, USER_ID, current_userid, mydb):
     try:
         # Extract additional fields from the data
         inspection_location_id = data['inspection_location_id']
@@ -23,6 +21,7 @@ def create_inspection_logic(data, USER_ID, current_userid,mydb):
         status = data.get('status', '')
         comments = data.get('comments', '')
         transaction_number = data.get('transaction_number')
+        transaction_header_number = data.get('transaction_header_number')  # Include new field
         transaction_type = data.get('transaction_type')
         accepted_qty_details = data.get('accepted_qty_details', '')
         rejected_qty_details = data.get('rejected_qty_details', '')
@@ -38,8 +37,8 @@ def create_inspection_logic(data, USER_ID, current_userid,mydb):
 
         try:
             query = """
-                INSERT INTO inv.inspection (item_id, inspection_name, inspection_location_id, transaction_quantity, accepted_quantity, rejected_quantity, uom_id, status, comments, transaction_number, transaction_type, accepted_qty_details, rejected_qty_details, created_by, updated_by)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO inv.inspection (item_id, inspection_name, inspection_location_id, transaction_quantity, accepted_quantity, rejected_quantity, uom_id, status, comments, transaction_number, transaction_header_number, transaction_type, accepted_qty_details, rejected_qty_details, created_by, updated_by)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             values = (
                 item_id,
@@ -52,6 +51,7 @@ def create_inspection_logic(data, USER_ID, current_userid,mydb):
                 status,
                 comments,
                 transaction_number,
+                transaction_header_number,  # Include new field
                 transaction_type,
                 accepted_qty_details,
                 rejected_qty_details,
@@ -109,7 +109,7 @@ def create_inspection():
         # Log the received data
         logger.debug(f"{USER_ID} --> {__name__}: Received data: {data}")
 
-        result, status_code = perform_inspection_logic(data, USER_ID, current_userid,mydb)
+        result, status_code = create_inspection_logic(data, USER_ID, current_userid, mydb)
 
         # Close the cursor and connection
         mydb.close()
@@ -120,4 +120,3 @@ def create_inspection():
         # Log any exceptions
         logger.error(f"{USER_ID} --> {__name__}: An error occurred: {str(e)}")
         return jsonify({'error': str(e)}), 500
-
