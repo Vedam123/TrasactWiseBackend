@@ -1,0 +1,118 @@
+from flask import Blueprint, jsonify, request
+from modules.admin.databases.mydb import get_database_connection
+from modules.security.permission_required import permission_required
+from config import READ_ACCESS_TYPE
+from modules.security.get_user_from_token import get_user_from_token
+from modules.utilities.logger import logger
+
+journal_api = Blueprint('journal_api', __name__)
+
+@journal_api.route('/get_journal_headers', methods=['GET'])
+@permission_required(READ_ACCESS_TYPE, __file__)
+def get_journal_headers():
+    MODULE_NAME = __name__
+
+    try:
+        authorization_header = request.headers.get('Authorization')
+        token_results = get_user_from_token(authorization_header)
+
+        if token_results:
+            USER_ID = token_results["username"]
+        else:
+            USER_ID = ""
+
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'get journal headers' function")
+        print("Parameters check for Invalidty")
+        invalid_params_present = any(param for param in request.args.keys() if param not in ['company_id', 'department_id', 'journal_date', 'journal_type', 'reference_type', 'reference_id', 'description', 'currency_id', 'status'])
+        if invalid_params_present:
+            return jsonify({'error': 'Invalid query parameter(s) detected'}), 400
+        
+        print("Parameters are okay")
+
+
+        company_id_str = request.args.get('company_id')
+        company_id = int(company_id_str.strip('"')) if company_id_str is not None else None
+        department_id_str = request.args.get('department_id')
+        department_id = int(department_id_str.strip('"')) if department_id_str is not None else None
+        journal_date = request.args.get('journal_date')
+        journal_type = request.args.get('journal_type')
+        reference_type = request.args.get('reference_type')
+        reference_id_str = request.args.get('reference_id')
+        reference_id = int(reference_id_str.strip('"')) if reference_id_str is not None else None
+        description = request.args.get('description')
+        currency_id_str = request.args.get('currency_id')
+        currency_id = int(currency_id_str.strip('"')) if currency_id_str is not None else None
+        status = request.args.get('status')
+
+
+        print(company_id)
+
+        mydb = get_database_connection(USER_ID, MODULE_NAME)
+        mycursor = mydb.cursor()
+
+        query = """
+            SELECT 
+                j.header_id, j.company_id, j.department_id, j.journal_date, j.journal_type, 
+                j.reference_type, j.reference_id, j.description, j.currency_id, j.status, 
+                j.created_at, j.updated_at, j.created_by, j.updated_by,
+                c.name AS company_name,
+                c.description AS company_description,
+                d.department_name,
+                d.description AS department_description,
+                cur.currencycode,
+                cur.currencyname,
+                cur.currencysymbol
+            FROM fin.journal_headers j
+            LEFT JOIN com.company c ON j.company_id = c.id
+            LEFT JOIN com.currency cur ON j.currency_id = cur.currency_id
+            LEFT JOIN com.department d ON j.department_id = d.id
+            WHERE 1=1
+        """
+
+        if company_id:
+            query += f" AND j.company_id = {company_id}"
+        if department_id:
+            query += f" AND j.department_id = {department_id}"
+        if journal_date:
+            query += f" AND j.journal_date = '{journal_date}'"
+        if journal_type:
+            query += f" AND j.journal_type = '{journal_type}'"
+        if reference_type:
+            query += f" AND j.reference_type = '{reference_type}'"
+        if reference_id:
+            query += f" AND j.reference_id = {reference_id}"
+        if description:
+            query += f" AND j.description = '{description}'"
+        if currency_id:
+            query += f" AND j.currency_id = {currency_id}"
+        if status:
+            query += f" AND j.status = '{status}'"
+
+        mycursor.execute(query)
+
+        result = mycursor.fetchall()
+        journal_headers_list = []
+
+        columns = [desc[0] for desc in mycursor.description]
+        column_indices = {column: index for index, column in enumerate(columns)}
+
+        for row in result:
+            journal_header_dict = {}
+
+            for column in columns:
+                journal_header_dict[column] = row[column_indices[column]]
+
+            journal_headers_list.append(journal_header_dict)
+
+        mycursor.close()
+        mydb.close()
+
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Successfully retrieved journal headers data")
+
+        return jsonify({'journal_headers_list': journal_headers_list})
+
+    except Exception as e:
+        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error retrieving journal headers data - {str(e)}")
+        import traceback
+        traceback.print_exc()  # Add this line to print the full stack trace
+        return jsonify({'error': 'Internal Server Error'}), 500
