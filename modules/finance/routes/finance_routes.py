@@ -3,6 +3,8 @@ from modules.finance.get_accounts import get_accounts
 from modules.finance.get_journal_headers import get_journal_headers
 from modules.finance.get_journal_lines import get_journal_lines
 from modules.finance.create_account import create_account
+from modules.finance.create_journal_header import create_journal_header
+from modules.finance.create_journal_lines import create_journal_line
 
 from modules.utilities.logger import logger  # Import the logger module
 
@@ -39,6 +41,20 @@ def create_account_data():
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to crete account")
     return create_account()
+
+@finance_post_routes.route('/create_journal_header', methods=['POST'])
+def create_journal_header_All():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to crete Journal Header")
+    return create_journal_header()
+
+@finance_post_routes.route('/create_journal_line', methods=['POST'])
+def create_journal_line_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to crete Journal Lines")
+    return create_journal_line()
 
 # PUT Methods -----------------------------------------------------------
 

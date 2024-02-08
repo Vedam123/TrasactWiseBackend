@@ -22,13 +22,10 @@ def get_journal_headers():
             USER_ID = ""
 
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'get journal headers' function")
-        print("Parameters check for Invalidty")
-        invalid_params_present = any(param for param in request.args.keys() if param not in ['company_id', 'department_id', 'journal_date', 'journal_type', 'reference_type', 'reference_id', 'description', 'currency_id', 'status'])
+
+        invalid_params_present = any(param for param in request.args.keys() if param not in ['company_id', 'department_id', 'journal_date', 'journal_type', 'description', 'currency_id', 'status', 'source_number', 'journal_number'])
         if invalid_params_present:
             return jsonify({'error': 'Invalid query parameter(s) detected'}), 400
-        
-        print("Parameters are okay")
-
 
         company_id_str = request.args.get('company_id')
         company_id = int(company_id_str.strip('"')) if company_id_str is not None else None
@@ -36,16 +33,14 @@ def get_journal_headers():
         department_id = int(department_id_str.strip('"')) if department_id_str is not None else None
         journal_date = request.args.get('journal_date')
         journal_type = request.args.get('journal_type')
-        reference_type = request.args.get('reference_type')
-        reference_id_str = request.args.get('reference_id')
-        reference_id = int(reference_id_str.strip('"')) if reference_id_str is not None else None
         description = request.args.get('description')
         currency_id_str = request.args.get('currency_id')
         currency_id = int(currency_id_str.strip('"')) if currency_id_str is not None else None
         status = request.args.get('status')
-
-
-        print(company_id)
+        source_number_str = request.args.get('source_number')
+        source_number = int(source_number_str.strip('"')) if source_number_str is not None else None
+        journal_number_str = request.args.get('journal_number')  # Added journal_number parsing
+        journal_number = int(journal_number_str.strip('"')) if journal_number_str is not None else None  # Convert to int if not None
 
         mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
@@ -53,7 +48,7 @@ def get_journal_headers():
         query = """
             SELECT 
                 j.header_id, j.company_id, j.department_id, j.journal_date, j.journal_type, 
-                j.reference_type, j.reference_id, j.description, j.currency_id, j.status, 
+                j.description, j.currency_id, j.status, j.journal_number, j.source_number,  -- Include journal_number field in the select query
                 j.created_at, j.updated_at, j.created_by, j.updated_by,
                 c.name AS company_name,
                 c.description AS company_description,
@@ -77,16 +72,16 @@ def get_journal_headers():
             query += f" AND j.journal_date = '{journal_date}'"
         if journal_type:
             query += f" AND j.journal_type = '{journal_type}'"
-        if reference_type:
-            query += f" AND j.reference_type = '{reference_type}'"
-        if reference_id:
-            query += f" AND j.reference_id = {reference_id}"
         if description:
             query += f" AND j.description = '{description}'"
         if currency_id:
             query += f" AND j.currency_id = {currency_id}"
         if status:
             query += f" AND j.status = '{status}'"
+        if source_number:
+            query += f" AND j.source_number = {source_number}"
+        if journal_number:  # Include journal_number condition if provided
+            query += f" AND j.journal_number = {journal_number}"
 
         mycursor.execute(query)
 

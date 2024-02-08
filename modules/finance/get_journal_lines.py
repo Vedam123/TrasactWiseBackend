@@ -30,8 +30,10 @@ def get_journal_lines():
         account_id_str = request.args.get('account_id')
         account_id = int(account_id_str.strip('"')) if account_id_str is not None else None
 
-
         status = request.args.get('status')
+
+        line_number_str = request.args.get('line_number')  # Added line_number parsing
+        line_number = int(line_number_str.strip('"')) if line_number_str is not None else None  # Convert to int if not None
 
         # Establish database connection
         mydb = get_database_connection(USER_ID, MODULE_NAME)
@@ -42,7 +44,8 @@ def get_journal_lines():
             SELECT 
                 jl.line_id, jl.header_id, jl.account_id, jl.debit, jl.credit, jl.status,
                 jl.created_at, jl.updated_at, jl.created_by, jl.updated_by,
-                jh.reference_type, jh.reference_id,
+                jl.line_number,  -- Include line_number field in the select query
+                jh.source_number, 
                 a.account_number, a.account_name, a.account_type,
                 cur.currencycode, cur.currencyname, cur.currencysymbol
             FROM fin.journal_lines jl
@@ -59,6 +62,8 @@ def get_journal_lines():
             query += f" AND jl.account_id = {account_id}"
         if status:
             query += f" AND jl.status = '{status}'"
+        if line_number:  # Include line_number condition if provided
+            query += f" AND jl.line_number = {line_number}"
 
         mycursor.execute(query)
 
@@ -88,5 +93,3 @@ def get_journal_lines():
         import traceback
         traceback.print_exc()  # Add this line to print the full stack trace
         return jsonify({'error': 'Internal Server Error'}), 500
-
-
