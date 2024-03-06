@@ -23,7 +23,7 @@ def get_purchase_invoice_details():
 
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'get_purchase_invoice_details' function")
 
-        invalid_params_present = any(param for param in request.args.keys() if param not in ['header_id', 'invoice_number', 'partnerid', 'invoicedate', 'payment_status', 'tax_id', 'company_id', 'currency_id', 'department_id', 'transaction_source'])
+        invalid_params_present = any(param for param in request.args.keys() if param not in ['header_id', 'invoice_number', 'partnerid', 'invoicedate', 'status', 'tax_id', 'company_id', 'currency_id', 'department_id', 'transaction_source'])
         if invalid_params_present:
             return jsonify({'error': 'Invalid query parameter(s) detected'}), 400
 
@@ -34,7 +34,7 @@ def get_purchase_invoice_details():
         partnerid_str = request.args.get('partnerid')
         partnerid = int(partnerid_str.strip('"')) if partnerid_str is not None else None
         invoicedate = request.args.get('invoicedate')
-        payment_status_list = request.args.getlist('payment_status')
+        status_list = request.args.getlist('status')
         tax_id_str = request.args.get('tax_id')
         tax_id = int(tax_id_str.strip('"')) if tax_id_str is not None else None
         company_id_str = request.args.get('company_id')
@@ -50,7 +50,7 @@ def get_purchase_invoice_details():
 
         query = """
             SELECT 
-                p.header_id, p.invoice_number, p.partnerid, p.invoicedate, p.totalamount, p.payment_status, 
+                p.header_id, p.invoice_number, p.partnerid, p.invoicedate, p.totalamount, p.status, 
                 p.payment_terms, p.payment_duedate, p.tax_id, p.currency_id, p.department_id, p.company_id, 
                 p.transaction_source, -- Added transaction_source field
                 p.created_at, p.updated_at, p.created_by, p.updated_by,
@@ -74,9 +74,9 @@ def get_purchase_invoice_details():
             query += f" AND p.partnerid = {partnerid}"
         if invoicedate:
             query += f" AND p.invoicedate = '{invoicedate}'"
-        if payment_status_list:
-            payment_status_conditions = " OR ".join([f"p.payment_status = '{status}'" for status in payment_status_list])
-            query += f" AND ({payment_status_conditions})"
+        if status_list:
+            status_conditions = " OR ".join([f"p.status = '{status}'" for status in status_list])
+            query += f" AND ({status_conditions})"
         if tax_id:
             query += f" AND p.tax_id = {tax_id}"
         if company_id:

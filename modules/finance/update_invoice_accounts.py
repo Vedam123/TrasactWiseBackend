@@ -10,9 +10,9 @@ from modules.utilities.logger import logger
 # Define the Blueprint
 update_invoice_accounts_api = Blueprint('update_invoice_accounts_api', __name__)
 
-@update_invoice_accounts_api.route('/update_invoice_accounts/<int:header_id>/<string:line_number>', methods=['PUT'])
+@update_invoice_accounts_api.route('/update_invoice_accounts', methods=['PUT'])
 @permission_required(WRITE_ACCESS_TYPE, __file__)
-def update_invoice_accounts(header_id, line_number):
+def update_invoice_accounts():
     try:
         authorization_header = request.headers.get('Authorization')
         token_results = ""
@@ -46,73 +46,45 @@ def update_invoice_accounts(header_id, line_number):
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
 
         # Check if any of the required fields are missing
-        if not all(key in data for key in ['account_id', 'debitamount', 'creditamount']):
-            return jsonify({'error': 'Missing required fields: account_id, debitamount, creditamount'}), 400
+        if not all(key in data for key in ['header_id', 'lines']):
+            return jsonify({'error': 'Missing required fields: header_id, lines'}), 400
 
-        # Typecast fields to appropriate types
-        account_id = int(data.get('account_id'))
-        debitamount = float(data.get('debitamount'))
-        creditamount = float(data.get('creditamount'))
+        # Extract header_id from the request
+        header_id = int(data.get('header_id'))
 
-        # Check if a record exists with the given header_id and line_number
-        record_exists = record_exists_in_database(mydb, header_id, line_number)
+        # Get lines from the request
+        lines = data.get('lines', [])
 
-        if record_exists:
-            # Update the existing record
-            update_query = """
-                UPDATE fin.purchaseinvoiceaccounts
-                SET account_id = %s, debitamount = %s, creditamount = %s, updated_by = %s
-                WHERE line_number = %s AND header_id = %s
-            """
-            update_values = (
-                account_id,
-                debitamount,
-                creditamount,
-                current_userid,  # updated_by
-                line_number,     # line_number to be updated
-                header_id        # header_id to be updated
-            )
-        else:
-            # Insert a new record
-            update_query = """
-                INSERT INTO fin.purchaseinvoiceaccounts (header_id, line_number, account_id, debitamount, creditamount, created_by, updated_by)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """
-            update_values = (
-                header_id,
-                line_number,
-                account_id,
-                debitamount,
-                creditamount,
-                current_userid,  # created_by
-                current_userid   # updated_by
-            )
+        if not lines:
+            return jsonify({'error': 'At least one line is required'}), 400
 
-        mycursor = mydb.cursor()
+        for line in lines:
+            # Extract line specific fields
+            line_id = line.get('line_id')
+            line_number = line.get('line_number')
+            account_id = int(line.get('account_id'))
+            debitamount = float(line.get('debitamount'))
+            creditamount = float(line.get('creditamount'))
 
-        try:
-            mycursor.execute(update_query, update_values)
-            mydb.commit()
+            # Check if a record exists with the given header_id and line_number
+            record_exists = record_exists_in_database(mydb, header_id, line_number)
 
             if record_exists:
-                # Log success for update
-                logger.info(f"{USER_ID} --> {MODULE_NAME}: Updated purchase invoice account with line ID: {line_number}")
+                # Update the existing record
+                update_existing_record(mydb, header_id, line_number, account_id, debitamount, creditamount, current_userid)
+                message = f"Data for header_id {header_id} and line_number {line_number} is updated in the system"
             else:
-                # Log success for insert
-                logger.info(f"{USER_ID} --> {MODULE_NAME}: Inserted purchase invoice account with line ID: {line_number}")
+                # Insert a new record
+                insert_new_record(mydb, header_id, line_number, account_id, debitamount, creditamount, current_userid)
+                message = f"Data for header_id {header_id} and line_number {line_number} is inserted in the system"
 
-            # Close the cursor and connection
-            mycursor.close()
-            mydb.close()
+        # Log success
+        logger.info(f"{USER_ID} --> {MODULE_NAME}: Updated or inserted invoice accounts")
 
-            return jsonify({'success': True, 'message': 'Purchase Invoice Account updated successfully'}), 200
+        # Close the database connection
+        mydb.close()
 
-        except Exception as e:
-            # Log the error and close the cursor and connection
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to update or insert purchase invoice account with line ID {line_number}: {str(e)}")
-            mycursor.close()
-            mydb.close()
-            return jsonify({'error': str(e)}), 500
+        return jsonify({'success': True, 'message': message}), 200
 
     except Exception as e:
         # Log any exceptions
@@ -137,6 +109,51 @@ def record_exists_in_database(mydb, header_id, line_number):
 
         # Check if any record exists
         return result[0] > 0
+
+    except Exception as e:
+        raise e
+
+    finally:
+        # Close the cursor
+        mycursor.close()
+
+def update_existing_record(mydb, header_id, line_number, account_id, debitamount, creditamount, current_userid):
+    try:
+        # Update query
+        update_query = """
+            UPDATE fin.purchaseinvoiceaccounts
+            SET account_id = %s, debitamount = %s, creditamount = %s, updated_by = %s
+            WHERE header_id = %s AND line_number = %s
+        """
+
+        # Initialize the cursor
+        mycursor = mydb.cursor()
+
+        # Execute the update query
+        mycursor.execute(update_query, (account_id, debitamount, creditamount, current_userid, header_id, line_number))
+        mydb.commit()
+
+    except Exception as e:
+        raise e
+
+    finally:
+        # Close the cursor
+        mycursor.close()
+
+def insert_new_record(mydb, header_id, line_number, account_id, debitamount, creditamount, current_userid):
+    try:
+        # Insert query
+        insert_query = """
+            INSERT INTO fin.purchaseinvoiceaccounts (header_id, line_number, account_id, debitamount, creditamount, created_by, updated_by)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """
+
+        # Initialize the cursor
+        mycursor = mydb.cursor()
+
+        # Execute the insert query
+        mycursor.execute(insert_query, (header_id, line_number, account_id, debitamount, creditamount, current_userid, current_userid))
+        mydb.commit()
 
     except Exception as e:
         raise e

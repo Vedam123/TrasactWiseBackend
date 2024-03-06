@@ -35,6 +35,8 @@ def get_invoice_distributions():
         account_id_str = request.args.get('account_id')
         account_id = int(account_id_str.strip('"')) if account_id_str is not None else None
 
+        invoice_number = request.args.get('invoice_number')
+
         # Establish database connection
         mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
@@ -61,6 +63,8 @@ def get_invoice_distributions():
             query += f" AND pia.header_id = {header_id}"
         if account_id:
             query += f" AND pia.account_id = {account_id}"
+        if invoice_number:
+            query += f" AND pi.invoice_number = '{invoice_number}'"
 
         mycursor.execute(query)
 

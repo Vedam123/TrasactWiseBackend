@@ -8,10 +8,17 @@ from modules.utilities.logger import logger
 
 update_purchase_invoice_api = Blueprint('update_purchase_invoice_api', __name__)
 
-@update_purchase_invoice_api.route('/update_purchase_invoice/<int:header_id>/<int:invoice_number>/<string:transaction_source>', methods=['PUT'])
+@update_purchase_invoice_api.route('/update_purchase_invoice', methods=['PUT'])
 @permission_required(WRITE_ACCESS_TYPE, __file__)
-def update_purchase_invoice(header_id, invoice_number, transaction_source):
+def update_purchase_invoice():
     try:
+
+        # Count the number of parameters sent
+        parameter_count = sum(1 for param in [request.args.get('header_id'), request.args.get('invoice_number'), request.args.get('transaction_source')] if param is not None)
+
+        # Ensure at least one parameter is sent
+        if parameter_count == 0:
+            raise ValueError("At least one of 'header_id', 'invoice_number', or 'transaction_source' must be provided.")
         authorization_header = request.headers.get('Authorization')
         token_results = ""
         USER_ID = ""
@@ -58,7 +65,7 @@ def update_purchase_invoice(header_id, invoice_number, transaction_source):
         # Assuming your purchaseinvoice table has columns like partnerid, invoicedate, etc.
         update_query = """
             UPDATE fin.purchaseinvoice
-            SET partnerid = %s, invoicedate = %s, totalamount = %s, status = %s, payment_terms = %s, payment_duedate = %s, tax_id = %s, currency_id = %s, department_id = %s, company_id = %s, transaction_source = %s, updated_by = %s
+            SET partnerid = %s, invoicedate = %s, totalamount = %s, status = %s, payment_terms = %s, payment_duedate = %s, tax_id = %s, currency_id = %s, department_id = %s, company_id = %s, updated_by = %s
             WHERE 1=1
         """
 
@@ -80,21 +87,25 @@ def update_purchase_invoice(header_id, invoice_number, transaction_source):
                 currency_id,
                 department_id,
                 company_id,
-                transaction_source,
                 current_userid  # updated_by
             ]
 
+
+
             # Add header_id condition if provided
+            header_id = request.args.get('header_id')
             if header_id is not None:
                 where_clause += " AND header_id = %s "
                 update_values.append(header_id)
 
             # Add invoice_number condition if provided
+            invoice_number = request.args.get('invoice_number')
             if invoice_number is not None:
                 where_clause += " AND invoice_number = %s "
                 update_values.append(invoice_number)
 
             # Add transaction_source condition if provided
+            transaction_source = request.args.get('transaction_source')
             if transaction_source is not None:
                 where_clause += " AND transaction_source = %s "
                 update_values.append(transaction_source)

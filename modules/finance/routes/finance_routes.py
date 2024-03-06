@@ -110,27 +110,27 @@ def distribute_invoice_to_accounts_all():
 
 # PUT Methods -----------------------------------------------------------
 
-@finance_update_routes.route('/update_purchase_invoice/<int:header_id>/<int:invoice_number>', methods=['PUT'])
-def update_purchase_invoice_all(header_id, invoice_number):
+@finance_update_routes.route('/update_purchase_invoice', methods=['PUT'])
+def update_purchase_invoice_all():
     MODULE_NAME = __name__
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to update Purchase Invoice Header")
-    return update_purchase_invoice(header_id, invoice_number)
+    return update_purchase_invoice()
 
 
-@finance_update_routes.route('/update_purchase_invoice_lines/<int:header_id>/<string:line_number>', methods=['PUT'])
-def update_purchase_invoice_lines_all(header_id, line_number):
+@finance_update_routes.route('/update_purchase_invoice_lines', methods=['PUT'])
+def update_purchase_invoice_lines_all():
     MODULE_NAME = __name__
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to update Purchase Invoice Lines")
-    return update_purchase_invoice_lines(header_id, line_number)
+    return update_purchase_invoice_lines()
 
-@finance_update_routes.route('/update_invoice_accounts/<int:header_id>/<string:line_number>', methods=['PUT'])
-def update_invoice_accounts_all(header_id,line_number):
+@finance_update_routes.route('/update_invoice_accounts', methods=['PUT'])
+def update_invoice_accounts_all():
     MODULE_NAME = __name__
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: update invoice accounts")
-    return update_invoice_accounts(header_id,line_number)
+    return update_invoice_accounts()
 
 # DELETE Methods ---------------------------------------------------------
 
