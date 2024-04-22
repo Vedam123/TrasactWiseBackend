@@ -6,11 +6,11 @@ from flask_jwt_extended import decode_token
 from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
-accounts_api = Blueprint('accounts_api', __name__)
+delete_purchase_invoice_account_api = Blueprint('delete_purchase_invoice_account_api', __name__)
 
-@accounts_api.route('/create_account', methods=['POST'])
+@delete_purchase_invoice_account_api.route('/delete_purchase_invoice_account', methods=['DELETE'])
 @permission_required(WRITE_ACCESS_TYPE, __file__)
-def create_account():
+def delete_purchase_invoice_account():
     try:
         authorization_header = request.headers.get('Authorization')
         token_results = ""
@@ -24,7 +24,7 @@ def create_account():
             token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
 
         # Log entry point
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'create_account' function")
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'delete_account' function")
 
         mydb = get_database_connection(USER_ID, MODULE_NAME)
 
@@ -37,56 +37,57 @@ def create_account():
 
         if request.content_type == 'application/json':
             data = request.get_json()
-            print(data)
         else:
-            data = request.form
+            return jsonify({'error': 'Content-Type must be application/json'}), 400
 
         # Log the received data
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
 
-        # Assuming your accounts table has columns like account_number, account_name, etc.
-        insert_query = """
-            INSERT INTO fin.accounts (account_number, account_name, account_category, account_type, opening_balance, currency_id, bank_name, branch_name, account_holder_name, contact_number, email, address, is_active, department_id, company_id, created_by, updated_by,default_account)
-            VALUES (%s, %s, %s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s)
+        if 'line_id' not in data or 'header_id' not in data:
+            return jsonify({'error': 'Both line_id and header_id are required'}), 400
+
+        line_id = data['line_id']
+        header_id = data['header_id']
+
+        # Check if the record exists
+        check_query = """
+            SELECT COUNT(*) FROM fin.purchaseinvoiceaccounts WHERE line_id = %s AND header_id = %s
         """
 
-        # Assuming the account_data dictionary contains the necessary keys
-        insert_values = (
-            data.get('account_number'),
-            data.get('account_name'),
-            data.get('account_category'),
-            data.get('account_type'),
-            data.get('opening_balance'),
-            int(data.get('currency_id')),
-            data.get('bank_name'),
-            data.get('branch_name'),
-            data.get('account_holder_name'),
-            data.get('contact_number'),
-            data.get('email'),
-            data.get('address'),
-            data.get('is_active'),
-            data.get('department_id'),
-            data.get('company_id'),
-            current_userid,  # created_by
-            current_userid,   # updated_by
-            data.get('default_account')
-        )
+        check_values = (line_id, header_id)
 
         mycursor = mydb.cursor()
 
         try:
-            mycursor.execute(insert_query, insert_values)
+            mycursor.execute(check_query, check_values)
+            result = mycursor.fetchone()[0]
+
+            if result == 0:
+                # Log warning and close the cursor and connection
+                logger.warning(f"{USER_ID} --> {MODULE_NAME}: No matching record found for deletion")
+                mycursor.close()
+                mydb.close()
+                return jsonify({'message': 'No matching record found for deletion'}), 404
+
+            # If the record exists, proceed with deletion
+            delete_query = """
+                DELETE FROM fin.purchaseinvoiceaccounts WHERE line_id = %s AND header_id = %s
+            """
+
+            delete_values = (line_id, header_id)
+
+            mycursor.execute(delete_query, delete_values)
             mydb.commit()
 
             # Log success and close the cursor and connection
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Account data created successfully")
+            logger.info(f"{USER_ID} --> {MODULE_NAME}: Account data deleted successfully")
             mycursor.close()
             mydb.close()
-            return jsonify({'message': 'Account created successfully'}), 200
+            return jsonify({'message': 'Account deleted successfully'}), 200
 
         except Exception as e:
             # Log the error and close the cursor and connection
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to create account data: {str(e)}")
+            logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to delete account data: {str(e)}")
             mycursor.close()
             mydb.close()
             return jsonify({'error': str(e)}), 500

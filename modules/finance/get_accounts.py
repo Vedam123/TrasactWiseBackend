@@ -23,25 +23,28 @@ def get_accounts():
 
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'get accounts' function")
 
-        invalid_params_present = any(param for param in request.args.keys() if param not in ['account_id', 'account_number', 'account_name', 'account_type', 'company_name', 'company_id', 'department_name', 'department_id'])
+        invalid_params_present = any(param for param in request.args.keys() if param not in ['account_id', 'account_number', 'account_category', 'account_name', 'account_type', 'company_name', 'company_id', 'department_name', 'department_id','currency_id','default_account'])
         if invalid_params_present:
             return jsonify({'error': 'Invalid query parameter(s) detected'}), 400
 
         account_id = request.args.get('account_id', None)
         account_number = request.args.get('account_number', None)
         account_name = request.args.get('account_name', None)
+        account_category = request.args.get('account_category', None)        
         account_type = request.args.get('account_type', None)
         company_name = request.args.get('company_name', None)
         company_id = request.args.get('company_id', None)
         department_name = request.args.get('department_name', None)
         department_id = request.args.get('department_id', None)
+        currency_id = request.args.get('currency_id', None)
+        default_account = request.args.get('default_account', None)
 
         mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
 
         query = """
             SELECT 
-                a.account_id, a.account_number, a.account_name, a.account_type, 
+                a.account_id, a.account_number, a.account_name, a.account_category, a.account_type, 
                 a.opening_balance, a.current_balance, a.currency_id, a.bank_name, 
                 a.branch_name, a.account_holder_name, a.contact_number, a.email, 
                 a.address, a.is_active, a.department_id, a.company_id, 
@@ -50,7 +53,8 @@ def get_accounts():
                 c.name AS company_name,
                 cur.currencycode,
                 cur.currencyname,
-                cur.currencysymbol
+                cur.currencysymbol,
+                a.default_account
             FROM fin.accounts a
             LEFT JOIN com.department d ON a.department_id = d.id
             LEFT JOIN com.company c ON a.company_id = c.id
@@ -63,6 +67,8 @@ def get_accounts():
             query += f" AND a.account_number = '{account_number}'"
         if account_name:
             query += f" AND a.account_name REGEXP '{account_name}'"
+        if account_category:
+            query += f" AND a.account_category REGEXP '{account_category}'"            
         if account_type:
             query += f" AND a.account_type REGEXP '{account_type}'"
         if company_name:
@@ -73,6 +79,10 @@ def get_accounts():
             query += f" AND d.department_name REGEXP '{department_name}'"
         if department_id:
             query += f" AND a.department_id = '{department_id}'"
+        if currency_id:
+            query += f" AND a.currency_id = '{currency_id}'"   
+        if default_account:
+            query += f" AND a.default_account = '{default_account}'"                     
 
         mycursor.execute(query)
 

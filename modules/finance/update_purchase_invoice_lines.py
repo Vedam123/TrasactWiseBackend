@@ -129,6 +129,7 @@ def update_existing_record(mydb, header_id, line_number, line_id, item_id, quant
         # Execute the update query
         mycursor.execute(update_query, (item_id, quantity, unit_price, line_total, uom_id, current_userid, header_id, line_number, line_id))
         mydb.commit()
+        update_totalamount(mydb, header_id)        
 
     except Exception as e:
         raise e
@@ -150,6 +151,43 @@ def insert_new_record(mydb, header_id, line_number, item_id, quantity, unit_pric
 
         # Execute the insert query
         mycursor.execute(insert_query, (header_id, line_number, item_id, quantity, unit_price, line_total, uom_id, current_userid, current_userid))
+        mydb.commit()
+
+        update_totalamount(mydb, header_id)
+
+    except Exception as e:
+        raise e
+
+    finally:
+        # Close the cursor
+        mycursor.close()
+
+def update_totalamount(mydb, header_id):
+    try:
+        # Total amount query
+        total_amount_query = """
+            SELECT SUM(line_total) AS total_amount
+            FROM fin.purchaseinvoicelines
+            WHERE header_id = %s
+        """
+
+        # Update query
+        update_query = """
+            UPDATE fin.purchaseinvoice
+            SET totalamount = %s
+            WHERE header_id = %s
+        """
+
+        # Initialize the cursor
+        mycursor = mydb.cursor()
+
+        # Execute the total amount query
+        mycursor.execute(total_amount_query, (header_id,))
+        total_amount_result = mycursor.fetchone()
+        total_amount = total_amount_result[0] if total_amount_result[0] else 0
+
+        # Update totalamount in fin.purchaseinvoice table
+        mycursor.execute(update_query, (total_amount, header_id))
         mydb.commit()
 
     except Exception as e:

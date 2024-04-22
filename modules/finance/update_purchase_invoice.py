@@ -11,29 +11,27 @@ update_purchase_invoice_api = Blueprint('update_purchase_invoice_api', __name__)
 @update_purchase_invoice_api.route('/update_purchase_invoice', methods=['PUT'])
 @permission_required(WRITE_ACCESS_TYPE, __file__)
 def update_purchase_invoice():
+    MODULE_NAME = __name__
     try:
-
         # Count the number of parameters sent
-        parameter_count = sum(1 for param in [request.args.get('header_id'), request.args.get('invoice_number'), request.args.get('transaction_source')] if param is not None)
+        parameter_count = sum(1 for param in ['header_id', 'invoice_number', 'transaction_source'] if request.args.get(param) is not None)
 
         # Ensure at least one parameter is sent
         if parameter_count == 0:
             raise ValueError("At least one of 'header_id', 'invoice_number', or 'transaction_source' must be provided.")
+        
         authorization_header = request.headers.get('Authorization')
-        token_results = ""
-        USER_ID = ""
-        MODULE_NAME = __name__
-        if authorization_header:
-            token_results = get_user_from_token(authorization_header)
+        token_results = get_user_from_token(authorization_header)
 
         if token_results:
             USER_ID = token_results["username"]
-            token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
+        else:
+            USER_ID = ""
 
-        # Log entry point
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'update_purchase_invoice' function")
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'update update purchase Invoice' function")
 
         mydb = get_database_connection(USER_ID, MODULE_NAME)
+        mycursor = mydb.cursor()
 
         current_userid = None
         authorization_header = request.headers.get('Authorization', '')
@@ -41,6 +39,14 @@ def update_purchase_invoice():
             token = authorization_header.replace('Bearer ', '')
             decoded_token = decode_token(token)
             current_userid = decoded_token.get('Userid')
+            print("decoded user id ",current_userid)
+
+        print("Current user id ",authorization_header,current_userid, USER_ID)
+
+        # Log entry point
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'update_purchase_invoice' function")
+
+        ##mydb = get_database_connection(USER_ID, MODULE_NAME)
 
         if request.content_type == 'application/json':
             data = request.get_json()
@@ -62,14 +68,16 @@ def update_purchase_invoice():
         department_id = int(data.get('department_id'))
         company_id = int(data.get('company_id'))
 
-        # Assuming your purchaseinvoice table has columns like partnerid, invoicedate, etc.
+        # Construct the update query
         update_query = """
             UPDATE fin.purchaseinvoice
-            SET partnerid = %s, invoicedate = %s, totalamount = %s, status = %s, payment_terms = %s, payment_duedate = %s, tax_id = %s, currency_id = %s, department_id = %s, company_id = %s, updated_by = %s
+            SET partnerid = %s, invoicedate = %s, totalamount = %s, status = %s,
+                payment_terms = %s, payment_duedate = %s, tax_id = %s, currency_id = %s,
+                department_id = %s, company_id = %s, updated_by = %s
             WHERE 1=1
         """
 
-        mycursor = mydb.cursor()
+        ##mycursor = mydb.cursor()
 
         try:
             # Building the WHERE clause dynamically based on input parameters
@@ -77,20 +85,9 @@ def update_purchase_invoice():
 
             # List to store values for the update query
             update_values = [
-                partnerid,
-                invoicedate,
-                totalamount,
-                status,
-                payment_terms,
-                payment_duedate,
-                tax_id,
-                currency_id,
-                department_id,
-                company_id,
-                current_userid  # updated_by
+                partnerid, invoicedate, totalamount, status, payment_terms, payment_duedate,
+                tax_id, currency_id, department_id, company_id, current_userid  # updated_by
             ]
-
-
 
             # Add header_id condition if provided
             header_id = request.args.get('header_id')
@@ -101,6 +98,7 @@ def update_purchase_invoice():
             # Add invoice_number condition if provided
             invoice_number = request.args.get('invoice_number')
             if invoice_number is not None:
+                invoice_number = int(invoice_number)  # Type-cast to number
                 where_clause += " AND invoice_number = %s "
                 update_values.append(invoice_number)
 
@@ -110,19 +108,36 @@ def update_purchase_invoice():
                 where_clause += " AND transaction_source = %s "
                 update_values.append(transaction_source)
 
+            # Remove the leading " OR "
+            where_clause = where_clause.lstrip(" OR ")
             update_query += where_clause
 
+            print("update_query", update_query)
+            print("Vlues",update_values)
+
+          # Execute the update query
             mycursor.execute(update_query, update_values)
+            # Commit the transaction
             mydb.commit()
 
-            # Log success
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Updated purchase invoice")
+            # Check if any row was affected by the update
+            if mycursor.rowcount > 0:
+                # Log success
+                logger.info(f"{USER_ID} --> {MODULE_NAME}: Updated purchase invoice")
+                # Close the cursor and connection
+                mycursor.close()
+                mydb.close()
+                # Return success message
+                return jsonify({'status': True, 'message': 'Purchase Invoice updated successfully'}), 200
+            else:
+                # Log that no rows were updated
+                logger.warning(f"{USER_ID} --> {MODULE_NAME}: No rows were updated by the query")
+                # Close the cursor and connection
+                mycursor.close()
+                mydb.close()
+                # Return appropriate message
+                return jsonify({'status': False, 'message': 'No rows were updated by the query'}), 404
 
-            # Close the cursor and connection
-            mycursor.close()
-            mydb.close()
-
-            return jsonify({'success': True, 'message': 'Purchase Invoice updated successfully'}), 200
 
         except Exception as e:
             # Log the error and close the cursor and connection

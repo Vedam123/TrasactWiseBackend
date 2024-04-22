@@ -13,7 +13,11 @@ from modules.finance.get_purchase_invoice_lines import get_purchase_invoice_line
 from modules.finance.get_invoice_distributions import get_invoice_distributions
 from modules.finance.update_purchase_invoice import update_purchase_invoice
 from modules.finance.update_purchase_invoice_lines import update_purchase_invoice_lines
+from modules.finance.delete_purchase_invoice_lines import delete_purchase_invoice_lines
+from modules.finance.delete_purchase_invoice_account import delete_purchase_invoice_account
 from modules.finance.update_invoice_accounts import update_invoice_accounts
+from modules.finance.validate_po_invoice import validate_po_invoice
+
 
 from modules.utilities.logger import logger  # Import the logger module
 
@@ -21,6 +25,7 @@ from modules.utilities.logger import logger  # Import the logger module
 finance_get_routes = Blueprint('finance_get_routes', __name__)
 finance_post_routes = Blueprint('finance_post_routes', __name__)
 finance_update_routes = Blueprint('finance_update_routes', __name__)
+finance_delete_routes = Blueprint('finance_delete_routes', __name__)
 
 # GET routes -----------------------------------------------------
 @finance_get_routes.route('/get_accounts', methods=['GET'])
@@ -64,6 +69,15 @@ def get_invoice_distributions_all():
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to get invoice distributions")
     return get_invoice_distributions()
+
+@finance_get_routes.route('/validate_po_invoice', methods=['GET'])
+def validate_po_invoice_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Validate PO Invoice")
+    return validate_po_invoice()
+
+
 
 # POST routes -----------------------------------------------------
 @finance_post_routes.route('/create_account', methods=['POST'])
@@ -134,9 +148,23 @@ def update_invoice_accounts_all():
 
 # DELETE Methods ---------------------------------------------------------
 
+@finance_delete_routes.route('/delete_purchase_invoice_lines', methods=['DELETE'])
+def delete_purchase_invoice_lines_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to Delete Invoice Lines")
+    return delete_purchase_invoice_lines()
+
+@finance_delete_routes.route('/delete_purchase_invoice_account', methods=['DELETE'])
+def delete_purchase_invoice_one_account():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to delete accounts")
+    return delete_purchase_invoice_account()
 
 # Register blueprints
 def register_finance_routes(app):
     app.register_blueprint(finance_get_routes)
     app.register_blueprint(finance_post_routes)
     app.register_blueprint(finance_update_routes)
+    app.register_blueprint(finance_delete_routes)
