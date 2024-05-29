@@ -54,10 +54,10 @@ def distribute_invoice_to_accounts():
         try:
             response_accounts = []
 
-            for account_data in data:
+            for account_data in data['lines']:  # Iterate over data['lines']
                 # Assuming the data dictionary contains the necessary keys for each account
                 insert_values = (
-                    account_data.get('header_id'),
+                    data.get('header_id'),  # Use data['header_id']
                     account_data.get('line_number'),                    
                     account_data.get('account_id'),
                     account_data.get('debitamount'),

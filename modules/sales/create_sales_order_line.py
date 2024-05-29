@@ -4,14 +4,14 @@ from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
 from flask_jwt_extended import decode_token
 from modules.security.get_user_from_token import get_user_from_token
-from modules.purchase.routines.update_po_header_total_byline import update_po_header_total_byline
+from modules.sales.routines.update_so_header_total_byline import update_so_header_total_by_line
 from modules.utilities.logger import logger
 
-create_purchase_order_line_api = Blueprint('create_purchase_order_line_api', __name__)
+create_sales_order_line_api = Blueprint('create_sales_order_line_api', __name__)
 
-@create_purchase_order_line_api.route('/create_purchase_order_line', methods=['POST'])
+@create_sales_order_line_api.route('/create_sales_order_line', methods=['POST'])
 @permission_required(WRITE_ACCESS_TYPE, __file__)
-def create_purchase_order_line():
+def create_sales_order_line():
     MODULE_NAME = __name__
 
     try:
@@ -25,7 +25,7 @@ def create_purchase_order_line():
             USER_ID = ""
 
         logger.debug(
-            f"{USER_ID} --> {MODULE_NAME}: Entered the 'create purchase order line' function")
+            f"{USER_ID} --> {MODULE_NAME}: Entered the 'create sales order line' function")
 
         mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
@@ -42,34 +42,45 @@ def create_purchase_order_line():
             if not json_data:
                 return 'error: No JSON data provided', 400
 
-            purchase_order_lines = json_data.get('purchase_order_lines')
-            if not purchase_order_lines or not isinstance(purchase_order_lines, list):
-                return 'error: Invalid purchase order lines data', 400
+            sales_order_lines = json_data.get('sales_order_lines')
+            if not sales_order_lines or not isinstance(sales_order_lines, list):
+                return 'error: Invalid sales order lines data', 400
 
-            print("Purchase order lines request",purchase_order_lines)
+            print("Sales order lines request", sales_order_lines)
             response_lines = []
 
-            for line_data in purchase_order_lines:
+            for line_data in sales_order_lines:
                 header_id = int(line_data.get('header_id'))
-                po_lnum = int(line_data.get('po_lnum'))
+                so_lnum = int(line_data.get('so_lnum'))
+                print("Header id -",header_id, so_lnum)
+                # Check if header_id is present in sal.sales_order_headers
+                mycursor.execute("SELECT header_id FROM sal.sales_order_headers WHERE header_id = %s", (header_id,))
+                if not mycursor.fetchone():
+                    print("Header id not found")
+                    return f'error: Header with id {header_id} not found', 400
+
+                # Check if same so_lnum is present in sal.sales_order_lines
+                mycursor.execute("SELECT so_lnum FROM sal.sales_order_lines WHERE so_lnum = %s", (so_lnum,))
+                if mycursor.fetchone():
+                    print("The Line number already exists")
+                    return f'error: Line number {so_lnum} already exists', 400
                 item_id = int(line_data.get('item_id'))
                 quantity = float(line_data.get('quantity'))
                 unit_price = float(line_data.get('unit_price'))
                 line_total = float(line_data.get('line_total'))
-                tax_id = int(line_data.get('tax_id'))
                 notes = str(line_data.get('notes'))
                 uom_id = int(line_data.get('uom_id'))
                 status = str(line_data.get('status'))  # Extract status from JSON
 
                 query = """
-                    INSERT INTO pur.purchase_order_line (
-                        header_id, po_lnum, item_id, quantity, unit_price,
-                        line_total, tax_id, uom_id, notes, created_by, updated_by, status
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                    INSERT INTO sal.sales_order_lines (
+                        header_id, so_lnum, item_id, quantity, unit_price,
+                        line_total,  uom_id, notes, created_by, updated_by, status
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
                 """
                 values = (
-                    header_id, po_lnum, item_id, quantity, unit_price,
-                    line_total, tax_id, uom_id, notes, current_userid, current_userid, status
+                    header_id, so_lnum, item_id, quantity, unit_price,
+                    line_total, uom_id, notes, current_userid, current_userid, status
                 )
                 mycursor.execute(query, values)
 
@@ -77,24 +88,24 @@ def create_purchase_order_line():
                 sum_of_line_total += line_data.get('line_total')
 
                 response_lines.append({
-                    'po_lnum': po_lnum,
+                    'so_lnum': so_lnum,
                     'line_id': line_id
                 })
 
             logger.debug(
-                f"{USER_ID} --> {MODULE_NAME}: Successfully created purchase order lines")
-
-            success = update_po_header_total_byline(USER_ID, MODULE_NAME, mydb, header_id, sum_of_line_total)
+                f"{USER_ID} --> {MODULE_NAME}: Successfully created sales order lines")
+            print("Header id before calling totals", header_id)
+            success = update_so_header_total_by_line(USER_ID, MODULE_NAME, mydb, header_id, sum_of_line_total)
 
             if success:
                 mydb.commit()
                 logger.debug(
-                    f"{USER_ID} --> {MODULE_NAME}: Successfully created purchase order lines")
+                    f"{USER_ID} --> {MODULE_NAME}: Successfully created sales order lines")
 
                 response = {
                     'success': True,
-                    'message': 'Purchase order lines created successfully',
-                    'po_lines': response_lines
+                    'message': 'Sales order lines created successfully',
+                    'so_lines': response_lines
                 }
             else:
                 mydb.rollback()
@@ -103,7 +114,7 @@ def create_purchase_order_line():
 
                 response = {
                     'success': False,
-                    'message': 'Failed to update total_amount for the purchase order header',
+                    'message': 'Failed to update total_amount for the sales order header',
                 }
 
             return response, 201 if success else 500
@@ -115,7 +126,7 @@ def create_purchase_order_line():
 
     except Exception as e:
         logger.error(
-            f"{USER_ID} --> {MODULE_NAME}: Error creating purchase order lines - {str(e)}")
+            f"{USER_ID} --> {MODULE_NAME}: Error creating sales order lines - {str(e)}")
         mydb.rollback()
         return 'error: Internal Server Error', 500
 

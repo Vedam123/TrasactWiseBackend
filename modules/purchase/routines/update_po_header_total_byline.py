@@ -1,7 +1,7 @@
 from decimal import Decimal  # Import the Decimal type
 from modules.utilities.logger import logger
 
-def update_po_header_total(USER_ID, MODULE_NAME, mydb, header_id, sum_of_line_total):
+def update_po_header_total_byline(USER_ID, MODULE_NAME, mydb, header_id, sum_of_line_total):
     try:
         mycursor = mydb.cursor()
         print("Update PO header with Total", header_id, sum_of_line_total)
