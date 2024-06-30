@@ -54,6 +54,7 @@ def bulk_pack_or_unpack():
             logger.error(error_message)
             return error_message, 400
 
+
         if all(data.get(field) is not None for field in ['input_item_id', 'input_source_uom_id', 'input_target_uom_id']):
             # Check if at least one optional field is present
             optional_fields = ['input_warehouse_id', 'input_location_id', 'input_zone_id', 'input_aisle_id', 'input_row_id', 'input_rack_id', 'input_bin_id']
@@ -81,16 +82,15 @@ def bulk_pack_or_unpack():
         # Log database connection
         with get_database_connection(USER_ID, MODULE_NAME) as mydb:
             logger.debug(f"Database Connection established for User ID: {USER_ID}")
-            print("Reached Bulkpack function")
             with mydb.cursor() as mycursor:
-                inventory_query = "SELECT * FROM inv.item_inventory WHERE item_id = %s AND uom_id = %s AND status != 'Yes'"
+                inventory_query = "SELECT * FROM inv.item_inventory WHERE item_id = %s AND uom_id = %s"
                 mycursor.execute(inventory_query, (input_item_id, input_source_uom_id))
 
                 fetched_row = mycursor.fetchall()
 
                 if not fetched_row:
-                    logger.info("No row found for the specified parameters or the selected inventory is reserved")
-                    return 'Fail: No row found for the specified parameters or the selected inventory is reserved', 400
+                    logger.info("No row found for the specified parameters")
+                    return 'Fail: No row found for the specified parameters', 400
 
                 total_quantity = sum(row[5] for row in fetched_row)
                 concatenated_rows = []

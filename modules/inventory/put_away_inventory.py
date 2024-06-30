@@ -55,6 +55,7 @@ def put_away_inventory():
         }
         additional_info = data.get('additional_info', '')
         transaction_source = data.get('transaction_source_id')
+
         # Validate mandatory parameters
         if not (item_id and uom_id and quantity and transaction_id and transaction_type):
             logger.error(f"{USER_ID} --> {MODULE_NAME}: Missing mandatory parameters in the request")
@@ -75,7 +76,7 @@ def put_away_inventory():
             if existing_row:
                 # Row with the given transaction_id and inventory_id already exists, update the quantity
                 update_query = """
-                     UPDATE inv.item_inventory
+                    UPDATE inv.item_inventory
                     SET quantity = %s, updated_at = NOW(), updated_by = %s, additional_info = %s
                     WHERE transaction_id = %s AND inventory_id = %s AND item_id = %s AND uom_id = %s
                 """
@@ -85,10 +86,12 @@ def put_away_inventory():
                 return f"Success:Item inventory Inserted at transaction id {transaction_id} in the inventory id {inventory_id}", 200
             else:
                 return f"There is no combination of {transaction_id} in the inventory id {inventory_id} , uom_id {uom_id}, item_id {item_id}", 422
+        
+        # Insert a new row with status as 'No'
         insert_query = """
             INSERT INTO inv.item_inventory
-            (item_id, uom_id, quantity, transaction_id, transaction_type, bin_id, rack_id, row_id, aisle_id, zone_id, location_id, warehouse_id, created_at, updated_at, created_by, updated_by, additional_info)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW(), %s, %s, %s)
+            (item_id, uom_id, quantity, transaction_id, transaction_type, bin_id, rack_id, row_id, aisle_id, zone_id, location_id, warehouse_id, status, created_at, updated_at, created_by, updated_by, additional_info)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'No', NOW(), NOW(), %s, %s, %s)
         """
         mycursor.execute(insert_query, (
             item_id, uom_id, quantity, transaction_id, transaction_type,

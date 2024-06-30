@@ -4,7 +4,6 @@ from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
 from flask_jwt_extended import decode_token
 from modules.security.get_user_from_token import get_user_from_token
-from modules.sales.routines.update_so_line_statuses import update_so_line_statuses
 from modules.utilities.logger import logger
 
 update_sales_order_header_api = Blueprint('update_sales_order_header_api', __name__)
@@ -24,7 +23,8 @@ def update_sales_order_header():
         else:
             USER_ID = ""
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'update sales order header' function")
+        logger.debug(
+            f"{USER_ID} --> {MODULE_NAME}: Entered the 'update sales order header' function")
 
         mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
@@ -47,10 +47,11 @@ def update_sales_order_header():
             customer_id = int(json_data.get('customer_id'))
             currency_id = int(json_data.get('currency_id'))
             tax_id = int(json_data.get('tax_id'))
+            total_amount = float(json_data.get('total_amount'))
             status = str(json_data.get('status'))
             shipping_method = json_data.get('shipping_method')
             payment_terms = json_data.get('payment_terms')
-            order_type = json_data.get('type')
+            order_type = json_data.get('type')  # New field
             department_id = int(json_data.get('department_id'))
             company_id = int(json_data.get('company_id'))
             billing_address = json_data.get('billing_address')
@@ -63,7 +64,7 @@ def update_sales_order_header():
                 rep_id = int(rep_id)
 
             # Log input parameters
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: JSON Input Parameters - so_date: {so_date}, customer_id: {customer_id}, currency_id: {currency_id}, tax_id: {tax_id}, status: {status}, shipping_method: {shipping_method}, payment_terms: {payment_terms}, type: {order_type}, department_id: {department_id}, company_id: {company_id}, billing_address: {billing_address}, shipping_address: {shipping_address}, rep_id: {rep_id}, comments: {comments}")
+            logger.info(f"{USER_ID} --> {MODULE_NAME}: JSON Input Parameters - so_date: {so_date}, customer_id: {customer_id}, currency_id: {currency_id}, tax_id: {tax_id}, total_amount: {total_amount}, status: {status}, shipping_method: {shipping_method}, payment_terms: {payment_terms}, type: {order_type}, department_id: {department_id}, company_id: {company_id}, billing_address: {billing_address}, shipping_address: {shipping_address}, rep_id: {rep_id}, comments: {comments}")
 
             # Extract query parameters
             header_id = request.args.get('header_id')
@@ -89,6 +90,8 @@ def update_sales_order_header():
             where_conditions = []
             where_query_values = []
 
+            print("Stage 1")
+
             if header_id is not None:
                 where_conditions.append("header_id = %s")
                 where_query_values.append(header_id)
@@ -100,6 +103,8 @@ def update_sales_order_header():
                 where_query_values.append(opportunity_id_query)
 
             where_clause = " AND ".join(where_conditions)
+
+            print("Stage 2")
 
             # Check if customer_id exists
             customer_check_query = "SELECT COUNT(*) FROM com.businesspartner WHERE partnerid = %s;"
@@ -127,6 +132,8 @@ def update_sales_order_header():
             if currency_exists == 0:
                 logger.warning(f"{USER_ID} --> {MODULE_NAME}: Currency with ID {currency_id} does not exist")
                 return jsonify({'error': f"Currency with ID {currency_id} does not exist"}), 404
+            
+            print("Stage 3")
 
             # Check if opportunity_id exists
             if opportunity_id_query is not None:
@@ -142,7 +149,7 @@ def update_sales_order_header():
             department_check_query = "SELECT COUNT(*) FROM com.department WHERE id = %s;"
             mycursor.execute(department_check_query, (department_id,))
             department_exists = mycursor.fetchone()[0]
-
+            print("Stage 4")
             if department_exists == 0:
                 logger.warning(f"{USER_ID} --> {MODULE_NAME}: Department with ID {department_id} does not exist")
                 return jsonify({'error': f"Department with ID {department_id} does not exist"}), 404
@@ -156,69 +163,42 @@ def update_sales_order_header():
                 logger.warning(f"{USER_ID} --> {MODULE_NAME}: Company with ID {company_id} does not exist")
                 return jsonify({'error': f"Company with ID {company_id} does not exist"}), 404
 
-            # Fetch the current status for comparison
             select_query = f"""
-                SELECT status FROM sal.sales_order_headers WHERE {where_clause};
+                SELECT COUNT(*) FROM sal.sales_order_headers WHERE {where_clause};
             """
             mycursor.execute(select_query, where_query_values)
-            current_status = mycursor.fetchone()[0]
+            record_count = mycursor.fetchone()[0]
 
-            if not current_status:
+            if record_count == 0:
                 logger.warning(f"{USER_ID} --> {MODULE_NAME}: No record found with the given parameters")
                 return jsonify({'error': 'No record found with the given parameters'}), 404
-
-            print("Current Status ",current_status)
-            print("New Status ",status)
-            # Check if status has changed
-            status_changed = current_status != status
-            print("Status changed ?",status_changed)
 
             update_query_values = []
             # Perform the update
             update_query = f"""
                 UPDATE sal.sales_order_headers
-                SET so_date = %s, customer_id = %s, currency_id = %s, tax_id = %s, status = %s,
+                SET so_date = %s, customer_id = %s, currency_id = %s, tax_id = %s, total_amount = %s, status = %s,
                     shipping_method = %s, payment_terms = %s, type = %s, department_id = %s,
                     company_id = %s, billing_address = %s, shipping_address = %s, rep_id = %s, comments = %s,
                     updated_by = %s
                 WHERE {where_clause};
             """
 
-            update_query_values.extend([so_date, customer_id, currency_id, tax_id, status, shipping_method,
+            update_query_values.extend([so_date, customer_id, currency_id, tax_id, total_amount, status, shipping_method,
                                         payment_terms, order_type, department_id, company_id, billing_address,
                                         shipping_address, rep_id, comments, current_userid] + where_query_values)
 
             mycursor.execute(update_query, update_query_values)
 
             # Commit the transaction
-             # Commit the transaction
             mydb.commit()
 
             if mycursor.rowcount > 0:
-                # If the status has changed, update the sales order lines
-                if status_changed:
-                    if header_id is None:
-                        select_query = f"""
-                            SELECT header_id FROM sal.sales_order_headers WHERE so_num = %s;
-                        """
-                        mycursor.execute(select_query, (so_num,))
-                        header_id_result = mycursor.fetchone()
-                        if header_id_result:
-                            header_id = header_id_result[0]
-                        else:
-                            logger.warning(f"{USER_ID} --> {MODULE_NAME}: No header found with so_num {so_num}")
-                            return jsonify({'error': 'No header found with the provided so_num'}), 404
-
-                    update_so_line_statuses(USER_ID, MODULE_NAME, mydb, header_id, status)
-
-
                 # Log success
                 logger.info(f"{USER_ID} --> {MODULE_NAME}: Updated sales order header")
-
                 # Close the cursor and connection
                 mycursor.close()
                 mydb.close()
-
                 # Return success message
                 return jsonify({'status': True, 'message': 'Sales Order updated successfully'}), 200
             else:
@@ -231,11 +211,13 @@ def update_sales_order_header():
                 return jsonify({'status': False, 'message': 'No changes are done to update'}), 404
 
         except Exception as json_error:
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Error processing JSON input - {str(json_error)}")
+            logger.error(
+                f"{USER_ID} --> {MODULE_NAME}: Error processing JSON input - {str(json_error)}")
             return jsonify({'error': 'Invalid JSON input'}), 400
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error updating sales order header - {str(e)}")
+        logger.error(
+            f"{USER_ID} --> {MODULE_NAME}: Error updating sales order header - {str(e)}")
         mydb.rollback()
         return jsonify({'error': 'Internal Server Error'}), 500
 

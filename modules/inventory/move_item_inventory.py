@@ -54,6 +54,8 @@ def move_item_inventory():
         target_location_id = data.get('target_location_id', None)
         target_warehouse_id = data.get('target_warehouse_id', None)
         source_additional_info = data.get('source_additional_info', '')
+        source_status = data.get('source_status', None)
+        source_subject = data.get('source_subject', None)
 
         if source_quantity == 0:
              return 'Error: Move Quantity 0 cannot be moved', 400
@@ -170,6 +172,8 @@ def move_item_inventory():
                     'target_location_id': target_location_id,
                     'target_warehouse_id': target_warehouse_id,
                     'source_additional_info': source_additional_info,
+                    'source_status': source_status,
+                    'source_subject': source_subject,                    
                     'mydb': mydb,
                     'USER_ID': USER_ID,
                     'MODULE_NAME': MODULE_NAME,

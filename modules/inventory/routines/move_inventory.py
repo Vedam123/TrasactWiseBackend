@@ -15,6 +15,8 @@ def move_inventory(input_params):
         target_quantity = input_params.get('target_quantity', 0)
         source_transaction_id = input_params.get('source_transaction_id', '')
         source_transaction_type = input_params.get('source_transaction_type', '')
+        source_status = input_params.get('source_status', '')
+        source_subject = input_params.get('source_subject', '')
         # source_bin_id = input_params.get('source_bin_id', None)
         # source_rack_id = input_params.get('source_rack_id', None)
         # source_row_id = input_params.get('source_row_id', None)
@@ -117,14 +119,14 @@ def move_inventory(input_params):
                     insert_query = (
                         "INSERT INTO inv.item_inventory "
                         "(transaction_id, transaction_type, item_id, uom_id, quantity, additional_info, "
-                        "bin_id, rack_id, row_id, aisle_id, zone_id, location_id, warehouse_id, created_by, updated_by) "
-                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                        "bin_id, rack_id, row_id, aisle_id, zone_id, location_id, warehouse_id, status, subject,created_by, updated_by) "
+                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s,%s)"
                     )
                     insert_params = (
                         source_transaction_id, source_transaction_type, source_item_id, source_uom_id, target_quantity,
                         source_additional_info,
                         target_bin_id, target_rack_id, target_row_id, target_aisle_id, target_zone_id, target_location_id,
-                        target_warehouse_id,
+                        target_warehouse_id,source_status, source_subject,
                         input_params['created_by'], input_params['updated_by']
                     )
                     mycursor.execute(insert_query, insert_params)

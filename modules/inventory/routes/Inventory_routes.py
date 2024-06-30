@@ -29,6 +29,7 @@ from modules.inventory.update_ir_status import update_ir_status
 from modules.inventory.pack_or_unpack   import pack_or_unpack
 from modules.inventory.bulk_pack_or_unpack   import bulk_pack_or_unpack
 from modules.inventory.move_item_inventory  import move_item_inventory
+from modules.inventory.pickrelease_inv  import pickrelease_inv
 from modules.utilities.logger import logger
 
 # Create blueprints
@@ -235,6 +236,13 @@ def move_item_inventory_all():
     USER_ID = ""
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request Move inventory")
     return move_item_inventory()
+
+@inventory_post_routes.route('/pick_release', methods=['POST'])
+def pickrelease_inv_all():
+    MODULE_NAME = __name__
+    USER_ID = ""
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to pickrelease_inv")
+    return pickrelease_inv()
 
 # PUT Methods -----------------------------------------------------------
 @inventory_put_routes.route('/update_inspection', methods=['PUT'])

@@ -84,9 +84,17 @@ def pack_or_unpack():
 
         # Log SQL query execution
         inventory_query = """
-            SELECT * FROM inv.item_inventory
-            WHERE inventory_id = %s AND transaction_id = %s AND item_id = %s AND transaction_type = %s AND uom_id = %s
+            SELECT * 
+            FROM inv.item_inventory
+            WHERE 
+                inventory_id = %s 
+                AND transaction_id = %s 
+                AND item_id = %s 
+                AND transaction_type = %s 
+                AND uom_id = %s
+                AND (status IS NULL OR TRIM(LOWER(status)) != 'yes')
         """
+
         mycursor.execute(inventory_query, (input_inventory_id, input_transaction_id, input_item_id, input_transaction_type, input_source_uom_id))
         fetched_row = mycursor.fetchone()
         if fetched_row is None:

@@ -19,14 +19,14 @@ sales_delete_routes = Blueprint('sales_delete_routes', __name__)
 def get_sales_order_lines_all():
     MODULE_NAME = __name__
     USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to get Purcahse order Lines")
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to get Sles order Lines")
     return get_sales_order_lines()
 
 @sales_list_routes.route('/get_sales_order_headers', methods=['GET'])
 def get_sales_order_headers_all():
     MODULE_NAME = __name__
     USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to get Purcahse order Headers")
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to get Sales order Headers")
     return get_sales_order_headers()
 # POST routes -----------------------------------------------------
 @sales_create_routes.route('/create_sales_order_header', methods=['POST'])

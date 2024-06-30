@@ -33,6 +33,8 @@ def get_sales_order_headers():
         mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
 
+
+
         query_params = {f"param_{param}": request.args.get(param) for param in request.args}
 
         try:
@@ -86,7 +88,8 @@ def get_sales_order_headers():
         select_discount = ", d.discount_name" if discount_id_exists else ""
 
         query = f"""
-            SELECT soh.*, 
+            SELECT 
+                soh.*, 
                 c.name AS company_name, 
                 c.description AS company_description, 
                 dept.department_name, 
@@ -101,18 +104,22 @@ def get_sales_order_headers():
                 bp.city,
                 bp.state,
                 bp.postalcode,
-                bp.country
-                {select_discount}
-                {select_promotion}
-            FROM sal.sales_order_headers soh
-            LEFT JOIN com.company c ON soh.company_id = c.id
-            LEFT JOIN com.department dept ON soh.department_id = dept.id
-            LEFT JOIN com.currency cu ON soh.currency_id = cu.currency_id
-            LEFT JOIN com.businesspartner bp ON soh.customer_id = bp.partnerid
-            {join_discount}
-            {join_promotion}
-            WHERE {where_clause}
+                bp.country,
+                t.tax_code,
+                t.tax_rate,
+                t.tax_type
+            FROM 
+                sal.sales_order_headers soh
+                LEFT JOIN com.company c ON soh.company_id = c.id
+                LEFT JOIN com.department dept ON soh.department_id = dept.id
+                LEFT JOIN com.currency cu ON soh.currency_id = cu.currency_id
+                LEFT JOIN com.businesspartner bp ON soh.customer_id = bp.partnerid
+                LEFT JOIN com.tax t ON soh.tax_id = t.tax_id
+            WHERE 
+                {where_clause}
         """
+
+
 
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Constructed query - {query}")
         mycursor.execute(query, query_params)

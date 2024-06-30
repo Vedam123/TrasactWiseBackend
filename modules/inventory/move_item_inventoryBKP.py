@@ -56,10 +56,10 @@ def move_item_inventory():
         source_additional_info = data.get('source_additional_info', '')
 
         if source_quantity == 0:
-            return jsonify({'error': 'Source Quantity 0 can not be moved'}), 400
+             return 'Error: Move Quantity 0 cannot be moved', 400
         
         if target_quantity == 0:
-            return jsonify({'error': 'Target Quantity 0 can not be moved'}), 400
+             return 'Error: Move Quantity 0 cannot be moved', 400
 
         # Validate mandatory fields
         mandatory_fields = [
@@ -69,21 +69,21 @@ def move_item_inventory():
         ]
 
         if any(field is None for field in mandatory_fields):
-            return jsonify({'error': 'Missing mandatory parameters in the request'}), 400
+            return 'Error: Missing mandatory parameters in the request', 400
 
         # Validate at least one parameter from each group has a value
         source_group = [source_bin_id, source_rack_id, source_row_id, source_aisle_id, source_zone_id, source_location_id, source_warehouse_id]
-        target_group = [target_bin_id, target_rack_id, target_row_id, target_aisle_id, target_zone_id, target_location_id]
+        target_group = [target_bin_id, target_rack_id, target_row_id, target_aisle_id, target_zone_id, target_location_id,target_warehouse_id]
 
         if all(param is None for param in source_group) or all(param is None for param in target_group):
-            return jsonify({'error': 'At least one parameter from each group is required'}), 400
+            return 'Error: At least one parameter from each group is required', 400
         
         # Check for one-to-one matching including None
         if any(src != tgt for src, tgt in zip_longest(source_group, target_group)):
             logger.debug(f"{USER_ID} --> {MODULE_NAME}: The source inventory and Target inventory are not matching so it's okay: {USER_ID}")
         else:
             logger.debug(f"{USER_ID} --> {MODULE_NAME}: The source inventory and Target inventory are matching so not possible to move: {USER_ID}")
-            return jsonify({'error': 'It is not possible to Move inventory to the same Location'}), 400
+            return 'Error: It is not possible to Move inventory to the same Location', 400
 
         # Log database connection
         with get_database_connection(USER_ID, MODULE_NAME) as mydb:
@@ -141,7 +141,7 @@ def move_item_inventory():
 
             if not existing_inventory:
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: Source inventory with inventory_id {source_inventory_id} does not exist")
-                return jsonify({'error': 'Source inventory does not exist'}), 400
+                return 'Error: Source inventory does not exist', 400
 
         # Log database connection
         with get_database_connection(USER_ID, MODULE_NAME) as mydb:
@@ -180,13 +180,13 @@ def move_item_inventory():
                 result, status_code = move_inventory(input_params)
 
         if status_code == 200:
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Request processed successfully")
-            return jsonify({'status': result}), 200
+            logger.info(f"{USER_ID} --> {MODULE_NAME}: Inventory moved successfully")
+            return 'Success : Inventory moved successfully', status_code
         else:
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Not processed successfully")
-            return jsonify({'error': result}), status_code
+            logger.error(f"{USER_ID} --> {MODULE_NAME}: Inventory is not moved ")
+            return 'Error : Inventory moved successfully', status_code
 
     except Exception as e:
         # Log exception details
         logger.error(f"{USER_ID} --> {MODULE_NAME}: Error occurred: {str(e)}")
-        return jsonify({'error': 'Internal Server Error'}), 500
+        return 'Error Internal Server Error', 500

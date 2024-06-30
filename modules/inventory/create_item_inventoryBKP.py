@@ -1,3 +1,5 @@
+# modules/inventory/create_item_inventory.py
+
 from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
@@ -47,7 +49,6 @@ def create_item_inventory():
         transaction_type = data['transaction_type']
         created_by = current_userid
         updated_by = current_userid
-        status = 'No'  # Set status to 'No'
 
         # Log parsed data
         logger.debug(f"{USER_ID} --> {__name__}: Parsed Item ID: {item_id}")
@@ -61,10 +62,10 @@ def create_item_inventory():
 
         try:
             query = """
-                INSERT INTO inv.item_inventory (item_id, bin_id, uom_id, quantity, transaction_id, transaction_type, status, created_by, updated_by)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO inv.item_inventory (item_id, bin_id, uom_id, quantity, transaction_id, transaction_type, created_by, updated_by)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
-            values = (item_id, bin_id, uom_id, quantity, transaction_id, transaction_type, status, created_by, updated_by)
+            values = (item_id, bin_id, uom_id, quantity, transaction_id, transaction_type, created_by, updated_by)
 
             mycursor.execute(query, values)
             mydb.commit()
