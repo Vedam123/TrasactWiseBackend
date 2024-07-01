@@ -28,6 +28,18 @@ def pickrelease_inv():
         data = request.get_json()
         logger.debug(f"Request Data: {data}")
 
+        full_picking = data.get('full_picking')
+        logger.debug(f"Full Picking: {full_picking}")
+
+        full_qty_alloc_status = data.get('full_qty_alloc_status')
+        part_qty_alloc_status = data.get('part_qty_alloc_status')
+
+
+
+        if full_picking != "Yes":
+            logger.error("Full picking is not enabled")
+            return jsonify(message='Full picking is not enabled'), 400
+
         current_userid = None
         if authorization_header.startswith('Bearer '):
             token = authorization_header.replace('Bearer ', '')
@@ -47,8 +59,6 @@ def pickrelease_inv():
 
         for sales_order in sales_orders:
             sales_header_id = sales_order.get('sales_header_id')
-            full_qty_alloc_status = sales_order.get('full_qty_alloc_status')
-            part_qty_alloc_status = sales_order.get('part_qty_alloc_status')
             sales_order_lines = sales_order.get('sales_order_lines')
             logger.debug(f"Processing Sales Header ID: {sales_header_id}")
             logger.debug(f"Sales Order Lines: {sales_order_lines}")
@@ -58,11 +68,15 @@ def pickrelease_inv():
                 current_status = get_sales_order_line_status(sales_order_line_id, mydb)
 
                 if current_status is None:
-                    return jsonify(message='Error fetching sales order line status'), 500
+                    result = jsonify(message=f"Fetched status for Sales Order Line ID: {sales_order_line_id} is NULL : {current_status}")
+                    status_code = 200
+                    logger.debug(f"Fetched status for Sales Order Line ID: {sales_order_line_id} is NULL : {current_status}")
+                    continue
 
                 logger.debug(f"Fetched status for Sales Order Line ID: {sales_order_line_id} is {current_status}")
 
                 if current_status == full_qty_alloc_status:
+                    result = jsonify(message=f"The Sales order line: {sales_order_line_id} is already fully Picked and its status is  : {current_status}")
                     logger.debug(f"Skipping allocation for Sales Order Line ID: {sales_order_line_id} as it is fully allocated")
                     continue
                 logger.debug(f"Processing Sales Order Line: {line}")
@@ -71,14 +85,12 @@ def pickrelease_inv():
                     logger.error(f"Processing failed for sales header ID and line: {sales_header_id}, {line}")
                     return jsonify(message=f"Processing failed for sales header ID: {sales_header_id}"), status_code
 
-            #update_sales_order_lines_status(sales_header_id, full_qty_alloc_status, part_qty_alloc_status, mydb, current_userid, MODULE_NAME)
-            #logger.debug(f"Updated Sales Order Lines status for Header ID: {sales_header_id}")
             logger.error(f"Now going to update Sales Order header: {sales_header_id}")
-            update_sales_order_status(sales_header_id, full_qty_alloc_status, part_qty_alloc_status, mydb, current_userid, MODULE_NAME)
+            result, status_code = update_sales_order_status(sales_header_id, full_qty_alloc_status, part_qty_alloc_status, mydb, current_userid, MODULE_NAME)
             logger.debug(f"Updated Sales Order Status for Header ID: {sales_header_id}")
 
         logger.info("All sales orders processed successfully")
-        return result, 200
+        return result, status_code
 
     except Exception as e:
         logger.error(f"Error occurred: {str(e)}")
@@ -146,12 +158,6 @@ def allocate_inventory(line, sales_header_id, full_qty_alloc_status,part_qty_all
                 # Update inventory for the allocated quantity
                 update_inventory(inventory, allocated_quantity_in_base_uom, sales_header_id, sales_order_line_id, mydb, current_userid, MODULE_NAME, created_by, updated_by)
 
-                # Create new inventory row if there is remaining quantity
-                #if remaining_quantity > 0:
-                #    if int(inv_uom_id) != int(sales_uom_id):
-                #        create_new_inventory_row(inventory, remaining_quantity, sales_uom_id, sales_header_id, sales_order_line_id, mydb, current_userid, MODULE_NAME, created_by, updated_by)
-                #        update_inventory_remaining(inventory, remaining_quantity, sales_uom_id, inv_uom_id, mydb, current_userid, MODULE_NAME, updated_by)
-
                 total_allocated += allocated_quantity
 
                 logger.debug(f"total_allocated Quantity before if break: {total_allocated}")
@@ -186,14 +192,7 @@ def allocate_inventory(line, sales_header_id, full_qty_alloc_status,part_qty_all
         logger.debug(f"sales order line status function is executed and came out for the line: {sales_order_line_id}")
         logger.debug(f"Result from Sales order lines status : {result}")
         logger.debug(f"Status from Sales order lines status :{status_code}")
-        #if total_allocated == required_quantity:
-        #    logger.debug(f"Total Allocated matches Sales Line Quantity for Line ID: {sales_order_line_id}")
-        #    update_sales_order_lines_status(sales_order_line_id, full_qty_alloc_status, total_allocated, mydb, current_userid, MODULE_NAME)
-        #    return 'Line allocated successfully', 200
-        #else:
-        #    logger.error(f"Insufficient quantity to allocate for Line ID: {sales_order_line_id}")
-        #    update_sales_order_lines_status(sales_order_line_id, part_qty_alloc_status, total_allocated, mydb, current_userid, MODULE_NAME)
-        #    return 'Insufficient quantity to allocate', 400
+
         return result, status_code
     except Exception as e:
         logger.error(f"{current_userid} --> {MODULE_NAME}: An error occurred: {str(e)}")
@@ -430,36 +429,28 @@ def update_sales_order_lines_status(sales_order_line_id, full_qty_alloc_status, 
             mycursor.close()
 
 
-
-def update_sales_order_lines_status2(sales_header_id, status, mydb, current_userid, MODULE_NAME):
-    try:
-        mycursor = mydb.cursor()
-        logger.debug(f"Updating Sales Order Lines Status for Header ID: {sales_header_id}, Full Status: {status}")
-
-        update_query = """
-            UPDATE sal.sales_order_lines
-            SET status = %s,
-                updated_at = NOW(),
-                updated_by = %s
-            WHERE header_id = %s
-        """
-        mycursor.execute(update_query, (
-            status,
-            current_userid,
-            sales_header_id
-        ))
-        mydb.commit()
-        logger.debug(f"Sales Order Lines status updated successfully for Header ID: {sales_header_id}")
-
-    except Exception as e:
-        logger.error(f"{current_userid} --> {MODULE_NAME}: Error in updating sales order lines status: {str(e)}")
-    finally:
-        if mycursor:
-            mycursor.close()
-
 def update_sales_order_status(sales_header_id, full_qty_alloc_status, part_qty_alloc_status, mydb, current_userid, MODULE_NAME):
     try:
-        mycursor = mydb.cursor()
+        mycursor = mydb.cursor(dictionary=True)
+        logger.debug(f"Checking current Sales Order Status for Header ID: {sales_header_id}")
+
+        # Query to check the current status
+        check_status_query = """
+            SELECT status
+            FROM sal.sales_order_headers
+            WHERE header_id = %s
+        """
+        mycursor.execute(check_status_query, (sales_header_id,))
+        current_status = mycursor.fetchone()
+
+        if not current_status:
+            logger.error(f"No sales order found with Header ID: {sales_header_id}")
+            return jsonify(message=f"No sales order found with Header ID: {sales_header_id}"), 404
+
+        if current_status['status'] == full_qty_alloc_status:
+            logger.debug(f"Sales Order Status for Header ID {sales_header_id} is already {full_qty_alloc_status}, no update needed.")
+            return jsonify(message=f"No Allocation is done As Sales Order Status for Header ID {sales_header_id} is already {full_qty_alloc_status}"), 200
+
         logger.debug(f"Updating Sales Order Status for Header ID: {sales_header_id}")
 
         update_query = """
@@ -498,8 +489,11 @@ def update_sales_order_status(sales_header_id, full_qty_alloc_status, part_qty_a
         mydb.commit()
         logger.debug(f"Sales Order status updated successfully for Header ID: {sales_header_id}")
 
+        return jsonify(message=f"Allocation is done and Sales Order header {sales_header_id} status is updated successfully"), 200
+
     except Exception as e:
         logger.error(f"{current_userid} --> {MODULE_NAME}: Error in updating sales order status: {str(e)}")
+        return jsonify(message=f"Error in updating sales order status: {str(e)}"), 500
     finally:
         if mycursor:
             mycursor.close()
