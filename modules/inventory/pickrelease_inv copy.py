@@ -175,8 +175,6 @@ def allocate_inventory(line, sales_header_id, full_qty_alloc_status,part_qty_all
 
                 # Update inventory for the allocated quantity
                 if remaining_quantity > 0:
-                    logger.debug(f"Yes, Remaining quantity is greater than 0: {remaining_quantity}")
-                    create_new_inventory_row(inventory, allocated_quantity, sales_uom_id, sales_header_id, sales_order_line_id, mydb, current_userid, MODULE_NAME, created_by, updated_by)
                     update_inventory_remaining(inventory, remaining_quantity, sales_uom_id, inv_uom_id, mydb, current_userid, MODULE_NAME, updated_by)
                 else:
                     update_inventory(inventory, allocated_quantity_in_base_uom, sales_header_id, sales_order_line_id, mydb, current_userid, MODULE_NAME, created_by, updated_by)
