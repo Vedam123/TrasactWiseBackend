@@ -40,10 +40,12 @@ def get_departments():
             SELECT d.id, d.company_id, d.department_name, d.manager_id, d.description,
                    d.created_at, d.updated_at, d.created_by, d.updated_by,
                    c.name AS company_name, c.description AS company_description,
-                   e.name AS manager_name
+                   e.name AS manager_name,
+                   dah.header_name AS default_account_header_name
             FROM com.department d
             JOIN com.company c ON d.company_id = c.id
             LEFT JOIN com.employee e ON d.manager_id = e.empid
+            LEFT JOIN fin.default_account_headers dah ON d.default_account_header_id = dah.header_id
             WHERE (%(id_param)s IS NULL OR d.id = %(id_param)s)
               AND (%(department_name_param)s IS NULL OR d.department_name REGEXP %(department_name_param)s)
               AND (%(company_id_param)s IS NULL OR d.company_id = %(company_id_param)s)

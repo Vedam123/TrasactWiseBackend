@@ -30,6 +30,7 @@ from modules.inventory.pack_or_unpack   import pack_or_unpack
 from modules.inventory.bulk_pack_or_unpack   import bulk_pack_or_unpack
 from modules.inventory.move_item_inventory  import move_item_inventory
 from modules.inventory.pickrelease_inv  import pickrelease_inv
+from modules.inventory.reverse_pickrelease_inv  import reverse_pick_release
 from modules.utilities.logger import logger
 
 # Create blueprints
@@ -243,6 +244,13 @@ def pickrelease_inv_all():
     USER_ID = ""
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to pickrelease_inv")
     return pickrelease_inv()
+
+@inventory_post_routes.route('/reverse_pick_release', methods=['POST'])
+def reverse_pick_release_all():
+    MODULE_NAME = __name__
+    USER_ID = ""
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to reverse_pick_release")
+    return reverse_pick_release()
 
 # PUT Methods -----------------------------------------------------------
 @inventory_put_routes.route('/update_inspection', methods=['PUT'])

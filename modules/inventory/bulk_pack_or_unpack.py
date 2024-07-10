@@ -83,7 +83,8 @@ def bulk_pack_or_unpack():
             logger.debug(f"Database Connection established for User ID: {USER_ID}")
             print("Reached Bulkpack function")
             with mydb.cursor() as mycursor:
-                inventory_query = "SELECT * FROM inv.item_inventory WHERE item_id = %s AND uom_id = %s AND status != 'Yes'"
+                inventory_query = "SELECT * FROM inv.item_inventory WHERE item_id = %s AND uom_id = %s AND (status != 'Yes' OR status IS NULL)"
+
                 mycursor.execute(inventory_query, (input_item_id, input_source_uom_id))
 
                 fetched_row = mycursor.fetchall()

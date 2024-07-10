@@ -5,7 +5,6 @@ from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
 from flask_jwt_extended import decode_token
 from modules.security.get_user_from_token import get_user_from_token
-from modules.common.routines.find_lowest_uom_and_cf import find_lowest_uom_and_cf
 from modules.sales.routines.update_so_header_total_cumulative import update_so_header_total_cumulative
 from modules.utilities.logger import logger
 
@@ -46,7 +45,7 @@ def update_sales_order_lines():
             json_data = request.get_json()
             if not json_data:
                 return 'error: No JSON data provided', 400
-
+            print("Json input",json_data)
             header_id = json_data.get('header_id')
             lines = json_data.get('lines', [])
 
@@ -59,7 +58,7 @@ def update_sales_order_lines():
             # Initialize list to store updated line IDs
             updated_lines = []
             all_lines = []
-
+            print("Before processing lines for loop")
             for line in lines:
                 line_id = line.get('line_id')
                 so_lnum = line.get('so_lnum')
@@ -79,11 +78,11 @@ def update_sales_order_lines():
                     uom_exists = check_uom_id_existence(mydb, uom_id)
                     if not uom_exists:
                         return jsonify({'error': f'UOM with ID {uom_id} does not exist'}), 400
-
+                print("checked UOM and item id presense")
                 # Build the update query dynamically based on provided fields
                 update_query_parts = []
                 query_values = []
-
+                print("before processing the input")
                 if 'quantity' in line:
                     update_query_parts.append('quantity = %s')
                     query_values.append(line.get('quantity'))
@@ -112,19 +111,11 @@ def update_sales_order_lines():
                     update_query_parts.append('item_id = %s')
                     query_values.append(line.get('item_id'))
 
-                if 'quantity' in line or 'unit_price' in line or 'uom_id' in line:
-                    # Recalculate base_uom_id and base_quantity
-                    result = find_lowest_uom_and_cf(uom_id, mydb, current_userid, MODULE_NAME)
-                    base_uom_id = result['base_unit']
-                    base_uom_cf = result['conversion_factor']
-                    base_quantity = line.get('quantity') * base_uom_cf
-                    update_query_parts.append('base_uom_id = %s')
-                    update_query_parts.append('base_quantity = %s')
-                    update_query_parts.append('uom_conversion_factor = %s')
-                    query_values.extend([base_uom_id, base_quantity,base_uom_cf])
+                print("Before checking if line_id is present",line_id)
 
                 if line_id:
                     # Build the update query
+                    print("Inside line Id update",line_id)
                     update_query = f"""
                     UPDATE sal.sales_order_lines
                     SET {', '.join(update_query_parts)},
@@ -137,10 +128,10 @@ def update_sales_order_lines():
                     if mycursor.rowcount > 0:
                         updated_lines.append(line_id)
                 else:
+                    print("Inside the else clause no line id present update",line_id)
                     # Insert the line into the sales_order_line table
                     insert_line(mydb, header_id, so_lnum, line, current_userid, MODULE_NAME)
                     updated_lines.append(so_lnum)
-
                 all_lines.append({'line_id': line_id, 'so_lnum': so_lnum, 'header_id': header_id})
 
             if updated_lines:
@@ -152,11 +143,11 @@ def update_sales_order_lines():
                 if success:
                     mydb.commit()
                     logger.debug(
-                        f"{USER_ID} --> {MODULE_NAME}: Successfully created/updated sales order lines")
+                        f"{USER_ID} --> {MODULE_NAME}: Successfully created sales order lines")
 
                     response = {
                         'success': True,
-                        'message': 'Sales order lines created/updated successfully',
+                        'message': 'Sales order lines created successfully',
                         'so_lines': all_lines
                     }
                 else:
@@ -173,8 +164,8 @@ def update_sales_order_lines():
             else:
                 mydb.rollback()
                 logger.error(
-                    f"{USER_ID} --> {MODULE_NAME}: Failed to create/update sales order lines")
-                return jsonify({'error': 'Failed to create/update records'}), 500
+                    f"{USER_ID} --> {MODULE_NAME}: Failed to update sales order lines")
+                return jsonify({'error': 'Failed to update records'}), 500
 
         except Exception as json_error:
             logger.error(
@@ -197,8 +188,8 @@ def insert_line(mydb, header_id, so_lnum, line_data, current_userid, MODULE_NAME
     try:
         # Build the insert query
         insert_query = """
-            INSERT INTO sal.sales_order_lines (header_id, so_lnum, quantity, unit_price, line_total, notes, uom_id, status, item_id, base_uom_id, base_quantity, uom_conversion_factor, created_by, updated_by)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO sal.sales_order_lines (header_id, so_lnum, quantity, unit_price, line_total, notes, uom_id, status, item_id, created_by, updated_by)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
         # Extract line data
@@ -210,19 +201,9 @@ def insert_line(mydb, header_id, so_lnum, line_data, current_userid, MODULE_NAME
         status = line_data.get('status')
         item_id = line_data.get('item_id')
 
-        # Calculate base_uom_id and base_quantity
-        if uom_id is not None:
-            result = find_lowest_uom_and_cf(uom_id, mydb, current_userid, MODULE_NAME)
-            base_uom_id = result['base_unit']
-            base_uom_cf = result['conversion_factor']
-            base_quantity = quantity * base_uom_cf
-        else:
-            base_uom_id = None
-            base_quantity = None
-
         # Execute the insert query
         mycursor = mydb.cursor()
-        query_values = (header_id, so_lnum, quantity, unit_price, line_total, notes, uom_id, status, item_id, base_uom_id, base_quantity, base_uom_cf,current_userid, current_userid)
+        query_values = (header_id, so_lnum, quantity, unit_price, line_total, notes, uom_id, status, item_id, current_userid, current_userid)
         mycursor.execute(insert_query, query_values)
         mydb.commit()
 

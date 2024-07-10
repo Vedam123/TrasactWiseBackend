@@ -50,6 +50,7 @@ def get_companies():
                 cu_reporting.currencyname AS reporting_currency_name,
                 cu_reporting.currencysymbol AS reporting_currency_symbol,
                 ctc.description AS company_tax_codes_description,
+                dah.header_name AS default_account_header_name,
                 c.created_at,
                 c.updated_at,
                 c.created_by,
@@ -59,7 +60,8 @@ def get_companies():
             LEFT JOIN com.currency cu_local ON c.local_cur_id = cu_local.currency_id
             LEFT JOIN com.currency cu_home ON c.home_cur_id = cu_home.currency_id
             LEFT JOIN com.currency cu_reporting ON c.reporting_cur_id = cu_reporting.currency_id
-            LEFT JOIN com.company_tax_codes ctc ON c.default_tax_code_id = ctc.id
+            LEFT JOIN com.default_tax_config ctc ON c.default_tax_code_id = ctc.header_id
+            LEFT JOIN fin.default_account_headers dah ON c.default_account_header_id = dah.header_id
         """
 
         params = {}
@@ -71,7 +73,6 @@ def get_companies():
             query += " WHERE c.name REGEXP %(company_name)s"
             params['company_name'] = company_name
 
-        print("PARAMETERS MUST BE NULL ",params)
         mycursor.execute(query, params)
 
         result = mycursor.fetchall()

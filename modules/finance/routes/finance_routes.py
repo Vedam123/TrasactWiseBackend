@@ -28,8 +28,14 @@ from modules.finance.delete_sales_invoice_lines import delete_sales_invoice_line
 from modules.finance.delete_sales_invoice_account import delete_sales_invoice_account
 from modules.finance.validate_sales_invoice import validate_sales_invoice
 from modules.finance.get_sales_invoice_distributions import get_sales_invoice_accounts
+from modules.finance.get_default_accounts import get_default_accounts
 from modules.finance.get_sales_invoice_lines import get_sales_invoice_lines
-
+from modules.finance.create_default_account import create_default_account
+from modules.finance.create_default_account_headers import create_default_account_headers
+from modules.finance.get_default_accounts_combined import get_default_accounts_combined
+from modules.finance.get_default_tax_headers import get_default_tax_headers
+from modules.finance.create_default_tax_headers import create_default_tax_headers
+from modules.finance.get_default_account_headers import get_default_account_headers
 
 from modules.utilities.logger import logger  # Import the logger module
 
@@ -118,6 +124,34 @@ def get_sales_invoice_lines_all():
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get sales Invoice lines")
     return get_sales_invoice_lines()
 
+@finance_get_routes.route('/get_default_accounts', methods=['GET'])
+def get_default_accounts_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get Default accounts")
+    return get_default_accounts()
+
+@finance_get_routes.route('/get_default_accounts_combined', methods=['GET'])
+def get_default_accounts_combined_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get Default account headers all combined")
+    return get_default_accounts_combined()
+
+@finance_get_routes.route('/get_default_tax_headers', methods=['GET'])
+def get_default_tax_headers_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get get_default_tax_codes")
+    return get_default_tax_headers()
+
+@finance_get_routes.route('/get_default_account_headers', methods=['GET'])
+def get_default_account_headers_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get get_default_account_headers")
+    return get_default_account_headers()
+
 
 # POST routes -----------------------------------------------------
 @finance_post_routes.route('/create_account', methods=['POST'])
@@ -183,7 +217,27 @@ def distribute_sales_invoice_to_accounts_all():
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Distribute Sales Invoice Accounts")
     return distribute_sales_invoice_to_accounts()
 
+@finance_post_routes.route('/create_default_account', methods=['POST'])
+def create_default_accounts_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Create Default Accounts from Company or Departement Accounts")
+    return create_default_account()
 
+@finance_post_routes.route('/create_default_account_headers', methods=['POST'])
+def create_default_account_headers_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Create Default Account Headers from Company or Departement Accounts")
+    return create_default_account_headers()
+
+
+@finance_post_routes.route('/create_default_tax_headers', methods=['POST'])
+def create_default_tax_headers_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Create Default create_default_tax_headers")
+    return create_default_tax_headers()
 
 
 

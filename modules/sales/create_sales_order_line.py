@@ -5,6 +5,7 @@ from config import WRITE_ACCESS_TYPE
 from flask_jwt_extended import decode_token
 from modules.security.get_user_from_token import get_user_from_token
 from modules.sales.routines.update_so_header_total_byline import update_so_header_total_by_line
+from modules.common.routines.find_lowest_uom_and_cf import find_lowest_uom_and_cf
 from modules.utilities.logger import logger
 
 create_sales_order_line_api = Blueprint('create_sales_order_line_api', __name__)
@@ -49,6 +50,8 @@ def create_sales_order_line():
             print("Sales order lines request", sales_order_lines)
             response_lines = []
 
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Process the Sales order lines")
+
             for line_data in sales_order_lines:
                 header_id = int(line_data.get('header_id'))
                 so_lnum = int(line_data.get('so_lnum'))
@@ -72,15 +75,26 @@ def create_sales_order_line():
                 uom_id = int(line_data.get('uom_id'))
                 status = str(line_data.get('status'))  # Extract status from JSON
 
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Going to call find_lowest_uom_and_cf function ")
+
+                result = find_lowest_uom_and_cf(uom_id, mydb, current_userid, MODULE_NAME)
+                base_uom_id = result['base_unit']
+                base_uom_cf = result['conversion_factor']
+                base_quantity = quantity * base_uom_cf
+
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Retrieved base uom id from the function function {base_uom_id}")
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Retrieved conversion factor from the function function {base_uom_cf}")
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Calculated base quantity  {base_quantity}")
+
                 query = """
                     INSERT INTO sal.sales_order_lines (
                         header_id, so_lnum, item_id, quantity, unit_price,
-                        line_total,  uom_id, notes, created_by, updated_by, status
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                        line_total,  uom_id, base_uom_id, uom_conversion_factor,base_quantity,notes, created_by, updated_by, status
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s,%s,%s);
                 """
                 values = (
                     header_id, so_lnum, item_id, quantity, unit_price,
-                    line_total, uom_id, notes, current_userid, current_userid, status
+                    line_total, uom_id, base_uom_id,base_uom_cf,base_quantity,notes, current_userid, current_userid, status
                 )
                 mycursor.execute(query, values)
 

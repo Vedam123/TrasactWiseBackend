@@ -47,6 +47,7 @@ def create_department():
         department_name = data['department_name']
         manager_id = data.get('manager_id')
         description = data.get('description')
+        account_group_id = data.get('account_group_id')
         created_by = current_userid
         updated_by = current_userid
 
@@ -60,10 +61,10 @@ def create_department():
 
         try:
             query = """
-                INSERT INTO com.department (company_id, department_name, manager_id, description, created_by, updated_by)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO com.department (company_id, department_name, manager_id, description, default_account_header_id, created_by, updated_by)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
-            values = (company_id, department_name, manager_id, description, created_by, updated_by)
+            values = (company_id, department_name, manager_id, description, account_group_id, created_by, updated_by)
 
             mycursor.execute(query, values)
             mydb.commit()
