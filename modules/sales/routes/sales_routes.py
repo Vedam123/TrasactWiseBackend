@@ -8,6 +8,7 @@ from modules.sales.update_sales_order_lines import update_sales_order_lines
 from modules.utilities.logger import logger  # Import the logger module
 from modules.sales.delete_sales_order_lines import delete_sales_order_lines
 from modules.sales.delete_sales_orders import delete_sales_orders
+from modules.sales.auto_create_so_si import auto_create_so_si
 
 # Create blueprints
 sales_list_routes = Blueprint('sales_list_routes', __name__)
@@ -42,6 +43,15 @@ def create_sales_order_line_All():
     USER_ID = ""
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Create a sales order line")
     return create_sales_order_line()
+
+@sales_create_routes.route('/auto_create_so_si', methods=['POST'])
+def auto_create_so_si_all():
+    MODULE_NAME = __name__
+    USER_ID = ""
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Create a auto_create_so_si ")
+    return auto_create_so_si()
+
+
 
 # PUT routes -----------------------------------------------------
 @sales_create_routes.route('/update_sales_order_header', methods=['PUT'])

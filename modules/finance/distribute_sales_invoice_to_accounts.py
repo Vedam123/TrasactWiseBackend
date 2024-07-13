@@ -43,12 +43,12 @@ def distribute_sales_invoice_to_accounts():
         try:
             response_accounts = []
 
-            if isinstance(data, list):  # Check if data is a list
-                for item in data:  # Iterate over each item in the list
+            if 'lines' in data:  # Check if 'lines' key exists in data
+                for item in data['lines']:  # Iterate over each item in 'lines'
                     # Assuming the item dictionary contains the necessary keys for each account
                     insert_values = (
-                        item.get('header_id'),  
-                        item.get('line_number'),                    
+                        data.get('header_id'),  
+                        item.get('line_number'),  # Extract 'line_number' from item                 
                         item.get('account_id'),
                         item.get('debitamount'),
                         item.get('creditamount'),
@@ -64,26 +64,8 @@ def distribute_sales_invoice_to_accounts():
                     response_accounts.append({
                         'line_id': line_number
                     })
-            else:  # If data is not a list, handle it as a single dictionary
-                # Assuming the data dictionary contains the necessary keys for each account
-                insert_values = (
-                    data.get('header_id'),  
-                    data.get('line_number'),                    
-                    data.get('account_id'),
-                    data.get('debitamount'),
-                    data.get('creditamount'),
-                    current_userid,  # created_by
-                    current_userid   # updated_by
-                )
-
-                mycursor.execute(insert_query, insert_values)
-                mydb.commit()
-
-                line_number = mycursor.lastrowid  # Get the ID of the inserted row
-
-                response_accounts.append({
-                    'line_id': line_number
-                })
+            else:
+                raise ValueError("'lines' key not found in request data")
 
             # Log success and close the cursor and connection
             logger.info(f"{USER_ID} --> {MODULE_NAME}: Sales invoice account data created successfully")
