@@ -8,6 +8,7 @@ from modules.purchase.update_purchase_order_lines import update_purchase_order_l
 from modules.utilities.logger import logger  # Import the logger module
 from modules.purchase.delete_purchase_order_lines import delete_purchase_order_lines
 from modules.purchase.delete_purchase_orders import delete_purchase_orders
+from modules.purchase.auto_create_po_pi import auto_create_po_pi
 
 # Create blueprints
 purchase_list_routes = Blueprint('purchase_list_routes', __name__)
@@ -43,6 +44,13 @@ def create_purchase_order_line_All():
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Create a purchase order line")
     return create_purchase_order_line()
 
+@purchase_create_routes.route('/auto_create_po_pi', methods=['POST'])
+def auto_create_po_pi_all():
+    MODULE_NAME = __name__
+    USER_ID = ""
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: auto_create_po_pi")
+    return auto_create_po_pi()
+
 # PUT routes -----------------------------------------------------
 @purchase_create_routes.route('/update_purchase_order_header', methods=['PUT'])
 def update_purchase_order_header_all():
@@ -57,6 +65,10 @@ def update_purchase_order_lines_all():
     USER_ID = ""
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Update a purchase order lines")
     return update_purchase_order_lines()
+
+
+
+
 
 # DELETE routes -----------------------------------------------------
 @purchase_list_routes.route('/delete_purchase_order_lines', methods=['DELETE'])

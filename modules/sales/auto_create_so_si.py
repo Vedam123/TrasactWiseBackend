@@ -1,4 +1,5 @@
 from flask import Flask, Blueprint, jsonify, request
+import uuid
 from flask_jwt_extended import decode_token
 from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
@@ -8,6 +9,8 @@ from config import WRITE_ACCESS_TYPE
 from datetime import datetime, timedelta
 from modules.finance.routines.get_default_tax_rates import get_default_tax_rates
 from modules.finance.routines.get_account_details import get_account_details
+from modules.sales.routines.update_soheader_and_lines_status import update_soheader_and_lines_status
+from modules.sales.routines.log_auto_invoice import log_auto_invoice
 from decimal import Decimal
 import traceback
 
@@ -47,7 +50,6 @@ def create_sales_invoice(data, USER_ID, MODULE_NAME, mydb):
         return {
             "header_id": header_id,
             "message": "Sales Invoice created successfully",
-            "status": "Pending",
             "success": True,
             "totalamount": data["totalamount"]
         }, 200
@@ -118,7 +120,8 @@ def create_sales_invoice_lines(header_id, lines, USER_ID, MODULE_NAME, mydb):
         logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to create sales invoice lines: {str(e)}")
         return {"error": str(e)}, 500
 
-# Helper function to distribute accounts
+def generate_execution_id():
+    return str(uuid.uuid4())
 
 # Main API to create sales invoice and distribute
 auto_create_so_si_api = Blueprint('auto_create_so_si_api', __name__)
@@ -127,6 +130,7 @@ auto_create_so_si_api = Blueprint('auto_create_so_si_api', __name__)
 @permission_required(WRITE_ACCESS_TYPE, __file__)
 def auto_create_so_si():
     mydb = None
+    execution_id = generate_execution_id()
     try:
         authorization_header = request.headers.get('Authorization')
         token_results = get_user_from_token(authorization_header) if authorization_header else None
@@ -151,6 +155,7 @@ def auto_create_so_si():
 
         sales_order_numbers = data.get("sales_order_numbers", [])
         invoice_number = data.get("invoice_number")
+        so_new_status = data.get("so_new_status")
         status = data.get("status", "Pending")
         account_types = data.get("account_types", {})
         #status_filter = data.get("status_filter", ['APPROVED', 'PARTPICKED', 'PICKED'])
@@ -182,6 +187,7 @@ def auto_create_so_si():
         for order in sales_orders:
             header_id = order["header_id"]
             sales_header_id = header_id
+            so_current_status = order["status"]
             partnerid = order["customer_id"]
             totalamount = order["total_amount"]
             tax_id = order["tax_id"]   #or get_default_tax_rates(order["company_id"], "some_tax_types", mydb, USER_ID, MODULE_NAME)["tax_id"]
@@ -352,10 +358,28 @@ def auto_create_so_si():
                 ))
                 mydb.commit()
 
+            if not update_soheader_and_lines_status(USER_ID, MODULE_NAME, mydb, sales_header_id, so_new_status):
+                return jsonify({'error': 'Failed to update sales order status'}), 500
+            
+            auto_invoice_log_data = {
+                'execution_id': execution_id,
+                'sales_header_id': sales_header_id,
+                'invoice_header_id': header_id,  # From the create_sales_invoice response
+                'so_header_prev_status': so_current_status,
+                'so_header_update_status': so_new_status,
+                'sales_invoice_status': invoice_data["status"],
+                'auto_inv_status': 'COMPLETED',
+                'created_by': current_userid,
+                'updated_by': current_userid
+            }
+
+            log_auto_invoice(auto_invoice_log_data, mydb)
+
             responses.append({
                 "header_response": header_response,
                 "accounts": account_lines,
-                "lines": lines_response
+                "lines": lines_response,
+                "message": "Sales order status updated to INVOICED successfully"
             })
         
         #cursor.close()

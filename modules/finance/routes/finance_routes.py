@@ -36,6 +36,7 @@ from modules.finance.get_default_accounts_combined import get_default_accounts_c
 from modules.finance.get_default_tax_headers import get_default_tax_headers
 from modules.finance.create_default_tax_headers import create_default_tax_headers
 from modules.finance.get_default_account_headers import get_default_account_headers
+from modules.finance.auto_create_journal import auto_create_journal
 
 from modules.utilities.logger import logger  # Import the logger module
 
@@ -239,7 +240,12 @@ def create_default_tax_headers_all():
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Create Default create_default_tax_headers")
     return create_default_tax_headers()
 
-
+@finance_post_routes.route('/auto_create_journal', methods=['POST'])
+def auto_create_journal_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to auto_create_journal accounts")
+    return auto_create_journal()
 
 # PUT Methods -----------------------------------------------------------
 
