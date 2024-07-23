@@ -11,7 +11,7 @@ from modules.finance.routines.get_default_tax_rates import get_default_tax_rates
 from modules.finance.routines.get_account_details import get_account_details
 from modules.sales.routines.update_soheader_and_lines_status import update_soheader_and_lines_status
 from modules.sales.routines.log_auto_invoice import log_auto_invoice
-from decimal import Decimal
+from decimal import Decimal,ROUND_HALF_UP
 import traceback
 
 # Helper function to create sales invoice header
@@ -316,9 +316,14 @@ def auto_create_so_si():
 
                 credit_total += total_tax_amount
 
-                # Validate totals
+              
+                debit_total = Decimal(debit_total).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                credit_total = Decimal(credit_total).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                totalamount = Decimal(totalamount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+
+                # Check if all rounded values are equal
                 if not (debit_total == credit_total == totalamount):
-                    raise Exception("Debit and Credit totals do not match the total amount.")
+                    raise Exception("Debit, Credit totals, and Total amount do not match after rounding to two decimal places.")  
 
                 # Distribute the accounts
                 for line in account_lines:

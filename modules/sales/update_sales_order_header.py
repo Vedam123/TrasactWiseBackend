@@ -55,9 +55,20 @@ def update_sales_order_header():
             company_id = int(json_data.get('company_id'))
             billing_address = json_data.get('billing_address')
             shipping_address = json_data.get('shipping_address')
-            rep_id = json_data.get('rep_id')
+            #rep_id = json_data.get('rep_id')
             comments = json_data.get('comments')
 
+            # Get the 'rep_id' from the json_data
+            rep_id = json_data.get('rep_id')
+
+            # Check if rep_id is a string and if it can be converted to an integer
+            if isinstance(rep_id, str) and rep_id.isdigit():
+                rep_id = int(rep_id)
+            elif isinstance(rep_id, str):
+                rep_id = None
+
+        
+            logger.info(f"{USER_ID} --> {MODULE_NAME}: JSON Input Parameters - so_date: {json_data}")
             # Handle potential None values
             if rep_id is not None:
                 rep_id = int(rep_id)

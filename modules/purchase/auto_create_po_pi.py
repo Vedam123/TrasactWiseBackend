@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from modules.purchase.routines.log_auto_purchase_invoice import log_auto_purchase_invoice
 from modules.purchase.routines.update_poheader_and_lines_status import update_poheader_and_lines_status
 from modules.finance.routines.get_account_details import get_account_details
-from decimal import Decimal
+from decimal import Decimal,ROUND_HALF_UP
 
 # Helper function to create purchase invoice header
 def create_purchase_invoice(data, USER_ID, MODULE_NAME, mydb):
@@ -360,8 +360,21 @@ def auto_create_po_pi():
                 # Insert account lines into purchase invoice accounts table
 
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: Total Debit and Credit amount Total amount comparision: {debit_total} {credit_total} {totalamount}")            
+                #rounded_debit_total = round(debit_total, 2)
+                #rounded_credit_total = round(credit_total, 2)
+                #rounded_totalamount = round(totalamount, 2)
+
+                # Check if all rounded values are equal
+                #if not (rounded_debit_total == rounded_credit_total == rounded_totalamount):
+                #    raise Exception("Debit, Credit totals, and Total amount do not match after rounding to two decimal places.")
+                # Convert values to Decimal and round to two decimal places
+                debit_total = Decimal(debit_total).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                credit_total = Decimal(credit_total).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                totalamount = Decimal(totalamount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+
+                # Check if all rounded values are equal
                 if not (debit_total == credit_total == totalamount):
-                    raise Exception("Debit and Credit totals do not match the total amount.")
+                    raise Exception("Debit, Credit totals, and Total amount do not match after rounding to two decimal places.")                 
 
 
                 # Insert Purchase Invoice Accounts
