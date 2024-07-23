@@ -218,133 +218,113 @@ def auto_create_po_pi():
         total_tax_amount = Decimal(0)
 
         for order in purchase_orders:
-            try:
-                header_id = order["header_id"]
-                pur_order_header_id = header_id
-                supplier_id = order["supplier_id"]
-                totalamount = Decimal(order["total_amount"])
-                tax_id = order["tax_id"]
-                tax_rate = 0.1  # Replace with actual logic if needed
+            header_id = order["header_id"]
+            pur_order_header_id = header_id
+            supplier_id = order["supplier_id"]
+            totalamount = Decimal(order["total_amount"])
+            tax_id = order["tax_id"]
+            tax_rate = 0.1  # Replace with actual logic if needed
 
-                cursor.execute('SET @next_val = 0;')
-                cursor.execute('CALL adm.get_next_sequence_value("PUR_HDR_INV_NUM", @next_val);')
-                cursor.execute('SELECT @next_val;')
-                result = cursor.fetchone()
+            cursor.execute('SET @next_val = 0;')
+            cursor.execute('CALL adm.get_next_sequence_value("PUR_HDR_INV_NUM", @next_val);')
+            cursor.execute('SELECT @next_val;')
+            result = cursor.fetchone()
 
-                if result is None or result['@next_val'] is None:
-                    raise Exception("Failed to retrieve next invoice number.")
+            if result is None or result['@next_val'] is None:
+                raise Exception("Failed to retrieve next invoice number.")
 
-                invoice_number = result['@next_val']
+            invoice_number = result['@next_val']
 
-                invoice_data = {
-                    "invoice_number": invoice_number,
-                    "partnerid": supplier_id,
-                    "invoicedate": datetime.now().strftime('%Y-%m-%d'),
-                    "totalamount": totalamount,
-                    "status": invoice_status,
-                    "payment_terms": po_payment_terms,
-                    "payment_duedate": (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d'),
-                    "tax_id": tax_id,
-                    "currency_id": order["currency_id"],
-                    "department_id": order["department_id"],
-                    "company_id": order["company_id"],
-                    "transaction_source": f"PO {order['header_id']}",
+            invoice_data = {
+                "invoice_number": invoice_number,
+                "partnerid": supplier_id,
+                "invoicedate": datetime.now().strftime('%Y-%m-%d'),
+                "totalamount": totalamount,
+                "status": invoice_status,
+                "payment_terms": po_payment_terms,
+                "payment_duedate": (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d'),
+                "tax_id": tax_id,
+                "currency_id": order["currency_id"],
+                "department_id": order["department_id"],
+                "company_id": order["company_id"],
+                "transaction_source": f"PO {order['header_id']}",
+                "created_by": current_userid,
+                "updated_by": current_userid
+            }
+
+            # Create Purchase Invoice
+            header_response, status_code = create_purchase_invoice(invoice_data, USER_ID, MODULE_NAME, mydb)
+            if status_code != 200:
+                return jsonify(header_response), status_code
+
+            header_id = header_response["header_id"]
+
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Main function VEDAM HEADER_ID  : {header_id}")
+
+            # Fetch purchase order lines
+            cursor.execute("""
+                SELECT * FROM pur.purchase_order_line
+                WHERE header_id = %s
+            """, (pur_order_header_id,))
+            order_lines = cursor.fetchall()
+
+            line_data = []
+            starting_line_number = 1  # Starting point for line numbers
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Main function VEDAM  : {order_lines}")
+            for index, line in enumerate(order_lines):
+                line_number = starting_line_number + index
+                line_data.append({
+                    "line_number": line_number,
+                    "header_id": header_id,
+                    "item_id": line["item_id"],
+                    "quantity": line["quantity"],
+                    "unit_price": line["unit_price"],
+                    "line_total": line["line_total"],
+                    "uom_id": line["uom_id"],
                     "created_by": current_userid,
                     "updated_by": current_userid
-                }
+                })
 
-                # Create Purchase Invoice
-                header_response, status_code = create_purchase_invoice(invoice_data, USER_ID, MODULE_NAME, mydb)
-                if status_code != 200:
-                    raise Exception(header_response.get("message", "Failed to create purchase invoice"))
+            # Create Purchase Invoice Lines
+            lines_response, status_code = create_purchase_invoice_lines(header_id, line_data, USER_ID, MODULE_NAME, mydb)
+            if status_code != 200:
+                return jsonify(lines_response), status_code
 
-                header_id = header_response["header_id"]
+            account_lines = []
+            credit_total = Decimal(0)
+            debit_total = Decimal(0)
+            tax_total = Decimal(0)
 
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Main function VEDAM HEADER_ID  : {header_id}")
+            # Process Credit accounts first
+            for credit_account in account_types.get("Credit", []):
+                account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_name"], mydb, USER_ID, MODULE_NAME)
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 00 , {account_details}") 
+                #distribution_percentage = credit_account.get("distribution_percentage", 0)
 
-                # Fetch purchase order lines
-                cursor.execute("""
-                    SELECT * FROM pur.purchase_order_line
-                    WHERE header_id = %s
-                """, (pur_order_header_id,))
-                order_lines = cursor.fetchall()
+                distribution_percentage = Decimal(credit_account.get("distribution_percentage", 0)) / 100
+                credit_amount = totalamount * distribution_percentage
 
-                line_data = []
-                starting_line_number = 1  # Starting point for line numbers
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Main function VEDAM  : {order_lines}")
-                for index, line in enumerate(order_lines):
-                    line_number = starting_line_number + index
-                    line_data.append({
-                        "line_number": line_number,
-                        "header_id": header_id,
-                        "item_id": line["item_id"],
-                        "quantity": line["quantity"],
-                        "unit_price": line["unit_price"],
-                        "line_total": line["line_total"],
-                        "uom_id": line["uom_id"],
-                        "created_by": current_userid,
-                        "updated_by": current_userid
-                    })
+                credit_total += credit_amount
 
-                # Create Purchase Invoice Lines
-                lines_response, status_code = create_purchase_invoice_lines(header_id, line_data, USER_ID, MODULE_NAME, mydb)
-                if status_code != 200:
-                    raise Exception(lines_response.get("message", "Failed to create purchase invoice lines"))
-
-                account_lines = []
-                credit_total = Decimal(0)
-                debit_total = Decimal(0)
-                tax_total = Decimal(0)
-
-                # Process Credit accounts first
-                for credit_account in account_types.get("Credit", []):
-                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_name"], mydb, USER_ID, MODULE_NAME)
-                    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 00 , {account_details}") 
-                    #distribution_percentage = credit_account.get("distribution_percentage", 0)
-
-                    distribution_percentage = Decimal(credit_account.get("distribution_percentage", 0)) / 100
-                    credit_amount = totalamount * distribution_percentage
-
-                    credit_total += credit_amount
-
-                    account_lines.append({
-                        "line_number": None,
-                        "header_id": header_id,
-                        "account_id": int(account_details["account_id"]),
-                        "debitamount": 0,
-                        "creditamount": credit_amount,
-                        "created_by": current_userid,
-                        "updated_by": current_userid
-                    })
+                account_lines.append({
+                    "line_number": None,
+                    "header_id": header_id,
+                    "account_id": int(account_details["account_id"]),
+                    "debitamount": 0,
+                    "creditamount": credit_amount,
+                    "created_by": current_userid,
+                    "updated_by": current_userid
+                })
 
 
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 0000")
-                if tax_id :
-                    for debit_account in account_types.get("Debit", []):                 
-                        if "Tax" in debit_account["category"] :
-                            debit_amount = totalamount * Decimal(tax_rate)  # Taxable amount based on total amount
-                            tax_total += debit_amount
-                            account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_name"], mydb, USER_ID, MODULE_NAME) 
-                            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 1")  
-                            account_lines.append({
-                                "line_number": debit_account["account_name"],
-                                "header_id": header_id,
-                                "account_id": int(account_details["account_id"]),
-                                "debitamount": debit_amount,
-                                "creditamount": 0,
-                                "created_by": current_userid,
-                                "updated_by": current_userid
-                            })
-
-                remaining_amount = totalamount - tax_total
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 2 Total, remaining, tax total ,{totalamount} , {remaining_amount} {tax_total}")  
-                for debit_account in account_types.get("Debit", []):
-                    if "Tax" not in debit_account["category"]:  # Only non-tax accounts
-                        distribution_percentage = Decimal(debit_account.get("distribution_percentage", 0)) / 100
-                        debit_amount = remaining_amount * distribution_percentage
-
-                        debit_total += debit_amount
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 0000")
+            if tax_id :
+                for debit_account in account_types.get("Debit", []):                 
+                    if "Tax" in debit_account["category"] :
+                        debit_amount = totalamount * Decimal(tax_rate)  # Taxable amount based on total amount
+                        tax_total += debit_amount
                         account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_name"], mydb, USER_ID, MODULE_NAME) 
+                        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 1")  
                         account_lines.append({
                             "line_number": debit_account["account_name"],
                             "header_id": header_id,
@@ -354,52 +334,67 @@ def auto_create_po_pi():
                             "created_by": current_userid,
                             "updated_by": current_userid
                         })
-                
-                debit_total = debit_total + tax_total
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 3 Debit total {debit_total}")  
-                # Insert account lines into purchase invoice accounts table
 
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Total Debit and Credit amount Total amount comparision: {debit_total} {credit_total} {totalamount}")            
-                if not (debit_total == credit_total == totalamount):
-                    raise Exception("Debit and Credit totals do not match the total amount.")
+            remaining_amount = totalamount - tax_total
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 2 Total, remaining, tax total ,{totalamount} , {remaining_amount} {tax_total}")  
+            for debit_account in account_types.get("Debit", []):
+                if "Tax" not in debit_account["category"]:  # Only non-tax accounts
+                    distribution_percentage = Decimal(debit_account.get("distribution_percentage", 0)) / 100
+                    debit_amount = remaining_amount * distribution_percentage
+
+                    debit_total += debit_amount
+                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_name"], mydb, USER_ID, MODULE_NAME) 
+                    account_lines.append({
+                        "line_number": debit_account["account_name"],
+                        "header_id": header_id,
+                        "account_id": int(account_details["account_id"]),
+                        "debitamount": debit_amount,
+                        "creditamount": 0,
+                        "created_by": current_userid,
+                        "updated_by": current_userid
+                    })
+            
+            debit_total = debit_total + tax_total
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 3 Debit total {debit_total}")  
+            # Insert account lines into purchase invoice accounts table
+
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Total Debit and Credit amount Total amount comparision: {debit_total} {credit_total} {totalamount}")            
+            if not (debit_total == credit_total == totalamount):
+                raise Exception("Debit and Credit totals do not match the total amount.")
 
 
-                # Insert Purchase Invoice Accounts
-                accounts_response, status_code = create_purchase_invoice_accounts(header_id, account_lines, current_userid, mydb)
-                if status_code != 200:
-                    raise Exception(accounts_response.get("message", "Failed to create purchase invoice accounts"))
+            # Insert Purchase Invoice Accounts
+            accounts_response, status_code = create_purchase_invoice_accounts(header_id, account_lines, current_userid, mydb)
+            if status_code != 200:
+                return jsonify(accounts_response), status_code
 
 
-                # Log the purchase invoice creation
-                log_data = {
-                    "execution_id": execution_id,
-                    "purchase_header_id": header_id,
-                    "purchase_invoice_id": header_id,
-                    "po_header_prev_status": order["status"],
-                    "po_header_update_status": po_new_status,
-                    "purchase_invoice_status": "CREATED",
-                    "auto_purchase_status": "SUCCESS",
-                    "created_by": current_userid,
-                    "updated_by": current_userid
-                }
-                log_auto_purchase_invoice(log_data, mydb)
+            # Log the purchase invoice creation
+            log_data = {
+                "execution_id": execution_id,
+                "purchase_header_id": header_id,
+                "purchase_invoice_id": header_id,
+                "po_header_prev_status": order["status"],
+                "po_header_update_status": po_new_status,
+                "purchase_invoice_status": "CREATED",
+                "auto_purchase_status": "SUCCESS",
+                "created_by": current_userid,
+                "updated_by": current_userid
+            }
+            log_auto_purchase_invoice(log_data, mydb)
 
-                # Update the purchase order status
+            # Update the purchase order status
 
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Now going to update a function to update PO header and lines for the header {header_id}")
-                update_poheader_and_lines_status(USER_ID, MODULE_NAME, mydb, pur_order_header_id, po_new_status)
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: The Function is executed successfully for the header {header_id}")
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Now going to update a function to update PO header and lines for the header {header_id}")
+            update_poheader_and_lines_status(USER_ID, MODULE_NAME, mydb, pur_order_header_id, po_new_status)
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: The Function is executed successfully for the header {header_id}")
 
-                responses.append({
-                    "header_response": header_response,
-                    "accounts": accounts_response,
-                    "lines": lines_response,
-                    "message": "Purchase order status updated to INVOICED successfully"
-                })
-
-            except Exception as e:
-                logger.error(f"{USER_ID} --> {MODULE_NAME}: Error processing order {order['header_id']}: {str(e)}")
-                continue
+            responses.append({
+                "header_response": header_response,
+                "accounts": accounts_response,
+                "lines": lines_response,
+                "message": "Purchase order status updated to INVOICED successfully"
+            })
 
         return jsonify({"success": True, "invoices": responses}), 200
 
@@ -410,4 +405,3 @@ def auto_create_po_pi():
     finally:
         if mydb:
             mydb.close()
-

@@ -40,7 +40,7 @@ def create_journal_header_logic(data, context):
 
             logger.info(f"{USER_ID} --> {MODULE_NAME}: Journal header data created successfully")
             mycursor.close()
-            mydb.close()
+            #mydb.close()
             
             response = {
                 'success': True,
@@ -50,13 +50,13 @@ def create_journal_header_logic(data, context):
                 'currency_id': currency_id,
                 'status': status
             }
-            
+            mycursor.close()
             return response, 200
 
         except Exception as e:
             logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to create journal header data: {str(e)}")
-            mycursor.close()
-            mydb.close()
+            #mycursor.close()
+            #mydb.close()
             return {'error': str(e)}, 500
 
     except Exception as e:

@@ -131,6 +131,7 @@ auto_create_so_si_api = Blueprint('auto_create_so_si_api', __name__)
 def auto_create_so_si():
     mydb = None
     execution_id = generate_execution_id()
+    responses = []
     try:
         authorization_header = request.headers.get('Authorization')
         token_results = get_user_from_token(authorization_header) if authorization_header else None
@@ -156,16 +157,17 @@ def auto_create_so_si():
         sales_order_numbers = data.get("sales_order_numbers", [])
         invoice_number = data.get("invoice_number")
         so_new_status = data.get("so_new_status")
-        status = data.get("status", "Pending")
+        invoice_status = data.get("invoice_status")
         account_types = data.get("account_types", {})
-        #status_filter = data.get("status_filter", ['APPROVED', 'PARTPICKED', 'PICKED'])
-        so_order_status_filter = data.get("so_order_status_filter")  # Get status_filter from input JSON        
+        so_order_status_filter = data.get("so_order_status_filter")
 
         mydb = get_database_connection(USER_ID, MODULE_NAME)
         cursor = mydb.cursor(dictionary=True)
 
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Sales order numbers: {sales_order_numbers}")
+
         if not sales_order_numbers:
-            placeholders = ', '.join(['%s'] * len(so_order_status_filter))            
+            placeholders = ', '.join(['%s'] * len(so_order_status_filter))
             query = f"""
                 SELECT * FROM sal.sales_order_headers
                 WHERE status IN ({placeholders})
@@ -181,208 +183,197 @@ def auto_create_so_si():
             cursor.execute(query, sales_order_numbers + so_order_status_filter)
 
         sales_orders = cursor.fetchall()
-        responses = []
-        total_tax_amount = Decimal(0)
+
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Fetched Sales orders that match with status: {sales_orders}")
+
+        if not sales_orders:
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: No Sales Orders fetched with the given status: {sales_orders}")
+            return jsonify({'message': 'No Sales Orders fetched with the given status', 'sales_orders': sales_orders}), 404
 
         for order in sales_orders:
-            header_id = order["header_id"]
-            sales_header_id = header_id
-            so_current_status = order["status"]
-            partnerid = order["customer_id"]
-            totalamount = order["total_amount"]
-            tax_id = order["tax_id"]   #or get_default_tax_rates(order["company_id"], "some_tax_types", mydb, USER_ID, MODULE_NAME)["tax_id"]
-            tax_rate = 0.1  # Replace with actual logic if needed
-            tax_account_type = data.get("tax_account_type")
+            try:
+                header_id = order["header_id"]
+                sales_header_id = header_id
+                so_current_status = order["status"]
+                partnerid = order["customer_id"]
+                totalamount = order["total_amount"]
+                tax_id = order["tax_id"]
+                tax_rate = 0.1  # Replace with actual logic if needed
+                tax_account_type = data.get("tax_account_type")
 
-
-            cursor.execute('SET @next_val = 0;')  # Initialize the variable
-            cursor.execute('CALL adm.get_next_sequence_value("SAL_HDR_INV_NUM", @next_val);')
-            cursor.execute('SELECT @next_val;')
-            result = cursor.fetchone()
-
-            if result is None or result['@next_val'] is None:
-                raise Exception("Failed to retrieve next line number.")
-
-            invoice_number = result['@next_val']  # Assign the value to line_number
-
-            invoice_data = {
-                "invoice_number": invoice_number,
-                "partnerid": partnerid,
-                "invoicedate": datetime.now().strftime('%Y-%m-%d'),
-                "totalamount": totalamount,
-                "status": status,
-                "payment_terms": order["payment_terms"],
-                "payment_duedate": (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d'),
-                "tax_id": tax_id,
-                "currency_id": order["currency_id"],
-                "department_id": order["department_id"],
-                "company_id": order["company_id"],
-                "transaction_source": f"SO {order['header_id']}",
-                "created_by": current_userid,
-                "updated_by": current_userid
-            }
-
-            # Create Sales Invoice
-            header_response, status_code = create_sales_invoice(invoice_data, USER_ID, MODULE_NAME, mydb)
-            if status_code != 200:
-                return jsonify(header_response), status_code
-            
-            header_id = header_response["header_id"]
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: What is the header id  VEDAM {sales_header_id}")
-            # Fetch sales order lines
-            cursor = mydb.cursor(dictionary=True)
-            cursor.execute("""
-                SELECT * FROM sal.sales_order_lines
-                WHERE header_id = %s
-            """, (sales_header_id,))
-            order_lines = cursor.fetchall()
-            #cursor.close()
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: bEFORE FORMING THE LINE what is the data in order lines VEDAM {order_lines}")
-            line_data = []
-            starting_line_number = 1  # Starting point for line numbers
-
-            for index, line in enumerate(order_lines):
-                line_number = starting_line_number + index
-                line_data.append({
-                    "line_number": line_number,  # Use sequential numbers
-                    "header_id": header_id,
-                    "item_id": line["item_id"],
-                    "quantity": line["quantity"],
-                    "unit_price": line["unit_price"],
-                    "line_total": line["line_total"],
-                    "uom_id": line["uom_id"],
-                    "created_by": current_userid,
-                    "updated_by": current_userid
-                })
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Added line: {line}")
-
-
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Completed processing order lines. Resulting line_data: {line_data}")
-
-            
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Lines data formed to send to create sales invoice lines function VEDAM {line_data}")
-
-            # Create Sales Invoice Lines
-            lines_response, status_code = create_sales_invoice_lines(header_id, line_data, USER_ID, MODULE_NAME, mydb)
-            if status_code != 200:
-                return jsonify(lines_response), status_code
-            account_lines = []
-            debit_total = Decimal(0)
-            credit_total = Decimal(0)
-
-            # Process Debit accounts
-            for debit_account in account_types.get("Debit", []):
-                account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_name"], mydb, USER_ID, MODULE_NAME)
-                distribution_percentage = Decimal(debit_account.get("distribution_percentage", 0)) / 100
-                debit_amount = totalamount * distribution_percentage
-
-                account_lines.append({
-                    "line_number": None,  # To be filled later with sequence
-                    "account_id": int(account_details["account_id"]),
-                    "debitamount": debit_amount,
-                    "creditamount": 0
-                })
-                debit_total += debit_amount
-
-                # Process Tax accounts first
-            if tax_id :                 
-                for credit_account in account_types.get("Credit", []):
-                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_name"], mydb, USER_ID, MODULE_NAME)
-                    if credit_account["category"] == "Tax":
-                        tax_amount = totalamount * Decimal(tax_rate)
-                        account_lines.append({
-                            "line_number": None,
-                            "account_id": int(account_details["account_id"]),
-                            "debitamount": 0,
-                            "creditamount": tax_amount
-                        })
-                        total_tax_amount += tax_amount
-
-            # Now process other Credit accounts   
-            for credit_account in account_types.get("Credit", []):
-                account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_name"], mydb, USER_ID, MODULE_NAME)
-                if credit_account["category"] != "Tax":
-                    remaining_amount = totalamount - total_tax_amount
-                    distribution_percentage = Decimal(credit_account.get("distribution_percentage", 0)) / 100
-                    credit_amount = remaining_amount * distribution_percentage
-
-                    account_lines.append({
-                        "line_number": None,
-                        "account_id": int(account_details["account_id"]),
-                        "debitamount": 0,
-                        "creditamount": credit_amount
-                    })
-                    credit_total += credit_amount
-
-            credit_total = credit_total + total_tax_amount
-            # Validate totals
-            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Total Debit and Credit amount : {debit_total} {credit_total} {totalamount}")            
-            if not (debit_total == credit_total == totalamount):
-                raise Exception("Debit and Credit totals do not match the total amount.")
-
-            # Distribute the accounts
-
-            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before checking the cursor and before forloop for acount_lines : {cursor} {mydb} {account_lines}  ") 
-
-            ##cursor = mydb.cursor(dictionary=True) 
-         
-            for line in account_lines:
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: In the for loop line {line}") 
-                cursor.execute('SET @next_val = 0;')
-                cursor.execute('CALL adm.get_next_sequence_value("SAL_DIST_LINE_NUMBER", @next_val);')
+                cursor.execute('SET @next_val = 0;')  # Initialize the variable
+                cursor.execute('CALL adm.get_next_sequence_value("SAL_HDR_INV_NUM", @next_val);')
                 cursor.execute('SELECT @next_val;')
                 result = cursor.fetchone()
-                logger.debug(f"Result from sequence retrieval: {result}")
 
                 if result is None or result['@next_val'] is None:
                     raise Exception("Failed to retrieve next line number.")
 
-                logger.error(f"Successfully got the , result was: {result}")
-                line_number = result['@next_val']  # Assign the value to line_number
-                logger.debug(f"Using line number: {line_number}")
+                invoice_number = result['@next_val']
 
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: In the for loop after  line_number assignment {line_number}")
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Using line number: {line_number}")
+                invoice_data = {
+                    "invoice_number": invoice_number,
+                    "partnerid": partnerid,
+                    "invoicedate": datetime.now().strftime('%Y-%m-%d'),
+                    "totalamount": totalamount,
+                    "status": invoice_status,
+                    "payment_terms": order["payment_terms"],
+                    "payment_duedate": (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d'),
+                    "tax_id": tax_id,
+                    "currency_id": order["currency_id"],
+                    "department_id": order["department_id"],
+                    "company_id": order["company_id"],
+                    "transaction_source": f"SO {order['header_id']}",
+                    "created_by": current_userid,
+                    "updated_by": current_userid
+                }
 
+                # Create Sales Invoice
+                header_response, status_code = create_sales_invoice(invoice_data, USER_ID, MODULE_NAME, mydb)
+                if status_code != 200:
+                    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Invoice Header Creation failed for SO {sales_header_id}. Response: {header_response}")
+                    continue  # Skip to the next sales order
+
+                header_id = header_response["header_id"]
+
+                # Fetch sales order lines
                 cursor.execute("""
-                    INSERT INTO fin.salesinvoiceaccounts (header_id, line_number, account_id, debitamount, creditamount, created_by, updated_by)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """, (
-                    header_id,
-                    line_number,
-                    line["account_id"],
-                    line["debitamount"],
-                    line["creditamount"],
-                    current_userid,
-                    current_userid
-                ))
-                mydb.commit()
+                    SELECT * FROM sal.sales_order_lines
+                    WHERE header_id = %s
+                """, (sales_header_id,))
+                order_lines = cursor.fetchall()
+                line_data = []
+                starting_line_number = 1  # Starting point for line numbers
 
-            if not update_soheader_and_lines_status(USER_ID, MODULE_NAME, mydb, sales_header_id, so_new_status):
-                return jsonify({'error': 'Failed to update sales order status'}), 500
-            
-            auto_invoice_log_data = {
-                'execution_id': execution_id,
-                'sales_header_id': sales_header_id,
-                'invoice_header_id': header_id,  # From the create_sales_invoice response
-                'so_header_prev_status': so_current_status,
-                'so_header_update_status': so_new_status,
-                'sales_invoice_status': invoice_data["status"],
-                'auto_inv_status': 'COMPLETED',
-                'created_by': current_userid,
-                'updated_by': current_userid
-            }
+                for index, line in enumerate(order_lines):
+                    line_number = starting_line_number + index
+                    line_data.append({
+                        "line_number": line_number,
+                        "header_id": header_id,
+                        "item_id": line["item_id"],
+                        "quantity": line["quantity"],
+                        "unit_price": line["unit_price"],
+                        "line_total": line["line_total"],
+                        "uom_id": line["uom_id"],
+                        "created_by": current_userid,
+                        "updated_by": current_userid
+                    })
 
-            log_auto_invoice(auto_invoice_log_data, mydb)
+                # Create Sales Invoice Lines
+                lines_response, status_code = create_sales_invoice_lines(header_id, line_data, USER_ID, MODULE_NAME, mydb)
+                if status_code != 200:
+                    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Invoice Line Creation failed for SO {sales_header_id}. Response: {lines_response}")
+                    continue  # Skip to the next sales order
 
-            responses.append({
-                "header_response": header_response,
-                "accounts": account_lines,
-                "lines": lines_response,
-                "message": "Sales order status updated to INVOICED successfully"
-            })
-        
-        #cursor.close()
+                account_lines = []
+                debit_total = Decimal(0)
+                credit_total = Decimal(0)
+                total_tax_amount = Decimal(0)  # Initialize the total tax amount
+
+                # Process Debit accounts
+                for debit_account in account_types.get("Debit", []):
+                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_name"], mydb, USER_ID, MODULE_NAME)
+                    distribution_percentage = Decimal(debit_account.get("distribution_percentage", 0)) / 100
+                    debit_amount = totalamount * distribution_percentage
+
+                    account_lines.append({
+                        "line_number": None,  # To be filled later with sequence
+                        "account_id": int(account_details["account_id"]),
+                        "debitamount": debit_amount,
+                        "creditamount": 0
+                    })
+                    debit_total += debit_amount
+
+                # Process Tax accounts first
+                if tax_id:
+                    for credit_account in account_types.get("Credit", []):
+                        account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_name"], mydb, USER_ID, MODULE_NAME)
+                        if credit_account["category"] == "Tax":
+                            tax_amount = totalamount * Decimal(tax_rate)
+                            account_lines.append({
+                                "line_number": None,
+                                "account_id": int(account_details["account_id"]),
+                                "debitamount": 0,
+                                "creditamount": tax_amount
+                            })
+                            total_tax_amount += tax_amount
+
+                # Now process other Credit accounts   
+                for credit_account in account_types.get("Credit", []):
+                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_name"], mydb, USER_ID, MODULE_NAME)
+                    if credit_account["category"] != "Tax":
+                        remaining_amount = totalamount - total_tax_amount
+                        distribution_percentage = Decimal(credit_account.get("distribution_percentage", 0)) / 100
+                        credit_amount = remaining_amount * distribution_percentage
+
+                        account_lines.append({
+                            "line_number": None,
+                            "account_id": int(account_details["account_id"]),
+                            "debitamount": 0,
+                            "creditamount": credit_amount
+                        })
+                        credit_total += credit_amount
+
+                credit_total += total_tax_amount
+
+                # Validate totals
+                if not (debit_total == credit_total == totalamount):
+                    raise Exception("Debit and Credit totals do not match the total amount.")
+
+                # Distribute the accounts
+                for line in account_lines:
+                    cursor.execute('SET @next_val = 0;')
+                    cursor.execute('CALL adm.get_next_sequence_value("SAL_DIST_LINE_NUMBER", @next_val);')
+                    cursor.execute('SELECT @next_val;')
+                    result = cursor.fetchone()
+                    if result is None or result['@next_val'] is None:
+                        raise Exception("Failed to retrieve next line number.")
+
+                    line_number = result['@next_val']  # Assign the value to line_number
+
+                    cursor.execute("""
+                        INSERT INTO fin.salesinvoiceaccounts (header_id, line_number, account_id, debitamount, creditamount, created_by, updated_by)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    """, (
+                        header_id,
+                        line_number,
+                        line["account_id"],
+                        line["debitamount"],
+                        line["creditamount"],
+                        current_userid,
+                        current_userid
+                    ))
+                    mydb.commit()
+
+                if not update_soheader_and_lines_status(USER_ID, MODULE_NAME, mydb, sales_header_id, so_new_status):
+                    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Failed to update sales order status for SO {sales_header_id}")
+                    continue  # Skip to the next sales order
+
+                auto_invoice_log_data = {
+                    'execution_id': execution_id,
+                    'sales_header_id': sales_header_id,
+                    'invoice_header_id': header_id,
+                    'so_header_prev_status': so_current_status,
+                    'so_header_update_status': so_new_status,
+                    'sales_invoice_status': invoice_data["status"],
+                    'auto_inv_status': 'COMPLETED',
+                    'created_by': current_userid,
+                    'updated_by': current_userid
+                }
+
+                log_auto_invoice(auto_invoice_log_data, mydb)
+
+                responses.append({
+                    "header_response": header_response,
+                    "accounts": account_lines,
+                    "lines": lines_response,
+                    "message": "Sales order status updated to INVOICED successfully"
+                })
+
+            except Exception as e:
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Error processing sales order {order['header_id']}: {str(e)}")
+                continue  # Continue to the next sales order
+
         mydb.close()
         return jsonify(responses), 200
 

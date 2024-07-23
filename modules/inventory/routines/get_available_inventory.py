@@ -31,7 +31,7 @@ def get_available_inventory(item_id, look_only_inventory_ids, mydb, current_user
             logger.debug("Executing base query.")
 
         result = mycursor.fetchall()
-        logger.debug(f"Fetched Available Inventory: {result}")
+        logger.debug(f"Fetched Available Inventory")
         return result
     except Exception as e:
         logger.error(f"{current_userid} --> {MODULE_NAME}: Error in fetching inventory: {str(e)}")

@@ -63,14 +63,18 @@ def update_sales_order_headers(mycursor, sales_line_status, sales_header_id):
         logger.error(f"Error updating sales order header for header_id {sales_header_id}: {str(e)}")
         raise e
 
-def update_pick_release_status(mycursor, rows):
+def update_pick_release_status(mycursor, rows, reverse_pick_release_status):
     try:
         for row in rows:
-            mycursor.execute("UPDATE sal.pick_release_log SET pick_release_status = 'REVERSED' WHERE log_id = %s", (row['log_id'],))
-        logger.debug("Updated pick_release_status in sal.pick_release_log for reversed entries")
+            mycursor.execute(
+                "UPDATE sal.pick_release_log SET pick_release_status = %s WHERE log_id = %s",
+                (reverse_pick_release_status, row['log_id'])
+            )
+        logger.debug(f"Updated pick_release_status in sal.pick_release_log to {reverse_pick_release_status} for relevant entries")
     except Exception as e:
         logger.error(f"Error updating pick_release_status: {str(e)}")
         raise e
+
     
 @reverse_pickrelease_inv_api.route('/reverse_pick_release', methods=['POST'])
 @permission_required(WRITE_ACCESS_TYPE, __file__)
@@ -95,10 +99,15 @@ def reverse_pick_release():
         sales_header_id = data.get('sales_header_id')
         sales_order_line_id = data.get('sales_order_line_id')
         inventory_id = data.get('inventory_id')
+        reverse_pick_release_status = data.get('reverse_pick_release')
 
         if not execution_id:
             logger.error("Execution ID is required in the request data")
             return jsonify(message='Execution ID is required'), 400
+        
+        if not reverse_pick_release_status:
+            logger.error("The reverse Pick release status is needed to process ")
+            return jsonify(message='The reverse Pick release status is needed to process'), 400
 
         mydb = get_database_connection(current_userid, MODULE_NAME)
         mydb.start_transaction()
@@ -125,7 +134,9 @@ def reverse_pick_release():
             if inventory_id is not None:
                 update_item_inventory(mycursor, inventory_id)
 
-            update_pick_and_ship_stage_status(USER_ID=current_userid, MODULE_NAME=MODULE_NAME, mydb=mydb, execution_id=execution_id, order_id=sales_header_id, line_id=sales_order_line_id)
+            update_pick_and_ship_stage_status(USER_ID=current_userid, MODULE_NAME=MODULE_NAME, mydb=mydb, 
+                                              reverse_pick_release_status=reverse_pick_release_status, execution_id=execution_id, 
+                                              order_id=sales_header_id, line_id=sales_order_line_id)
 
             if row['sales_line_status'] is not None and row['sales_line_new_status'] is not None and row['sales_line_status'] != row['sales_line_new_status']:
                 updated_picked_quantity = calculate_updated_picked_quantity(row['already_picked_quantity'],row['picked_quantity'])
@@ -134,7 +145,7 @@ def reverse_pick_release():
         for sales_header_id in sales_header_ids:
             update_sales_order_headers(mycursor, rows[0]['sales_line_status'], sales_header_id)
         
-        update_pick_release_status(mycursor, rows)
+        update_pick_release_status(mycursor, rows,reverse_pick_release_status)
         
         mydb.commit()
         logger.info("Pick release reversed successfully")

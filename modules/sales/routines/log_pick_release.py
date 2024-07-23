@@ -2,7 +2,7 @@ from modules.sales.routines.fetch_sales_line_details import fetch_sales_line_det
 from modules.utilities.logger import logger  # Import your logger module
 
 def log_pick_release(execution_id, sales_header_id, sales_order_line_id, sales_line_prev_status, 
-                     inventory_id, picked_quantity, created_by, mydb):
+                     inventory_id, picked_quantity, pick_status,created_by, mydb):
     try:
         # Fetch necessary data using fetch_sales_line_details function
         sales_order_line_data, status_code = fetch_sales_line_details(sales_header_id, sales_order_line_id, mydb)
@@ -29,7 +29,7 @@ def log_pick_release(execution_id, sales_header_id, sales_order_line_id, sales_l
             execution_id, sales_header_id, sales_order_line_id, sales_order_line_data.get('item_id'), sales_order_line_data.get('uom_id'), 
             sales_order_line_data.get('quantity'), sales_order_line_data.get('base_uom_id'), sales_order_line_data.get('base_quantity'), 
             sales_order_line_data.get('picked_quantity'),sales_line_prev_status, sales_order_line_data.get('status'),  inventory_id, 
-            picked_quantity, 'RELEASED', created_by
+            picked_quantity, pick_status, created_by
         )
 
         # Execute the query

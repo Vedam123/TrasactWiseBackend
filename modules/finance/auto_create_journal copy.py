@@ -21,7 +21,10 @@ def auto_create_journal():
 
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'auto_create_journal' function")
 
-        data = request.get_json() if request.content_type == 'application/json' else request.form
+        if request.content_type == 'application/json':
+            data = request.get_json()
+        else:
+            data = request.form
 
         current_userid = None
         if authorization_header and authorization_header.startswith('Bearer '):
@@ -35,7 +38,7 @@ def auto_create_journal():
             'current_userid': current_userid
         }
         
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before calling auto_create_journal_logic function sent data {data} ")
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before calling auto_create_journal_logic function")
         responses = auto_create_journal_logic(data, context)
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: After calling auto_create_journal_logic function {responses}")
         
