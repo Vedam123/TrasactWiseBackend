@@ -16,6 +16,7 @@ def distribute_invoice_to_accounts():
         token_results = ""
         USER_ID = ""
         MODULE_NAME = __name__
+        
         if authorization_header:
             token_results = get_user_from_token(authorization_header)
 
@@ -24,7 +25,7 @@ def distribute_invoice_to_accounts():
             token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
 
         # Log entry point
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'create_purchase_invoice_accounts' function")
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'distribute_invoice_to_accounts' function")
 
         mydb = get_database_connection(USER_ID, MODULE_NAME)
 
@@ -43,10 +44,10 @@ def distribute_invoice_to_accounts():
         # Log the received data
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
 
-        # Assuming your purchaseinvoiceaccounts table has columns like header_id, account_id, etc.
+        # Updated SQL query to include the is_tax_line field
         insert_query = """
-            INSERT INTO fin.purchaseinvoiceaccounts (header_id, line_number, account_id, debitamount, creditamount, created_by, updated_by)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO fin.purchaseinvoiceaccounts (header_id, line_number, account_id, debitamount, creditamount, is_tax_line, created_by, updated_by)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
 
         mycursor = mydb.cursor()
@@ -55,13 +56,17 @@ def distribute_invoice_to_accounts():
             response_accounts = []
 
             for account_data in data['lines']:  # Iterate over data['lines']
-                # Assuming the data dictionary contains the necessary keys for each account
+                # Extract the is_tax_line value from the request data, defaulting to False if not provided
+                is_tax_line = account_data.get('is_tax_line', False)
+
+                # Prepare the values for the SQL statement
                 insert_values = (
                     data.get('header_id'),  # Use data['header_id']
-                    account_data.get('line_number'),                    
+                    account_data.get('line_number'),
                     account_data.get('account_id'),
                     account_data.get('debitamount'),
                     account_data.get('creditamount'),
+                    is_tax_line,  # Include the is_tax_line value
                     current_userid,  # created_by
                     current_userid   # updated_by
                 )

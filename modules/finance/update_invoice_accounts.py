@@ -23,7 +23,6 @@ def update_invoice_accounts():
 
         if token_results:
             USER_ID = token_results["username"]
-            token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
 
         # Log entry point
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'update_invoice_accounts' function")
@@ -31,8 +30,7 @@ def update_invoice_accounts():
         mydb = get_database_connection(USER_ID, MODULE_NAME)
 
         current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
+        if authorization_header and authorization_header.startswith('Bearer '):
             token = authorization_header.replace('Bearer ', '')
             decoded_token = decode_token(token)
             current_userid = decoded_token.get('Userid')
@@ -58,6 +56,8 @@ def update_invoice_accounts():
         if not lines:
             return jsonify({'error': 'At least one line is required'}), 400
 
+        messages = []  # Accumulate messages for each line
+
         for line in lines:
             # Extract line specific fields
             line_id = line.get('line_id')
@@ -65,18 +65,21 @@ def update_invoice_accounts():
             account_id = int(line.get('account_id'))
             debitamount = float(line.get('debitamount'))
             creditamount = float(line.get('creditamount'))
+            is_tax_line = line.get('is_tax_line', False)  # Default to False if not provided
 
             # Check if a record exists with the given header_id and line_number
             record_exists = record_exists_in_database(mydb, header_id, line_number)
 
             if record_exists:
                 # Update the existing record
-                update_existing_record(mydb, header_id, line_number, account_id, debitamount, creditamount, current_userid)
+                update_existing_record(mydb, header_id, line_number, account_id, debitamount, creditamount, is_tax_line, current_userid)
                 message = f"Data for header_id {header_id} and line_number {line_number} is updated in the system"
             else:
                 # Insert a new record
-                insert_new_record(mydb, header_id, line_number, account_id, debitamount, creditamount, current_userid)
+                insert_new_record(mydb, header_id, line_number, account_id, debitamount, creditamount, is_tax_line, current_userid)
                 message = f"Data for header_id {header_id} and line_number {line_number} is inserted in the system"
+
+            messages.append(message)  # Add message for current line to the list
 
         # Log success
         logger.info(f"{USER_ID} --> {MODULE_NAME}: Updated or inserted invoice accounts")
@@ -84,7 +87,7 @@ def update_invoice_accounts():
         # Close the database connection
         mydb.close()
 
-        return jsonify({'success': True, 'message': message}), 200
+        return jsonify({'success': True, 'messages': messages}), 200
 
     except Exception as e:
         # Log any exceptions
@@ -117,12 +120,12 @@ def record_exists_in_database(mydb, header_id, line_number):
         # Close the cursor
         mycursor.close()
 
-def update_existing_record(mydb, header_id, line_number, account_id, debitamount, creditamount, current_userid):
+def update_existing_record(mydb, header_id, line_number, account_id, debitamount, creditamount, is_tax_line, current_userid):
     try:
         # Update query
         update_query = """
             UPDATE fin.purchaseinvoiceaccounts
-            SET account_id = %s, debitamount = %s, creditamount = %s, updated_by = %s
+            SET account_id = %s, debitamount = %s, creditamount = %s, is_tax_line = %s, updated_by = %s
             WHERE header_id = %s AND line_number = %s
         """
 
@@ -130,7 +133,7 @@ def update_existing_record(mydb, header_id, line_number, account_id, debitamount
         mycursor = mydb.cursor()
 
         # Execute the update query
-        mycursor.execute(update_query, (account_id, debitamount, creditamount, current_userid, header_id, line_number))
+        mycursor.execute(update_query, (account_id, debitamount, creditamount, is_tax_line, current_userid, header_id, line_number))
         mydb.commit()
 
     except Exception as e:
@@ -140,19 +143,19 @@ def update_existing_record(mydb, header_id, line_number, account_id, debitamount
         # Close the cursor
         mycursor.close()
 
-def insert_new_record(mydb, header_id, line_number, account_id, debitamount, creditamount, current_userid):
+def insert_new_record(mydb, header_id, line_number, account_id, debitamount, creditamount, is_tax_line, current_userid):
     try:
         # Insert query
         insert_query = """
-            INSERT INTO fin.purchaseinvoiceaccounts (header_id, line_number, account_id, debitamount, creditamount, created_by, updated_by)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO fin.purchaseinvoiceaccounts (header_id, line_number, account_id, debitamount, creditamount, is_tax_line, created_by, updated_by)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
 
         # Initialize the cursor
         mycursor = mydb.cursor()
 
         # Execute the insert query
-        mycursor.execute(insert_query, (header_id, line_number, account_id, debitamount, creditamount, current_userid, current_userid))
+        mycursor.execute(insert_query, (header_id, line_number, account_id, debitamount, creditamount, is_tax_line, current_userid, current_userid))
         mydb.commit()
 
     except Exception as e:

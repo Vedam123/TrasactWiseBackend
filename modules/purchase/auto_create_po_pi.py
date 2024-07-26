@@ -124,8 +124,8 @@ def create_purchase_invoice_accounts(header_id, account_lines, current_userid, m
         cursor = mydb.cursor(dictionary=True) 
 
         insert_accounts_query = """
-            INSERT INTO fin.purchaseinvoiceaccounts (line_number, header_id, account_id, debitamount, creditamount, created_by, updated_by)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO fin.purchaseinvoiceaccounts (line_number, header_id, account_id, debitamount, creditamount, is_tax_line, created_by, updated_by)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
 
         for account in account_lines:
@@ -139,12 +139,15 @@ def create_purchase_invoice_accounts(header_id, account_lines, current_userid, m
  
             line_number = int(result['@next_val'])
             logger.debug(f"New line number to insert into accounts:  {line_number}")
+            
+            # Include is_tax_line in the insert query
             cursor.execute(insert_accounts_query, (
                 line_number,
                 header_id,
                 int(account["account_id"]),
                 account["debitamount"],
                 account["creditamount"],
+                account.get("is_tax_line", False),  # Add is_tax_line field
                 current_userid,
                 current_userid
             ))
@@ -156,8 +159,6 @@ def create_purchase_invoice_accounts(header_id, account_lines, current_userid, m
     except Exception as e:
         logger.error(f"Unable to create purchase invoice accounts: {str(e)}")
         return {"error": str(e)}, 500
-
-
 
 
 
@@ -343,6 +344,7 @@ def auto_create_po_pi():
                         "header_id": header_id,
                         "account_id": int(account_details["account_id"]),
                         "debitamount": 0,
+                        "is_tax_line": False,  # Add is_tax_line field
                         "creditamount": credit_amount,
                         "created_by": current_userid,
                         "updated_by": current_userid
@@ -384,6 +386,7 @@ def auto_create_po_pi():
                             "account_id": int(account_details["account_id"]),
                             "debitamount": debit_amount,
                             "creditamount": 0,
+                            "is_tax_line": False,  # Add is_tax_line field
                             "created_by": current_userid,
                             "updated_by": current_userid
                         })

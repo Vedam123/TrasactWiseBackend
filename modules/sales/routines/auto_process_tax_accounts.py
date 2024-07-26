@@ -60,6 +60,7 @@ def auto_process_tax_accounts(order, totalamount, account_types, account_lines, 
                     "line_number": None,
                     "account_id": int(account_details["account_id"]),
                     "debitamount": 0,
+                    "is_tax_line": True,  # Set is_tax_line to False for debit accounts                    
                     "creditamount": tax_allocation_amount
                 })
 

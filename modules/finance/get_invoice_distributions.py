@@ -47,7 +47,7 @@ def get_invoice_distributions():
                 pia.line_id, pia.line_number, pia.header_id, pia.account_id, pia.debitamount, pia.creditamount, 
                 pia.created_at, pia.updated_at, pia.created_by, pia.updated_by,
                 a.account_number, a.account_name, a.account_type,
-                pi.invoice_number, pi.totalamount,a.account_category
+                pi.invoice_number, pi.totalamount,a.account_category ,pia.is_tax_line
             FROM fin.purchaseinvoiceaccounts pia
             LEFT JOIN fin.accounts a ON pia.account_id = a.account_id
             LEFT JOIN fin.purchaseinvoice pi ON pia.header_id = pi.header_id

@@ -22,7 +22,7 @@ def distribute_sales_invoice_to_accounts():
 
         mydb = get_database_connection(USER_ID, MODULE_NAME)
 
-        current_userid = decode_token(authorization_header.replace('Bearer ', '')).get('Userid') if authorization_header.startswith('Bearer ') else None
+        current_userid = decode_token(authorization_header.replace('Bearer ', '')).get('Userid') if authorization_header and authorization_header.startswith('Bearer ') else None
 
         if request.content_type == 'application/json':
             data = request.get_json()
@@ -32,10 +32,10 @@ def distribute_sales_invoice_to_accounts():
         # Log the received data
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
 
-        # Assuming your salesinvoiceaccounts table has columns like header_id, account_id, etc.
+        # Updated SQL query to include the is_tax_line field
         insert_query = """
-            INSERT INTO fin.salesinvoiceaccounts (header_id, line_number, account_id, debitamount, creditamount, created_by, updated_by)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO fin.salesinvoiceaccounts (header_id, line_number, account_id, debitamount, creditamount, is_tax_line, created_by, updated_by)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
 
         mycursor = mydb.cursor()
@@ -45,13 +45,17 @@ def distribute_sales_invoice_to_accounts():
 
             if 'lines' in data:  # Check if 'lines' key exists in data
                 for item in data['lines']:  # Iterate over each item in 'lines'
-                    # Assuming the item dictionary contains the necessary keys for each account
+                    # Extract the is_tax_line value from the request data, defaulting to False if not provided
+                    is_tax_line = item.get('is_tax_line', False)
+
+                    # Prepare the values for the SQL statement
                     insert_values = (
                         data.get('header_id'),  
                         item.get('line_number'),  # Extract 'line_number' from item                 
                         item.get('account_id'),
                         item.get('debitamount'),
                         item.get('creditamount'),
+                        is_tax_line,  # Include the is_tax_line value
                         current_userid,  # created_by
                         current_userid   # updated_by
                     )

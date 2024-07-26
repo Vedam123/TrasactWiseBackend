@@ -219,9 +219,9 @@ def auto_create_so_si():
                     raise Exception("Failed to retrieve next line number.")
 
                 invoice_number = result['@next_val']
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Check the cnew tax_id  ? {new_tax_id}")                
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Check the new tax_id  ? {new_tax_id}")                
                 invoice_data = None
-                if tax_id :
+                if tax_id:
                     invoice_data = {
                         "invoice_number": invoice_number,
                         "partnerid": partnerid,
@@ -308,7 +308,8 @@ def auto_create_so_si():
                         "line_number": None,  # To be filled later with sequence
                         "account_id": int(account_details["account_id"]),
                         "debitamount": debit_amount,
-                        "creditamount": 0
+                        "creditamount": 0,
+                        "is_tax_line": False  # Set is_tax_line to False for debit accounts
                     })
                     debit_total += debit_amount
 
@@ -317,7 +318,7 @@ def auto_create_so_si():
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before calling the Auto process tax accounts Orders ----------->: {order}")
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before calling the Auto process tax accounts account types  ----------->: {account_types} ")
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before calling the Auto process tax accounts account lines  ----------->: {account_lines} ")
-                total_tax_amount= auto_process_tax_accounts(order, totalamount, account_types, account_lines, USER_ID, MODULE_NAME, mydb)       
+                total_tax_amount = auto_process_tax_accounts(order, totalamount, account_types, account_lines, USER_ID, MODULE_NAME, mydb)       
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: After calling the Auto process tax accounts Orders ----------->: {order}")
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: After calling the Auto process tax accounts account types  ----------->: {account_types} ")
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: After calling the Auto process tax accounts account lines  ----------->: {account_lines} ")
@@ -335,7 +336,8 @@ def auto_create_so_si():
                             "line_number": None,
                             "account_id": int(account_details["account_id"]),
                             "debitamount": 0,
-                            "creditamount": credit_amount
+                            "creditamount": credit_amount,
+                            "is_tax_line": False  # Set is_tax_line to False for credit accounts
                         })
                         credit_total += credit_amount
 
@@ -361,14 +363,15 @@ def auto_create_so_si():
                     line_number = result['@next_val']  # Assign the value to line_number
 
                     cursor.execute("""
-                        INSERT INTO fin.salesinvoiceaccounts (header_id, line_number, account_id, debitamount, creditamount, created_by, updated_by)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s)
+                        INSERT INTO fin.salesinvoiceaccounts (header_id, line_number, account_id, debitamount, creditamount, is_tax_line, created_by, updated_by)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                     """, (
                         header_id,
                         line_number,
                         line["account_id"],
                         line["debitamount"],
                         line["creditamount"],
+                        line["is_tax_line"],  # Insert is_tax_line value
                         current_userid,
                         current_userid
                     ))
