@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, jsonify, request
+from flask import  Blueprint, jsonify, request
 import uuid
 from flask_jwt_extended import decode_token
 from modules.admin.databases.mydb import get_database_connection
@@ -7,10 +7,11 @@ from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 from config import WRITE_ACCESS_TYPE
 from datetime import datetime, timedelta
-from modules.finance.routines.get_default_tax_rates import get_default_tax_rates
 from modules.finance.routines.get_account_details import get_account_details
 from modules.sales.routines.update_soheader_and_lines_status import update_soheader_and_lines_status
 from modules.sales.routines.log_auto_invoice import log_auto_invoice
+from modules.common.routines.get_tax_rate_by_company_id import get_tax_rate_by_company_id
+from modules.sales.routines.auto_process_tax_accounts import auto_process_tax_accounts
 from decimal import Decimal,ROUND_HALF_UP
 import traceback
 
@@ -189,6 +190,12 @@ def auto_create_so_si():
         if not sales_orders:
             logger.debug(f"{USER_ID} --> {MODULE_NAME}: No Sales Orders fetched with the given status: {sales_orders}")
             return jsonify({'message': 'No Sales Orders fetched with the given status', 'sales_orders': sales_orders}), 404
+        
+        new_input_tax_type = None
+        for find_tax_type in account_types.get("Credit", []):
+            if find_tax_type["category"] == "Tax":
+                new_input_tax_type = find_tax_type["tax_type"]
+                break
 
         for order in sales_orders:
             try:
@@ -196,10 +203,12 @@ def auto_create_so_si():
                 sales_header_id = header_id
                 so_current_status = order["status"]
                 partnerid = order["customer_id"]
+                company_id = order["company_id"]
                 totalamount = order["total_amount"]
                 tax_id = order["tax_id"]
-                tax_rate = 0.1  # Replace with actual logic if needed
-                tax_account_type = data.get("tax_account_type")
+                new_tax_id = None
+                if not tax_id:
+                    new_tax_id, new_tax_rate = get_tax_rate_by_company_id(company_id, new_input_tax_type, USER_ID, MODULE_NAME, mydb)
 
                 cursor.execute('SET @next_val = 0;')  # Initialize the variable
                 cursor.execute('CALL adm.get_next_sequence_value("SAL_HDR_INV_NUM", @next_val);')
@@ -210,25 +219,44 @@ def auto_create_so_si():
                     raise Exception("Failed to retrieve next line number.")
 
                 invoice_number = result['@next_val']
-
-                invoice_data = {
-                    "invoice_number": invoice_number,
-                    "partnerid": partnerid,
-                    "invoicedate": datetime.now().strftime('%Y-%m-%d'),
-                    "totalamount": totalamount,
-                    "status": invoice_status,
-                    "payment_terms": order["payment_terms"],
-                    "payment_duedate": (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d'),
-                    "tax_id": tax_id,
-                    "currency_id": order["currency_id"],
-                    "department_id": order["department_id"],
-                    "company_id": order["company_id"],
-                    "transaction_source": f"SO {order['header_id']}",
-                    "created_by": current_userid,
-                    "updated_by": current_userid
-                }
-
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Check the cnew tax_id  ? {new_tax_id}")                
+                invoice_data = None
+                if tax_id :
+                    invoice_data = {
+                        "invoice_number": invoice_number,
+                        "partnerid": partnerid,
+                        "invoicedate": datetime.now().strftime('%Y-%m-%d'),
+                        "totalamount": totalamount,
+                        "status": invoice_status,
+                        "payment_terms": order["payment_terms"],
+                        "payment_duedate": (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d'),
+                        "tax_id": tax_id,
+                        "currency_id": order["currency_id"],
+                        "department_id": order["department_id"],
+                        "company_id": order["company_id"],
+                        "transaction_source": f"SO {order['header_id']}",
+                        "created_by": current_userid,
+                        "updated_by": current_userid
+                    }
+                else:
+                    invoice_data = {
+                        "invoice_number": invoice_number,
+                        "partnerid": partnerid,
+                        "invoicedate": datetime.now().strftime('%Y-%m-%d'),
+                        "totalamount": totalamount,
+                        "status": invoice_status,
+                        "payment_terms": order["payment_terms"],
+                        "payment_duedate": (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d'),
+                        "tax_id": new_tax_id,
+                        "currency_id": order["currency_id"],
+                        "department_id": order["department_id"],
+                        "company_id": order["company_id"],
+                        "transaction_source": f"SO {order['header_id']}",
+                        "created_by": current_userid,
+                        "updated_by": current_userid
+                    }
                 # Create Sales Invoice
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Invoice Header Creation failed for SO OBSERVE tax_id IS EMPTY ? {invoice_data}")
                 header_response, status_code = create_sales_invoice(invoice_data, USER_ID, MODULE_NAME, mydb)
                 if status_code != 200:
                     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Invoice Header Creation failed for SO {sales_header_id}. Response: {header_response}")
@@ -285,19 +313,16 @@ def auto_create_so_si():
                     debit_total += debit_amount
 
                 # Process Tax accounts first
-                if tax_id:
-                    for credit_account in account_types.get("Credit", []):
-                        account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_name"], mydb, USER_ID, MODULE_NAME)
-                        if credit_account["category"] == "Tax":
-                            tax_amount = totalamount * Decimal(tax_rate)
-                            account_lines.append({
-                                "line_number": None,
-                                "account_id": int(account_details["account_id"]),
-                                "debitamount": 0,
-                                "creditamount": tax_amount
-                            })
-                            total_tax_amount += tax_amount
-
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before calling the Auto process tax accounts function START ----------->")
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before calling the Auto process tax accounts Orders ----------->: {order}")
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before calling the Auto process tax accounts account types  ----------->: {account_types} ")
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before calling the Auto process tax accounts account lines  ----------->: {account_lines} ")
+                total_tax_amount= auto_process_tax_accounts(order, totalamount, account_types, account_lines, USER_ID, MODULE_NAME, mydb)       
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: After calling the Auto process tax accounts Orders ----------->: {order}")
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: After calling the Auto process tax accounts account types  ----------->: {account_types} ")
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: After calling the Auto process tax accounts account lines  ----------->: {account_lines} ")
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: After calling the Auto process tax accounts function END  ----------->")
+                
                 # Now process other Credit accounts   
                 for credit_account in account_types.get("Credit", []):
                     account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_name"], mydb, USER_ID, MODULE_NAME)
@@ -315,7 +340,6 @@ def auto_create_so_si():
                         credit_total += credit_amount
 
                 credit_total += total_tax_amount
-
               
                 debit_total = Decimal(debit_total).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
                 credit_total = Decimal(credit_total).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)

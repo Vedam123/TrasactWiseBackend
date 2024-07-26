@@ -48,7 +48,7 @@ def get_sales_invoice_accounts():
                 sia.created_at, sia.updated_at, sia.created_by, sia.updated_by,
                 a.account_number, a.account_name, a.account_type,
                 si.invoice_number, si.totalamount,
-                cur.currencycode, cur.currencyname, cur.currencysymbol
+                cur.currencycode, cur.currencyname, cur.currencysymbol,a.account_category,a.account_type
             FROM fin.salesinvoiceaccounts sia
             LEFT JOIN fin.accounts a ON sia.account_id = a.account_id
             LEFT JOIN fin.salesinvoice si ON sia.header_id = si.header_id

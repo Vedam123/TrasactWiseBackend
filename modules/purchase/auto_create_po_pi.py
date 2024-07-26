@@ -10,6 +10,8 @@ from datetime import datetime, timedelta
 from modules.purchase.routines.log_auto_purchase_invoice import log_auto_purchase_invoice
 from modules.purchase.routines.update_poheader_and_lines_status import update_poheader_and_lines_status
 from modules.finance.routines.get_account_details import get_account_details
+from modules.common.routines.get_tax_rate_by_company_id import get_tax_rate_by_company_id
+from modules.purchase.routines.auto_process_tax_accounts import auto_process_tax_accounts
 from decimal import Decimal,ROUND_HALF_UP
 
 # Helper function to create purchase invoice header
@@ -117,7 +119,7 @@ def create_purchase_invoice_lines(header_id, lines, USER_ID, MODULE_NAME, mydb):
 # Main API to create purchase invoice and distribute
 
 def create_purchase_invoice_accounts(header_id, account_lines, current_userid, mydb):
-    logger.debug(f"Entered the create_purchase_invoice_accounts function for header_id: {header_id}")
+    logger.debug(f"Entered the create_purchase_invoice_accounts function for header_id: {header_id}, account lines --> {account_lines}")
     try:
         cursor = mydb.cursor(dictionary=True) 
 
@@ -136,6 +138,7 @@ def create_purchase_invoice_accounts(header_id, account_lines, current_userid, m
                 raise Exception("Failed to retrieve next line number.")
  
             line_number = int(result['@next_val'])
+            logger.debug(f"New line number to insert into accounts:  {line_number}")
             cursor.execute(insert_accounts_query, (
                 line_number,
                 header_id,
@@ -217,13 +220,24 @@ def auto_create_po_pi():
         responses = []
         total_tax_amount = Decimal(0)
 
+        new_input_tax_type = None
+        for find_tax_type in account_types.get("Credit", []):
+            if find_tax_type["category"] == "Tax":
+                new_input_tax_type = find_tax_type["tax_type"]
+                break
+
         for order in purchase_orders:
             try:
                 header_id = order["header_id"]
                 pur_order_header_id = header_id
                 supplier_id = order["supplier_id"]
+                company_id = order["company_id"]
                 totalamount = Decimal(order["total_amount"])
                 tax_id = order["tax_id"]
+                new_tax_id = None
+                if not tax_id:
+                    new_tax_id, new_tax_rate = get_tax_rate_by_company_id(company_id, new_input_tax_type, USER_ID, MODULE_NAME, mydb)
+
                 tax_rate = 0.1  # Replace with actual logic if needed
 
                 cursor.execute('SET @next_val = 0;')
@@ -235,23 +249,40 @@ def auto_create_po_pi():
                     raise Exception("Failed to retrieve next invoice number.")
 
                 invoice_number = result['@next_val']
-
-                invoice_data = {
-                    "invoice_number": invoice_number,
-                    "partnerid": supplier_id,
-                    "invoicedate": datetime.now().strftime('%Y-%m-%d'),
-                    "totalamount": totalamount,
-                    "status": invoice_status,
-                    "payment_terms": po_payment_terms,
-                    "payment_duedate": (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d'),
-                    "tax_id": tax_id,
-                    "currency_id": order["currency_id"],
-                    "department_id": order["department_id"],
-                    "company_id": order["company_id"],
-                    "transaction_source": f"PO {order['header_id']}",
-                    "created_by": current_userid,
-                    "updated_by": current_userid
-                }
+                if tax_id :
+                    invoice_data = {
+                        "invoice_number": invoice_number,
+                        "partnerid": supplier_id,
+                        "invoicedate": datetime.now().strftime('%Y-%m-%d'),
+                        "totalamount": totalamount,
+                        "status": invoice_status,
+                        "payment_terms": po_payment_terms,
+                        "payment_duedate": (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d'),
+                        "tax_id": tax_id,
+                        "currency_id": order["currency_id"],
+                        "department_id": order["department_id"],
+                        "company_id": order["company_id"],
+                        "transaction_source": f"PO {order['header_id']}",
+                        "created_by": current_userid,
+                        "updated_by": current_userid
+                    }
+                else:
+                    invoice_data = {
+                        "invoice_number": invoice_number,
+                        "partnerid": supplier_id,
+                        "invoicedate": datetime.now().strftime('%Y-%m-%d'),
+                        "totalamount": totalamount,
+                        "status": invoice_status,
+                        "payment_terms": po_payment_terms,
+                        "payment_duedate": (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d'),
+                        "tax_id": new_tax_id,
+                        "currency_id": order["currency_id"],
+                        "department_id": order["department_id"],
+                        "company_id": order["company_id"],
+                        "transaction_source": f"PO {order['header_id']}",
+                        "created_by": current_userid,
+                        "updated_by": current_userid
+                    }
 
                 # Create Purchase Invoice
                 header_response, status_code = create_purchase_invoice(invoice_data, USER_ID, MODULE_NAME, mydb)
@@ -319,31 +350,33 @@ def auto_create_po_pi():
 
 
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 0000")
-                if tax_id :
-                    for debit_account in account_types.get("Debit", []):                 
-                        if "Tax" in debit_account["category"] :
-                            debit_amount = totalamount * Decimal(tax_rate)  # Taxable amount based on total amount
-                            tax_total += debit_amount
-                            account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_name"], mydb, USER_ID, MODULE_NAME) 
-                            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 1")  
-                            account_lines.append({
-                                "line_number": debit_account["account_name"],
-                                "header_id": header_id,
-                                "account_id": int(account_details["account_id"]),
-                                "debitamount": debit_amount,
-                                "creditamount": 0,
-                                "created_by": current_userid,
-                                "updated_by": current_userid
-                            })
+                total_tax_amount= auto_process_tax_accounts(order, totalamount, account_types, account_lines, USER_ID, MODULE_NAME, mydb) 
+                
+ #               if tax_id :
+ #                   for debit_account in account_types.get("Debit", []):                 
+ #                       if "Tax" in debit_account["category"] :
+ #                           debit_amount = totalamount * Decimal(tax_rate)  # Taxable amount based on total amount
+ #                           tax_total += debit_amount
+ #                           account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_name"], mydb, USER_ID, MODULE_NAME) 
+ #                          logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 1")  
+ #                           account_lines.append({
+ #                               "line_number": debit_account["account_name"],
+ #                               "header_id": header_id,
+ #                               "account_id": int(account_details["account_id"]),
+ #                               "debitamount": debit_amount,
+ #                               "creditamount": 0,
+ #                               "created_by": current_userid,
+ #                               "updated_by": current_userid
+ #                           })
 
-                remaining_amount = totalamount - tax_total
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 2 Total, remaining, tax total ,{totalamount} , {remaining_amount} {tax_total}")  
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 2 Total, remaining, tax total ,{totalamount} , {account_types} {total_tax_amount}")  
                 for debit_account in account_types.get("Debit", []):
                     if "Tax" not in debit_account["category"]:  # Only non-tax accounts
+
+                        remaining_amount = totalamount - total_tax_amount
                         distribution_percentage = Decimal(debit_account.get("distribution_percentage", 0)) / 100
                         debit_amount = remaining_amount * distribution_percentage
 
-                        debit_total += debit_amount
                         account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_name"], mydb, USER_ID, MODULE_NAME) 
                         account_lines.append({
                             "line_number": debit_account["account_name"],
@@ -354,8 +387,9 @@ def auto_create_po_pi():
                             "created_by": current_userid,
                             "updated_by": current_userid
                         })
+                        debit_total += debit_amount
                 
-                debit_total = debit_total + tax_total
+                debit_total = debit_total + total_tax_amount
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 3 Debit total {debit_total}")  
                 # Insert account lines into purchase invoice accounts table
 
