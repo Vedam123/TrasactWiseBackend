@@ -87,9 +87,9 @@ def create_purchase_invoice_lines(header_id, lines, USER_ID, MODULE_NAME, mydb):
                 next_val,
                 header_id,
                 line["item_id"],
-                line["quantity"],
-                line["unit_price"],
-                line["line_total"],
+                Decimal(line["quantity"]).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP),
+                Decimal(line["unit_price"]).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP),
+                Decimal(line["line_total"]).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP),
                 line["uom_id"],
                 line['created_by'],
                 line['updated_by']
@@ -145,8 +145,8 @@ def create_purchase_invoice_accounts(header_id, account_lines, current_userid, m
                 line_number,
                 header_id,
                 int(account["account_id"]),
-                account["debitamount"],
-                account["creditamount"],
+                Decimal(account["debitamount"]).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP),         
+                Decimal(account["creditamount"]).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP),        
                 account.get("is_tax_line", False),  # Add is_tax_line field
                 current_userid,
                 current_userid
@@ -220,6 +220,7 @@ def auto_create_po_pi():
         purchase_orders = cursor.fetchall()
         responses = []
         total_tax_amount = Decimal(0)
+        total_tax_amount= Decimal(total_tax_amount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
         new_input_tax_type = None
         for find_tax_type in account_types.get("Credit", []):
@@ -233,7 +234,7 @@ def auto_create_po_pi():
                 pur_order_header_id = header_id
                 supplier_id = order["supplier_id"]
                 company_id = order["company_id"]
-                totalamount = Decimal(order["total_amount"])
+                totalamount = Decimal(order["total_amount"]).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
                 tax_id = order["tax_id"]
                 new_tax_id = None
                 if not tax_id:
@@ -309,10 +310,10 @@ def auto_create_po_pi():
                     line_data.append({
                         "line_number": line_number,
                         "header_id": header_id,
-                        "item_id": line["item_id"],
-                        "quantity": line["quantity"],
-                        "unit_price": line["unit_price"],
-                        "line_total": line["line_total"],
+                        "item_id": line["item_id"],                     
+                        "quantity":Decimal(line["quantity"]).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP),
+                        "unit_price": Decimal(line["unit_price"]).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP),
+                        "line_total": Decimal(line["line_total"]).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP),                       
                         "uom_id": line["uom_id"],
                         "created_by": current_userid,
                         "updated_by": current_userid
@@ -338,6 +339,9 @@ def auto_create_po_pi():
                     credit_amount = totalamount * distribution_percentage
 
                     credit_total += credit_amount
+                    logger.debug(f"{USER_ID} --> {MODULE_NAME}: TO BE INSERTED CREDIT before  ROUNDING: {credit_amount}")
+                    credit_amount = Decimal(credit_amount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                    logger.debug(f"{USER_ID} --> {MODULE_NAME}: TO BE INSERTED CREDIT AMOUNT AFTER ROUNDING: {credit_amount}")
 
                     account_lines.append({
                         "line_number": None,
@@ -378,6 +382,10 @@ def auto_create_po_pi():
                         remaining_amount = totalamount - total_tax_amount
                         distribution_percentage = Decimal(debit_account.get("distribution_percentage", 0)) / 100
                         debit_amount = remaining_amount * distribution_percentage
+                        debit_total += debit_amount
+                        logger.debug(f"{USER_ID} --> {MODULE_NAME}: TO BE INSERTED DEBIT AMOUNT before  ROUNDING: {debit_amount}")
+                        debit_amount = Decimal(debit_amount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                        logger.debug(f"{USER_ID} --> {MODULE_NAME}: TO BE INSERTED DEBIT AMOUNT AFTER ROUNDING: {debit_amount}")
 
                         account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_name"], mydb, USER_ID, MODULE_NAME) 
                         account_lines.append({
@@ -390,7 +398,7 @@ def auto_create_po_pi():
                             "created_by": current_userid,
                             "updated_by": current_userid
                         })
-                        debit_total += debit_amount
+
                 
                 debit_total = debit_total + total_tax_amount
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 3 Debit total {debit_total}")  
