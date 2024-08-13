@@ -46,7 +46,7 @@ def get_journal_lines():
                 jl.created_at, jl.updated_at, jl.created_by, jl.updated_by,
                 jl.line_number,  -- Include line_number field in the select query
                 jh.source_number, 
-                a.account_number, a.account_name, a.account_type,
+                a.account_number, a.account_name, a.account_type,a.account_category,
                 cur.currencycode, cur.currencyname, cur.currencysymbol
             FROM fin.journal_lines jl
             LEFT JOIN fin.journal_headers jh ON jl.header_id = jh.header_id

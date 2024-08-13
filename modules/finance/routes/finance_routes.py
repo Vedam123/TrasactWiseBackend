@@ -37,6 +37,11 @@ from modules.finance.get_default_tax_headers import get_default_tax_headers
 from modules.finance.create_default_tax_headers import create_default_tax_headers
 from modules.finance.get_default_account_headers import get_default_account_headers
 from modules.finance.auto_create_journal import auto_create_journal
+from modules.finance.update_journal_header import update_journal_header
+from modules.finance.update_journal_line import update_journal_line
+from modules.finance.delete_journal_line import delete_journal_line
+from modules.finance.validate_journal import validate_journal
+
 
 from modules.utilities.logger import logger  # Import the logger module
 
@@ -153,6 +158,12 @@ def get_default_account_headers_all():
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get get_default_account_headers")
     return get_default_account_headers()
 
+@finance_get_routes.route('/validate_journal', methods=['GET'])
+def validate_journal_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get validate_journal")
+    return validate_journal()
 
 # POST routes -----------------------------------------------------
 @finance_post_routes.route('/create_account', methods=['POST'])
@@ -292,6 +303,20 @@ def update_sales_invoice_accounts_all():
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: update sales invoice accounts ")
     return update_sales_invoice_accounts()
 
+@finance_update_routes.route('/update_journal_header', methods=['PUT'])
+def update_journal_headers_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to update Journal Headers")
+    return update_journal_header()
+
+@finance_update_routes.route('/update_journal_line', methods=['PUT'])
+def update_journal_line_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to  update_journal_line")
+    return update_journal_line()
+
 # DELETE Methods ---------------------------------------------------------
 
 @finance_delete_routes.route('/delete_purchase_invoice_lines', methods=['DELETE'])
@@ -323,6 +348,12 @@ def delete_sales_invoice_account_all():
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to delete sales invoice accounts")
     return delete_sales_invoice_account()
 
+@finance_delete_routes.route('/delete_journal_line', methods=['DELETE'])
+def delete_journal_line_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to delete_journal_line")
+    return delete_journal_line()
 
 
 
