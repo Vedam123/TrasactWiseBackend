@@ -44,6 +44,9 @@ def create_item_category():
     else:
         data = request.form
 
+
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received Input {data}")
+    
     category_name = data.get('category_name')
     description = data.get('description')
     is_active = data.get('is_active')
@@ -52,6 +55,8 @@ def create_item_category():
 
     # Handling images
     images = request.files.getlist('images')  # Assuming images are sent as a list of files
+
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received Image files  {images}")
 
     logger.info(f"{USER_ID} --> {MODULE_NAME}: Parsed Request Data: %s", data)
 

@@ -9,6 +9,8 @@ from modules.products.uom_conversion import convert_quantity_endpoint
 from modules.products.baseunit_uom_conversion import baseunit_uom_conversion
 from modules.products.currency_conversion import currency_conversion
 from modules.products.get_category_images import get_category_images
+from modules.products.get_item_images import get_item_images
+
 from modules.utilities.logger import logger  # Import the logger module
 
 # Create blueprints
@@ -64,6 +66,13 @@ def get_category_images_all():
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: get_category_images ")
     return get_category_images()
+
+@item_create_routes.route('/get_item_images', methods=['GET'])
+def get_item_images_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: get_item_images ")
+    return get_item_images()
 
 # POST routes -----------------------------------------------------
 @item_create_routes.route('/create_items', methods=['POST'])

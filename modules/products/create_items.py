@@ -15,11 +15,17 @@ def create_items():
     token_results = ""
     USER_ID = ""
     MODULE_NAME = __name__
+    
     if authorization_header:
-        token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
+        token_results = get_user_from_token(authorization_header) if authorization_header else None
 
     if token_results:
         USER_ID = token_results["username"]
+    
+    if request.content_type == 'application/json':
+        data = request.get_json()
+    else:
+        data = request.form
 
     # Log entry point
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the create item data function")
@@ -27,83 +33,104 @@ def create_items():
     mydb = get_database_connection(USER_ID, MODULE_NAME)
 
     current_userid = None
-    authorization_header = request.headers.get('Authorization', '')
     if authorization_header.startswith('Bearer '):
         token = authorization_header.replace('Bearer ', '')
         decoded_token = decode_token(token)
         current_userid = decoded_token.get('Userid')
 
     # Get the data from the request's form data
-    item_code = request.form.get('item_code')
-    item_name = request.form.get('item_name')
-    category_id = request.form.get('category_id')
-    unit_price = request.form.get('unit_price')
-    manufacturer = request.form.get('manufacturer')
-    barcode = request.form.get('barcode')
-    stock_quantity = request.form.get('stock_quantity')
-    min_stock_level = request.form.get('min_stock_level')
-    max_stock_level = request.form.get('max_stock_level')
-    reorder_point = request.form.get('reorder_point')
-    lead_time = request.form.get('lead_time')
-    shelf_life = request.form.get('shelf_life') or None
-    location = request.form.get('location')
-    product_type = request.form.get('product_type')
-    notes = request.form.get('notes')
-    default_uom_id = request.form.get('default_uom_id')
-    expiry_date_flag = request.form.get('expiry_date_flag') == 'true'  # Convert to boolean
-    expiry_date = request.form.get('expiry_date') or None
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received Input {data}")
+    item_code = data.get('item_code')
+    item_name = data.get('item_name')
+    category_id = data.get('category_id')
+    manufacturer = data.get('manufacturer')
+    barcode = data.get('barcode') or None
+    stock_quantity = data.get('stock_quantity') or None
+    min_stock_level = data.get('min_stock_level') or None
+    max_stock_level = data.get('max_stock_level') or None
+    reorder_point = data.get('reorder_point') or None
+    lead_time = data.get('lead_time') or None
+    shelf_life = data.get('shelf_life') or None
+    location = data.get('location') or None
+    product_type = data.get('product_type')
+    notes = data.get('notes')
+    default_uom_id = data.get('default_uom_id')
+    expiry_date_flag = data.get('expiry_date_flag') == 'true'  # Convert to boolean
+    expiry_date = data.get('expiry_date') or None
 
-    # Handle file upload
-    item_image = request.files.get('item_image')
-    image_binary = None
-    if item_image:
-        try:
-            image_binary = item_image.read()
-        except Exception as e:
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Failed to process image: %s", str(e))
-            return jsonify({'message': 'Failed to process image.', 'error': str(e)}), 400
+    # Handle multiple file uploads
+    image_files = request.files.getlist('item_images')
+    
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received Image files  {image_files}")
 
-    # Validate the required fields
-    if not item_code or not item_name or not category_id or not unit_price:
-        logger.warning(f"{USER_ID} --> {MODULE_NAME}: Required fields are missing: item_code=%s, item_name=%s, category_id=%s, unit_price=%s",
-                       item_code, item_name, category_id, unit_price)
-        return jsonify({'message': 'item_code, item_name, category_id, and unit_price are required fields.'}), 400
+    # Validate the required fields (remove unit_price validation)
+    if not item_code or not item_name or not category_id:
+        logger.warning(f"{USER_ID} --> {MODULE_NAME}: Required fields are missing: item_code=%s, item_name=%s, category_id=%s",
+                       item_code, item_name, category_id)
+        return jsonify({'message': 'item_code, item_name, and category_id are required fields.'}), 400
 
-    # Insert a new item into the database
-    query = """
-        INSERT INTO com.items 
-        (item_code, item_name, category_id, unit_price, manufacturer, barcode, stock_quantity, min_stock_level, 
-        max_stock_level, reorder_point, lead_time, shelf_life, location, product_type, item_image, notes, 
-        default_uom_id, expiry_date_flag, expiry_date, created_by, updated_by) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    """
-    values = (
-        item_code, item_name, category_id, unit_price, manufacturer, barcode, stock_quantity, min_stock_level, 
-        max_stock_level, reorder_point, lead_time, shelf_life, location, product_type, image_binary, notes, 
-        default_uom_id, expiry_date_flag, expiry_date, current_userid, current_userid
-    )
-
-    mycursor = mydb.cursor()
     try:
-        mycursor.execute(query, values)
-        mydb.commit()
+        # Insert a new item into the database (remove unit_price from query and values)
+       # Corrected SQL query after removing unit_price
+        item_query = """
+            INSERT INTO com.items 
+            (item_code, item_name, category_id, manufacturer, barcode, stock_quantity, min_stock_level, 
+            max_stock_level, reorder_point, lead_time, shelf_life, location, product_type, notes, 
+            default_uom_id, expiry_date_flag, expiry_date, created_by, updated_by) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        # Corresponding values tuple without unit_price
+        item_values = (
+            item_code, item_name, category_id, manufacturer, barcode, stock_quantity, min_stock_level, 
+            max_stock_level, reorder_point, lead_time, shelf_life, location, product_type, notes, 
+            default_uom_id, expiry_date_flag, expiry_date, current_userid, current_userid
+        )
+
+
+        mycursor = mydb.cursor()
+        mycursor.execute(item_query, item_values)
         item_id = mycursor.lastrowid
+
+        # Handle multiple images
+        image_query = """
+            INSERT INTO com.item_images (image, image_type, created_by, updated_by) 
+            VALUES (%s, %s, %s, %s)
+        """
+        mapping_query = """
+            INSERT INTO com.item_image_mapping (item_id, image_id, image_order) 
+            VALUES (%s, %s, %s)
+        """
+        
+        for order, image_file in enumerate(image_files, start=1):
+            try:
+                image_binary = image_file.read()
+                image_type = image_file.content_type  # Get the MIME type of the image
+
+                # Insert image into item_images table
+                mycursor.execute(image_query, (image_binary, image_type, current_userid, current_userid))
+                image_id = mycursor.lastrowid
+
+                # Map image to the item in item_image_mapping table
+                mycursor.execute(mapping_query, (item_id, image_id, order))
+            except Exception as e:
+                logger.error(f"{USER_ID} --> {MODULE_NAME}: Failed to process image: %s", str(e))
+                mydb.rollback()
+                return jsonify({'message': 'Failed to process image.', 'error': str(e)}), 400
+
+        mydb.commit()
         mycursor.close()
         mydb.close()
 
         # Log successful creation
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Item created: item_id=%s, item_code=%s, item_name=%s, category_id=%s, unit_price=%s, manufacturer=%s, barcode=%s, stock_quantity=%s, min_stock_level=%s, max_stock_level=%s, reorder_point=%s, lead_time=%s, shelf_life=%s, location=%s, product_type=%s, expiry_date_flag=%s, expiry_date=%s",
-                    item_id, item_code, item_name, category_id, unit_price, manufacturer, barcode, stock_quantity, 
-                    min_stock_level, max_stock_level, reorder_point, lead_time, shelf_life, location, product_type, 
-                    expiry_date_flag, expiry_date)
+        logger.info(f"{USER_ID} --> {MODULE_NAME}: Item created with item_id=%s", item_id)
 
-        # Return the newly created item as a JSON response
+        # Return the newly created item as a JSON response (remove unit_price from response)
         return jsonify({
             'item_id': item_id, 'item_code': item_code, 'item_name': item_name, 'category_id': category_id, 
-            'unit_price': unit_price, 'manufacturer': manufacturer, 'barcode': barcode, 'stock_quantity': stock_quantity, 
+            'manufacturer': manufacturer, 'barcode': barcode, 'stock_quantity': stock_quantity, 
             'min_stock_level': min_stock_level, 'max_stock_level': max_stock_level, 'reorder_point': reorder_point, 
             'lead_time': lead_time, 'shelf_life': shelf_life, 'location': location, 'product_type': product_type, 
-            'item_image': None, 'notes': notes, 'default_uom_id': default_uom_id, 'expiry_date_flag': expiry_date_flag, 
+            'notes': notes, 'default_uom_id': default_uom_id, 'expiry_date_flag': expiry_date_flag, 
             'expiry_date': expiry_date
         }), 201
     except Exception as e:
