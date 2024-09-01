@@ -1,31 +1,31 @@
 import json
-import logging  # Import the logging module
+import logging
+import mimetypes
 from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
-import base64
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
 from flask_jwt_extended import decode_token
 from modules.security.get_user_from_token import get_user_from_token
-from modules.utilities.logger import logger  # Import the logger module
+from modules.utilities.logger import logger
 
 create_item_category_api = Blueprint('create_item_category_api', __name__)
 
 @create_item_category_api.route('/create_item_category', methods=['POST'])
-@permission_required(WRITE_ACCESS_TYPE, __file__)  # Pass WRITE_ACCESS_TYPE as an argument
+@permission_required(WRITE_ACCESS_TYPE, __file__)
 def create_item_category():
     authorization_header = request.headers.get('Authorization')
     token_results = ""
     USER_ID = ""
     MODULE_NAME = __name__
+    
     if authorization_header:
         token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
 
     if token_results:
         USER_ID = token_results["username"]
 
-    # Log entry point
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the create categories data function")
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the create categories data function")
     
     mydb = get_database_connection(USER_ID, MODULE_NAME)
     current_userid = None
@@ -49,24 +49,11 @@ def create_item_category():
     is_active = data.get('is_active')
     tax_information = data.get('tax_information')
     default_uom = data.get('uom_id')
-    # image is no longer included in the request JSON
-    image = request.files['image'] if 'image' in request.files else None
-    image_data = image.read() if image else None
+
+    # Handling images
+    images = request.files.getlist('images')  # Assuming images are sent as a list of files
 
     logger.info(f"{USER_ID} --> {MODULE_NAME}: Parsed Request Data: %s", data)
-    logger.info(f"{USER_ID} --> {MODULE_NAME}: category_name: %s", category_name)
-    logger.info(f"{USER_ID} --> {MODULE_NAME}: description: %s", description)
-    logger.info(f"{USER_ID} --> {MODULE_NAME}: is_active: %s", is_active)
-    logger.info(f"{USER_ID} --> {MODULE_NAME}: tax_information: %s", tax_information)
-    logger.info(f"{USER_ID} --> {MODULE_NAME}: default_uom: %s", default_uom)
-
-    if image:
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Parsed Category Image: File detected")
-    else:
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Parsed Category Image: Empty")
-
-    logger.info(f"{USER_ID} --> {MODULE_NAME}: Parsed the incoming requests: category_name=%s, description=%s, is_active=%s, tax_information=%s, default_uom=%s, image=%s",
-                category_name, description, is_active, tax_information, default_uom, bool(image))
 
     # Validate the required fields
     if not category_name or not description or not is_active or not tax_information or not default_uom:
@@ -75,14 +62,39 @@ def create_item_category():
         return jsonify({'message': 'category_name, description, is_active, tax_information, and default_uom are required fields.'}), 400
 
     # Insert a new item category into the database
-    query = "INSERT INTO com.itemcategory (category_name, description, is_active, tax_information, default_uom, image, created_by, updated_by) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-    values = (category_name, description, is_active, tax_information, default_uom, image_data, current_userid, current_userid)
+    query = "INSERT INTO com.itemcategory (category_name, description, is_active, tax_information, default_uom, created_by, updated_by) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    values = (category_name, description, is_active, tax_information, default_uom, current_userid, current_userid)
 
     mycursor = mydb.cursor()
     try:
         mycursor.execute(query, values)
         mydb.commit()
         category_id = mycursor.lastrowid
+
+        # If images are provided, process and insert them
+        if images:
+            for index, image in enumerate(images):
+                # Determine the MIME type of the image
+                image_type = mimetypes.guess_type(image.filename)[0] or 'unknown'
+                
+                # Read the image data
+                image_data = image.read()
+                
+                # Insert the image data into com.category_images
+                image_query = "INSERT INTO com.category_images (image, image_type, created_by, updated_by) VALUES (%s, %s, %s, %s)"
+                image_values = (image_data, image_type, current_userid, current_userid)
+                
+                mycursor.execute(image_query, image_values)
+                mydb.commit()
+                image_id = mycursor.lastrowid
+
+                # Insert mapping into com.category_image_mapping with image_order
+                mapping_query = "INSERT INTO com.category_image_mapping (category_id, image_id, image_order, created_at, updated_at) VALUES (%s, %s, %s, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
+                mapping_values = (category_id, image_id, index + 1)  # Image order starts from 1
+                
+                mycursor.execute(mapping_query, mapping_values)
+                mydb.commit()
+
         mycursor.close()
         mydb.close()
 

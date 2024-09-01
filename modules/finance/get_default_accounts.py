@@ -26,6 +26,7 @@ def get_default_accounts():
         mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
 
+        # Base query
         query = """
             SELECT
                 da.line_id,
@@ -54,7 +55,20 @@ def get_default_accounts():
                 a.company_id
             FROM fin.default_accounts da
             JOIN fin.accounts a ON da.account_id = a.account_id
+            WHERE 1=1
         """
+
+        # Check for optional query parameters and append them to the query
+        header_id = request.args.get('header_id')
+        company_id = request.args.get('company_id')
+        currency_id = request.args.get('currency_id')
+
+        if header_id:
+            query += f" AND da.header_id = {int(header_id)}"
+        if company_id:
+            query += f" AND a.company_id = {int(company_id)}"
+        if currency_id:
+            query += f" AND a.currency_id = {int(currency_id)}"
 
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Executing query: {query}")
         mycursor.execute(query)

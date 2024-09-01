@@ -19,6 +19,16 @@ from modules.common.get_departments import get_departments
 from modules.common.create_department import create_department
 
 from modules.common.get_company_tax_codes import get_company_tax_codes
+from modules.common.create_tax_codes import create_tax_codes
+
+from modules.common.create_currencies   import create_currencies
+from modules.common.create_exchange_rates import create_exchange_rates
+
+from modules.common.create_default_tax_codes import create_default_tax_codes
+from modules.common.get_default_tax_codes import get_default_tax_codes
+
+from modules.common.get_default_tax_headers import get_default_tax_headers
+from modules.common.create_default_tax_headers import create_default_tax_headers
 
 from modules.utilities.logger import logger  # Import the logger module
 
@@ -109,6 +119,20 @@ def get_all_departments():
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get department entities")
     return get_departments()
 
+@list_common_module.route('/get_default_tax_codes', methods=['GET'])
+def get_default_tax_codes_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: get_default_tax_codes ")
+    return get_default_tax_codes()
+
+@list_common_module.route('/get_default_tax_headers', methods=['GET'])
+def get_default_tax_headers_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get get_default_tax_codes")
+    return get_default_tax_headers()
+
 # POST Methods ----------------------------------------------------------
 
 @list_common_module.route('/create_partner_data', methods=['POST'])
@@ -145,6 +169,43 @@ def create_a_department():
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Create department")
     return create_department()
+
+@list_common_module.route('/create_tax_codes', methods=['POST'])
+def create_tax_codes_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}:create_tax_codes")
+    return create_tax_codes()
+
+@list_common_module.route('/create_currencies', methods=['POST'])
+def create_currencies_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}:create_currencies")
+    return create_currencies()
+
+@list_common_module.route('/create_exchange_rates', methods=['POST'])
+def create_exchange_rates_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}:create_exchange_rates")
+    return create_exchange_rates()
+
+@list_common_module.route('/create_default_tax_codes', methods=['POST'])
+def create_default_tax_codes_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}:create_default_tax_codes")
+    return create_default_tax_codes()
+
+@list_common_module.route('/create_default_tax_headers', methods=['POST'])
+def create_default_tax_headers_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}:create_default_tax_headers_all")
+    return create_default_tax_headers()
+
+
 # PUT Methods -----------------------------------------------------------
 
 # DELETE Methods ---------------------------------------------------------

@@ -26,6 +26,10 @@ def get_default_account_headers():
         mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
 
+        # Fetch header_id from query parameters if provided
+        header_id = request.args.get('header_id', default=None, type=int)
+
+        # Base query
         query = """
             SELECT
                 header_id,
@@ -37,8 +41,14 @@ def get_default_account_headers():
             FROM fin.default_account_headers
         """
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Executing query: {query}")
-        mycursor.execute(query)
+        # Add WHERE clause if header_id is provided
+        if header_id is not None:
+            query += " WHERE header_id = %s"
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Executing query with header_id filter: {query}")
+            mycursor.execute(query, (header_id,))
+        else:
+            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Executing query: {query}")
+            mycursor.execute(query)
 
         result = mycursor.fetchall()
         default_account_headers_list = []
@@ -48,10 +58,8 @@ def get_default_account_headers():
 
         for row in result:
             default_account_header_dict = {}
-
             for column in columns:
                 default_account_header_dict[column] = row[column_indices[column]]
-
             default_account_headers_list.append(default_account_header_dict)
 
         mycursor.close()

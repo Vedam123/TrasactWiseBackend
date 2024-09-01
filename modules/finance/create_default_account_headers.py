@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
+from flask_jwt_extended import decode_token
 from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
@@ -29,9 +30,16 @@ def create_default_account_headers():
         # Assuming the input data is in JSON format
         data = request.get_json()
 
+        current_userid = None
+        authorization_header = request.headers.get('Authorization', '')
+        if authorization_header.startswith('Bearer '):
+            token = authorization_header.replace('Bearer ', '')
+            decoded_token = decode_token(token)
+            current_userid = decoded_token.get('Userid')
+
         header_name = data.get('header_name')
-        created_by = USER_ID  # Assuming created_by is the current user
-        updated_by = USER_ID  # Assuming updated_by is the current user
+        created_by = current_userid  # Assuming created_by is the current user
+        updated_by = current_userid  # Assuming updated_by is the current user
 
         # Check if the required fields are provided
         if not header_name :

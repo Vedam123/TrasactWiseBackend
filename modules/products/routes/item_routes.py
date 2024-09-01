@@ -3,11 +3,12 @@ from modules.products.list_item_categories import list_item_categories
 from modules.products.list_items import list_items
 from modules.products.list_uoms import list_uoms
 from modules.products.create_item_category import create_item_category
-from modules.products.create_item import create_item
+from modules.products.create_items import create_items
 from modules.products.create_uom import create_uom
 from modules.products.uom_conversion import convert_quantity_endpoint
 from modules.products.baseunit_uom_conversion import baseunit_uom_conversion
 from modules.products.currency_conversion import currency_conversion
+from modules.products.get_category_images import get_category_images
 from modules.utilities.logger import logger  # Import the logger module
 
 # Create blueprints
@@ -57,13 +58,20 @@ def baseunit_conversion():
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Base unit conversion ")
     return baseunit_uom_conversion()
 
+@item_create_routes.route('/get_category_images', methods=['GET'])
+def get_category_images_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: get_category_images ")
+    return get_category_images()
+
 # POST routes -----------------------------------------------------
-@item_create_routes.route('/create_item', methods=['POST'])
-def create_route_item():
+@item_create_routes.route('/create_items', methods=['POST'])
+def create_items_all():
     MODULE_NAME = __name__
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to create an item")
-    return create_item()
+    return create_items()
 
 @item_create_routes.route('/create_item_category', methods=['POST'])
 def create_route_item_category():

@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
+from flask_jwt_extended import decode_token
 from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 import traceback
@@ -30,27 +31,34 @@ def create_default_tax_headers():
         # Assuming the input data is in JSON format
         data = request.get_json()
 
-        header_id = data.get('header_id')
-        description = data.get('description', '')
-        created_by = USER_ID  # Assuming created_by is the current user
-        updated_by = USER_ID  # Assuming updated_by is the current user
+        current_userid = None
+        authorization_header = request.headers.get('Authorization', '')
+        if authorization_header.startswith('Bearer '):
+            token = authorization_header.replace('Bearer ', '')
+            decoded_token = decode_token(token)
+            current_userid = decoded_token.get('Userid')
 
-        # Check if the required fields are provided
-        if not header_id:
-            return jsonify({'error': 'Missing required fields'}), 400
+        description = data.get('description', '').strip()  # Trim whitespace from the description
 
-        # Insert query for default_tax_config table
+        # Validate the description field
+        if not description:
+            return jsonify({'error': 'Description is required and cannot be empty'}), 400
+
+        created_by = current_userid  # Assuming created_by is the current user
+        updated_by = current_userid  # Assuming updated_by is the current user
+
+        # Insert query for default_tax_config table without header_id (AUTO_INCREMENT)
         insert_query = """
-            INSERT INTO com.default_tax_config (header_id, description, created_at, updated_at, created_by, updated_by)
-            VALUES (%s, %s, NOW(), NOW(), %s, %s)
+            INSERT INTO com.default_tax_config (description, created_at, updated_at)
+            VALUES (%s, NOW(), NOW())
         """
-        insert_values = (header_id, description, created_by, updated_by)
+        insert_values = (description,)  # Correctly formatted as a tuple
 
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Executing query: {insert_query} with values: {insert_values}")
         mycursor.execute(insert_query, insert_values)
         mydb.commit()
 
-        # Fetch the inserted header_id
+        # Fetch the inserted header_id (auto-generated)
         header_id = mycursor.lastrowid
 
         mycursor.close()
