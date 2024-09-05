@@ -5,6 +5,7 @@ from config import WRITE_ACCESS_TYPE
 from flask_jwt_extended import decode_token
 from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
+from modules.common.routines.update_company_account_header import update_company_account_header  # Import the function to update company
 
 default_account_headers_api = Blueprint('default_account_headers_api', __name__)
 
@@ -38,11 +39,12 @@ def create_default_account_headers():
             current_userid = decoded_token.get('Userid')
 
         header_name = data.get('header_name')
+        company_id = int(data.get('company_id'))
         created_by = current_userid  # Assuming created_by is the current user
         updated_by = current_userid  # Assuming updated_by is the current user
 
         # Check if the required fields are provided
-        if not header_name :
+        if not header_name:
             return jsonify({'error': 'Missing required fields'}), 400
 
         # Insert query
@@ -59,12 +61,19 @@ def create_default_account_headers():
         # Fetch the inserted header_id
         header_id = mycursor.lastrowid
 
+        # Now that the header_id is generated, call the function to update the company table
+        update_result = update_company_account_header(company_id, header_id, mydb, current_userid, MODULE_NAME)
+
+        if update_result is None:
+            # If the update failed, return an error response
+            return jsonify({'error': 'Failed to update the company with the new default account header ID'}), 500
+
         mycursor.close()
         mydb.close()
 
         logger.info(f"{USER_ID} --> {MODULE_NAME}: Default account header created successfully with header_id {header_id}")
 
-        return jsonify({'message': 'Default account header created successfully', 'header_id': header_id}), 201
+        return jsonify({'message': 'Default account header created successfully and company updated', 'header_id': header_id}), 201
 
     except Exception as e:
         logger.error(f"{USER_ID} --> {MODULE_NAME}: Error creating default account header - {str(e)}")

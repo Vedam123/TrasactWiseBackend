@@ -78,6 +78,13 @@ def pickrelease_inv():
         sales_orders = sales_order_data.get("sales_orders", [])
 
         logger.debug(f"{current_userid} --> {MODULE_NAME}: AFTER RETURN FROM FUNCTION SALES ORDER DATA : {sales_orders}")
+        if not sales_orders:  # This will handle both None and empty list cases
+            logger.debug(f"{current_userid} --> {MODULE_NAME}: No Sales order is found , check its status: {sales_order_data}")
+            response = {
+                "message": "No Sales order is found, check its status",
+                "status": "NOSALES"
+            }
+            return response, 200
 
         updated_headers = set()
 

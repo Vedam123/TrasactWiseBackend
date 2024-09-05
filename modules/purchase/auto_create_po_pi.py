@@ -51,9 +51,8 @@ def create_purchase_invoice(data, USER_ID, MODULE_NAME, mydb):
         
         return {
             "header_id": header_id,
-            "message": "Purchase Invoice created successfully",
-            "success": True,
-            "totalamount": data["totalamount"]
+            "invoice_number" : data["invoice_number"],
+            "status":"Sucess",
         }, 200
 
     except Exception as e:
@@ -105,11 +104,12 @@ def create_purchase_invoice_lines(header_id, lines, USER_ID, MODULE_NAME, mydb):
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: After For loop : {lines}")
         cursor.close()
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before leaving the function: {response_lines}")
-
+   
         return {
-            "lines": response_lines,
-            "message": "Purchase Invoice Lines created successfully",
-            "success": True
+            "header_id": header_id,
+            "line_id" : line_id,
+            "line_number": next_val,
+            "status":"Sucess",
         }, 200
 
     except Exception as e:
@@ -154,7 +154,12 @@ def create_purchase_invoice_accounts(header_id, account_lines, current_userid, m
 
         mydb.commit()
         cursor.close()
-        return {"message": "Purchase invoice accounts created successfully", "success": True}, 200
+
+        return {
+            "header_id": header_id,
+            "account_line_number": line_number,
+            "status":"Sucess",
+        }, 200
 
     except Exception as e:
         logger.error(f"Unable to create purchase invoice accounts: {str(e)}")
@@ -293,7 +298,7 @@ def auto_create_po_pi():
 
                 header_id = header_response["header_id"]
 
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Main function VEDAM HEADER_ID  : {header_id}")
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Main function   : {header_id}")
 
                 # Fetch purchase order lines
                 cursor.execute("""
@@ -304,7 +309,7 @@ def auto_create_po_pi():
 
                 line_data = []
                 starting_line_number = 1  # Starting point for line numbers
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Main function VEDAM  : {order_lines}")
+                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Main function   : {order_lines}")
                 for index, line in enumerate(order_lines):
                     line_number = starting_line_number + index
                     line_data.append({
@@ -331,7 +336,7 @@ def auto_create_po_pi():
 
                 # Process Credit accounts first
                 for credit_account in account_types.get("Credit", []):
-                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_name"], mydb, USER_ID, MODULE_NAME)
+                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_type"], mydb, USER_ID, MODULE_NAME)
                     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 00 , {account_details}") 
                     #distribution_percentage = credit_account.get("distribution_percentage", 0)
 
@@ -354,31 +359,13 @@ def auto_create_po_pi():
                         "updated_by": current_userid
                     })
 
-
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 0000")
                 total_tax_amount= auto_process_tax_accounts(order, totalamount, account_types, account_lines, USER_ID, MODULE_NAME, mydb) 
                 
- #               if tax_id :
- #                   for debit_account in account_types.get("Debit", []):                 
- #                       if "Tax" in debit_account["category"] :
- #                           debit_amount = totalamount * Decimal(tax_rate)  # Taxable amount based on total amount
- #                           tax_total += debit_amount
- #                           account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_name"], mydb, USER_ID, MODULE_NAME) 
- #                          logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 1")  
- #                           account_lines.append({
- #                               "line_number": debit_account["account_name"],
- #                               "header_id": header_id,
- #                               "account_id": int(account_details["account_id"]),
- #                               "debitamount": debit_amount,
- #                               "creditamount": 0,
- #                               "created_by": current_userid,
- #                               "updated_by": current_userid
- #                           })
-
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 2 Total, remaining, tax total ,{totalamount} , {account_types} {total_tax_amount}")  
                 for debit_account in account_types.get("Debit", []):
                     if "Tax" not in debit_account["category"]:  # Only non-tax accounts
-
+                        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Total amount and total tax amount: {totalamount} {total_tax_amount} ") 
                         remaining_amount = totalamount - total_tax_amount
                         distribution_percentage = Decimal(debit_account.get("distribution_percentage", 0)) / 100
                         debit_amount = remaining_amount * distribution_percentage
@@ -387,9 +374,9 @@ def auto_create_po_pi():
                         debit_amount = Decimal(debit_amount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
                         logger.debug(f"{USER_ID} --> {MODULE_NAME}: TO BE INSERTED DEBIT AMOUNT AFTER ROUNDING: {debit_amount}")
 
-                        account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_name"], mydb, USER_ID, MODULE_NAME) 
+                        account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_type"], mydb, USER_ID, MODULE_NAME) 
                         account_lines.append({
-                            "line_number": debit_account["account_name"],
+                            "line_number": debit_account["account_type"],
                             "header_id": header_id,
                             "account_id": int(account_details["account_id"]),
                             "debitamount": debit_amount,
@@ -398,35 +385,25 @@ def auto_create_po_pi():
                             "created_by": current_userid,
                             "updated_by": current_userid
                         })
-
                 
                 debit_total = debit_total + total_tax_amount
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 3 Debit total {debit_total}")  
                 # Insert account lines into purchase invoice accounts table
 
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: Total Debit and Credit amount Total amount comparision: {debit_total} {credit_total} {totalamount}")            
-                #rounded_debit_total = round(debit_total, 2)
-                #rounded_credit_total = round(credit_total, 2)
-                #rounded_totalamount = round(totalamount, 2)
 
-                # Check if all rounded values are equal
-                #if not (rounded_debit_total == rounded_credit_total == rounded_totalamount):
-                #    raise Exception("Debit, Credit totals, and Total amount do not match after rounding to two decimal places.")
-                # Convert values to Decimal and round to two decimal places
                 debit_total = Decimal(debit_total).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
                 credit_total = Decimal(credit_total).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
                 totalamount = Decimal(totalamount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
-                # Check if all rounded values are equal
                 if not (debit_total == credit_total == totalamount):
-                    raise Exception("Debit, Credit totals, and Total amount do not match after rounding to two decimal places.")                 
-
+                    logger.error(f"Debit total: {debit_total} , Taxm amount: {total_tax_amount}, Credit total: {credit_total}, Total amount: {totalamount}")
+                    raise Exception("Debit, Credit totals, and Total amount do not match after rounding to two decimal places.")               
 
                 # Insert Purchase Invoice Accounts
                 accounts_response, status_code = create_purchase_invoice_accounts(header_id, account_lines, current_userid, mydb)
                 if status_code != 200:
                     raise Exception(accounts_response.get("message", "Failed to create purchase invoice accounts"))
-
 
                 # Log the purchase invoice creation
                 log_data = {

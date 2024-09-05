@@ -4,7 +4,6 @@ from flask_jwt_extended import decode_token
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
 from modules.security.get_user_from_token import get_user_from_token
-from modules.admin.routines.get_next_free_number_function import get_next_free_number_function
 from modules.utilities.logger import logger
 
 create_items_api = Blueprint('create_items_api', __name__)
@@ -41,7 +40,7 @@ def create_items():
 
     # Get the data from the request's form data
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received Input {data}")
-    item_code_prefix = data.get('item_code', '')  # This will be used to prefix the sequence number
+    item_code = data.get('item_code')
     item_name = data.get('item_name')
     category_id = data.get('category_id')
     manufacturer = data.get('manufacturer')
@@ -58,7 +57,6 @@ def create_items():
     default_uom_id = data.get('default_uom_id')
     expiry_date_flag = data.get('expiry_date_flag') == 'true'  # Convert to boolean
     expiry_date = data.get('expiry_date') or None
-    is_serial_controlled = data.get('is_serial_controlled') == 'true'  # Convert to boolean
 
     # Handle multiple file uploads
     image_files = request.files.getlist('item_images')
@@ -66,32 +64,28 @@ def create_items():
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received Image files  {image_files}")
 
     # Validate the required fields (remove unit_price validation)
-    if not item_name or not category_id:
-        logger.warning(f"{USER_ID} --> {MODULE_NAME}: Required fields are missing: item_name=%s, category_id=%s",
-                       item_name, category_id)
-        return jsonify({'message': 'item_name and category_id are required fields.'}), 400
+    if not item_code or not item_name or not category_id:
+        logger.warning(f"{USER_ID} --> {MODULE_NAME}: Required fields are missing: item_code=%s, item_name=%s, category_id=%s",
+                       item_code, item_name, category_id)
+        return jsonify({'message': 'item_code, item_name, and category_id are required fields.'}), 400
 
     try:
-        # Get the next free number for the sequence 'ITEM_NUMBER'
-        next_number = get_next_free_number_function("ITEM_NUMBER", mydb, USER_ID, MODULE_NAME)
-        
-        # Prefix the next number with the item_code_prefix
-        item_code = f"{item_code_prefix}{next_number}"
-
-        # Insert a new item into the database, including is_serial_controlled
+        # Insert a new item into the database (remove unit_price from query and values)
+       # Corrected SQL query after removing unit_price
         item_query = """
             INSERT INTO com.items 
             (item_code, item_name, category_id, manufacturer, barcode, stock_quantity, min_stock_level, 
             max_stock_level, reorder_point, lead_time, shelf_life, location, product_type, notes, 
-            default_uom_id, expiry_date_flag, expiry_date, is_serial_controlled, created_by, updated_by) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            default_uom_id, expiry_date_flag, expiry_date, created_by, updated_by) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-        # Corresponding values tuple including is_serial_controlled
+        # Corresponding values tuple without unit_price
         item_values = (
             item_code, item_name, category_id, manufacturer, barcode, stock_quantity, min_stock_level, 
             max_stock_level, reorder_point, lead_time, shelf_life, location, product_type, notes, 
-            default_uom_id, expiry_date_flag, expiry_date, is_serial_controlled, current_userid, current_userid
+            default_uom_id, expiry_date_flag, expiry_date, current_userid, current_userid
         )
+
 
         mycursor = mydb.cursor()
         mycursor.execute(item_query, item_values)
@@ -130,14 +124,14 @@ def create_items():
         # Log successful creation
         logger.info(f"{USER_ID} --> {MODULE_NAME}: Item created with item_id=%s", item_id)
 
-        # Return the newly created item as a JSON response, including is_serial_controlled
+        # Return the newly created item as a JSON response (remove unit_price from response)
         return jsonify({
             'item_id': item_id, 'item_code': item_code, 'item_name': item_name, 'category_id': category_id, 
             'manufacturer': manufacturer, 'barcode': barcode, 'stock_quantity': stock_quantity, 
             'min_stock_level': min_stock_level, 'max_stock_level': max_stock_level, 'reorder_point': reorder_point, 
             'lead_time': lead_time, 'shelf_life': shelf_life, 'location': location, 'product_type': product_type, 
             'notes': notes, 'default_uom_id': default_uom_id, 'expiry_date_flag': expiry_date_flag, 
-            'expiry_date': expiry_date, 'is_serial_controlled': is_serial_controlled
+            'expiry_date': expiry_date
         }), 201
     except Exception as e:
         mycursor.close()

@@ -23,14 +23,14 @@ def get_accounts():
 
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'get accounts' function")
 
-        invalid_params_present = any(param for param in request.args.keys() if param not in ['account_id', 'account_number', 'account_category', 'account_name', 'account_type', 'company_name', 'company_id', 'department_name', 'department_id','currency_id','default_account'])
+        invalid_params_present = any(param for param in request.args.keys() if param not in ['account_id', 'account_number', 'account_category', 'account_name', 'account_type', 'company_name', 'company_id', 'department_name', 'department_id', 'currency_id', 'default_account'])
         if invalid_params_present:
             return jsonify({'error': 'Invalid query parameter(s) detected'}), 400
 
         account_id = request.args.get('account_id', None)
         account_number = request.args.get('account_number', None)
         account_name = request.args.get('account_name', None)
-        account_category = request.args.get('account_category', None)        
+        account_category = request.args.get('account_category', None)
         account_type = request.args.get('account_type', None)
         company_name = request.args.get('company_name', None)
         company_id = request.args.get('company_id', None)
@@ -42,7 +42,8 @@ def get_accounts():
         mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
 
-        query = """
+        # Query with all three parameters
+        query_all_params = """
             SELECT 
                 a.account_id, a.account_number, a.account_name, a.account_category, a.account_type, 
                 a.opening_balance, a.current_balance, a.currency_id, a.bank_name, 
@@ -61,43 +62,139 @@ def get_accounts():
             LEFT JOIN com.currency cur ON a.currency_id = cur.currency_id
             WHERE 1=1
         """
-        if account_id:
-            query += f" AND a.account_id = '{account_id}'"
-        if account_number:
-            query += f" AND a.account_number = '{account_number}'"
-        if account_name:
-            query += f" AND a.account_name REGEXP '{account_name}'"
-        if account_category:
-            query += f" AND a.account_category REGEXP '{account_category}'"            
-        if account_type:
-            query += f" AND a.account_type REGEXP '{account_type}'"
-        if company_name:
-            query += f" AND c.name REGEXP '{company_name}'"
+
         if company_id:
-            query += f" AND a.company_id = '{company_id}'"
-        if department_name:
-            query += f" AND d.department_name REGEXP '{department_name}'"
+            query_all_params += " AND a.company_id = %s"
         if department_id:
-            query += f" AND a.department_id = '{department_id}'"
+            query_all_params += " AND a.department_id = %s"
         if currency_id:
-            query += f" AND a.currency_id = '{currency_id}'"   
+            query_all_params += " AND a.currency_id = %s"
+        
+        # Additional optional filters
+        if account_id:
+            query_all_params += " AND a.account_id = %s"
+        if account_number:
+            query_all_params += " AND a.account_number = %s"
+        if account_name:
+            query_all_params += " AND a.account_name REGEXP %s"
+        if account_category:
+            query_all_params += " AND a.account_category REGEXP %s"
+        if account_type:
+            query_all_params += " AND a.account_type REGEXP %s"
+        if company_name:
+            query_all_params += " AND c.name REGEXP %s"
+        if department_name:
+            query_all_params += " AND d.department_name REGEXP %s"
         if default_account:
-            query += f" AND a.default_account = '{default_account}'"                     
+            query_all_params += " AND a.default_account = %s"
 
-        mycursor.execute(query)
+        # Query with only company_id and currency_id if no results are found
+        query_fallback = """
+            SELECT 
+                a.account_id, a.account_number, a.account_name, a.account_category, a.account_type, 
+                a.opening_balance, a.current_balance, a.currency_id, a.bank_name, 
+                a.branch_name, a.account_holder_name, a.contact_number, a.email, 
+                a.address, a.is_active, a.department_id, a.company_id, 
+                a.created_at, a.updated_at, a.created_by, a.updated_by,
+                d.department_name,
+                c.name AS company_name,
+                cur.currencycode,
+                cur.currencyname,
+                cur.currencysymbol,
+                a.default_account
+            FROM fin.accounts a
+            LEFT JOIN com.department d ON a.department_id = d.id
+            LEFT JOIN com.company c ON a.company_id = c.id
+            LEFT JOIN com.currency cur ON a.currency_id = cur.currency_id
+            WHERE 1=1
+        """
+        
+        if company_id:
+            query_fallback += " AND a.company_id = %s"
+        if currency_id:
+            query_fallback += " AND a.currency_id = %s"
+        
+        # Additional optional filters for fallback query
+        if account_id:
+            query_fallback += " AND a.account_id = %s"
+        if account_number:
+            query_fallback += " AND a.account_number = %s"
+        if account_name:
+            query_fallback += " AND a.account_name REGEXP %s"
+        if account_category:
+            query_fallback += " AND a.account_category REGEXP %s"
+        if account_type:
+            query_fallback += " AND a.account_type REGEXP %s"
+        if company_name:
+            query_fallback += " AND c.name REGEXP %s"
+        if department_name:
+            query_fallback += " AND d.department_name REGEXP %s"
+        if default_account:
+            query_fallback += " AND a.default_account = %s"
 
+        # First try with all parameters
+        params_all = []
+        if company_id:
+            params_all.append(company_id)
+        if department_id:
+            params_all.append(department_id)
+        if currency_id:
+            params_all.append(currency_id)
+        if account_id:
+            params_all.append(account_id)
+        if account_number:
+            params_all.append(account_number)
+        if account_name:
+            params_all.append(account_name)
+        if account_category:
+            params_all.append(account_category)
+        if account_type:
+            params_all.append(account_type)
+        if company_name:
+            params_all.append(company_name)
+        if department_name:
+            params_all.append(department_name)
+        if default_account:
+            params_all.append(default_account)
+
+        mycursor.execute(query_all_params, params_all)
         result = mycursor.fetchall()
         accounts_list = []
+
+        if not result:
+            # If no results, try fallback query with company_id and currency_id
+            params_fallback = []
+            if company_id:
+                params_fallback.append(company_id)
+            if currency_id:
+                params_fallback.append(currency_id)
+            if account_id:
+                params_fallback.append(account_id)
+            if account_number:
+                params_fallback.append(account_number)
+            if account_name:
+                params_fallback.append(account_name)
+            if account_category:
+                params_fallback.append(account_category)
+            if account_type:
+                params_fallback.append(account_type)
+            if company_name:
+                params_fallback.append(company_name)
+            if department_name:
+                params_fallback.append(department_name)
+            if default_account:
+                params_fallback.append(default_account)
+
+            mycursor.execute(query_fallback, params_fallback)
+            result = mycursor.fetchall()
 
         columns = [desc[0] for desc in mycursor.description]
         column_indices = {column: index for index, column in enumerate(columns)}
 
         for row in result:
             account_dict = {}
-
             for column in columns:
                 account_dict[column] = row[column_indices[column]]
-
             accounts_list.append(account_dict)
 
         mycursor.close()

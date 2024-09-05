@@ -50,9 +50,8 @@ def create_sales_invoice(data, USER_ID, MODULE_NAME, mydb):
 
         return {
             "header_id": header_id,
-            "message": "Sales Invoice created successfully",
-            "success": True,
-            "totalamount": data["totalamount"]
+            "invoice_number" : data["invoice_number"],
+            "status":"Sucess",
         }, 200
 
     except Exception as e:
@@ -110,11 +109,12 @@ def create_sales_invoice_lines(header_id, lines, USER_ID, MODULE_NAME, mydb):
 
         cursor.close()
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before leaving the function: {response_lines}")
-
+        
         return {
-            "lines": response_lines,
-            "message": "Sales Invoice Lines created successfully",
-            "success": True
+            "header_id": header_id,
+            "line_id" : line_id,
+            "line_number": next_val,
+            "status":"Sucess",
         }, 200
 
     except Exception as e:
@@ -187,9 +187,9 @@ def auto_create_so_si():
 
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Fetched Sales orders that match with status: {sales_orders}")
 
-        if not sales_orders:
-            logger.debug(f"{USER_ID} --> {MODULE_NAME}: No Sales Orders fetched with the given status: {sales_orders}")
-            return jsonify({'message': 'No Sales Orders fetched with the given status', 'sales_orders': sales_orders}), 404
+        #if not sales_orders:
+        #    logger.debug(f"{USER_ID} --> {MODULE_NAME}: No Sales Orders fetched with the given status: {sales_orders}")
+        #    return jsonify({'message': 'No Sales Orders fetched with the given status', 'sales_orders': sales_orders}), 404
         
         new_input_tax_type = None
         for find_tax_type in account_types.get("Credit", []):
@@ -300,7 +300,7 @@ def auto_create_so_si():
 
                 # Process Debit accounts
                 for debit_account in account_types.get("Debit", []):
-                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_name"], mydb, USER_ID, MODULE_NAME)
+                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_type"], mydb, USER_ID, MODULE_NAME)
                     distribution_percentage = Decimal(debit_account.get("distribution_percentage", 0)) / 100
                     debit_amount = totalamount * distribution_percentage
 
@@ -326,7 +326,7 @@ def auto_create_so_si():
                 
                 # Now process other Credit accounts   
                 for credit_account in account_types.get("Credit", []):
-                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_name"], mydb, USER_ID, MODULE_NAME)
+                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_type"], mydb, USER_ID, MODULE_NAME)
                     if credit_account["category"] != "Tax":
                         remaining_amount = totalamount - total_tax_amount
                         distribution_percentage = Decimal(credit_account.get("distribution_percentage", 0)) / 100
@@ -348,8 +348,12 @@ def auto_create_so_si():
                 totalamount = Decimal(totalamount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
                 # Check if all rounded values are equal
+                #if not (debit_total == credit_total == totalamount):
+                #    raise Exception("Debit, Credit totals, and Total amount do not match after rounding to two decimal places.")  
+                
                 if not (debit_total == credit_total == totalamount):
-                    raise Exception("Debit, Credit totals, and Total amount do not match after rounding to two decimal places.")  
+                    logger.error(f"Debit total: {debit_total}, Credit total: {credit_total}, Total amount: {totalamount}")
+                    raise Exception("Debit, Credit totals, and Total amount do not match after rounding to two decimal places.")                
 
                 # Distribute the accounts
                 for line in account_lines:
@@ -406,11 +410,14 @@ def auto_create_so_si():
                 logger.debug(f"{USER_ID} --> {MODULE_NAME}: Error processing sales order {order['header_id']}: {str(e)}")
                 continue  # Continue to the next sales order
 
-        mydb.close()
-        return jsonify(responses), 200
+        return jsonify({"success": True, "invoices": responses}), 200
 
     except Exception as e:
         logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: {str(e)} at line {traceback.extract_stack()[-2].lineno}")
         if mydb:
             mydb.close()
         return jsonify({'error': str(e)}), 500
+        
+    finally:
+        if mydb:
+            mydb.close()

@@ -60,7 +60,7 @@ def auto_process_tax_accounts(order, totalamount, account_types, account_lines, 
                     company_id,
                     order["department_id"],
                     order["currency_id"],
-                    debit_account["account_name"],
+                    debit_account["account_type"],
                     mydb,
                     USER_ID,
                     MODULE_NAME

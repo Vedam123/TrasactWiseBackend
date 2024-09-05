@@ -16,6 +16,7 @@ def create_company():
         token_results = ""
         USER_ID = ""
         MODULE_NAME = __name__
+
         if authorization_header:
             token_results = get_user_from_token(authorization_header)
 
@@ -50,7 +51,6 @@ def create_company():
         home_cur_id = data.get('home_cur_id')
         reporting_cur_id = data.get('reporting_cur_id')
         tax_code_id = data.get('tax_code_id')
-        account_group_id = data.get('account_group_id')
         created_by = current_userid
         updated_by = current_userid
 
@@ -61,17 +61,20 @@ def create_company():
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Local Currency: {local_cur_id}")
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Home Currency: {home_cur_id}")
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Reporting Currency: {reporting_cur_id}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Tax code : {tax_code_id}")
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Tax code: {tax_code_id}")
 
         mycursor = mydb.cursor()
 
         try:
             query = """
                 INSERT INTO com.company 
-                (group_company_id, name,description, local_cur_id, home_cur_id, reporting_cur_id, default_tax_code_id,default_account_header_id,created_by, updated_by)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                (group_company_id, name, description, local_cur_id, home_cur_id, reporting_cur_id, default_tax_code_id, created_by, updated_by)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
-            values = (group_company_id,name,description, local_cur_id, home_cur_id, reporting_cur_id,tax_code_id, account_group_id,created_by, updated_by)
+            values = (
+                group_company_id, name, description, local_cur_id, home_cur_id, 
+                reporting_cur_id, tax_code_id, created_by, updated_by
+            )
 
             mycursor.execute(query, values)
             mydb.commit()

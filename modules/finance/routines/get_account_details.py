@@ -12,17 +12,19 @@ def get_account_details(company_id, department_id, currency_id, account_type, my
             logger.info(f"{USER_ID} --> {MODULE_NAME}: select from department {result1}")
             logger.info(f"Executing query: {query1} with params: {(department_id,)}")
   
-            if result1 and 'default_account_header_id' in result1:
+            if result1 and result1.get('default_account_header_id') is not None:
                 default_account_header_id = result1['default_account_header_id']
             else:
                 # Step 2: If not found, get default_account_header_id from com.company table
-                logger.info(f"Executing query: {query2} with params: {(company_id,)}")
+                logger.info(f"FINDING COMPANY DEFAULT ACCOUNT HEADER ID IN ELSE VEDAM : {result1}")
                 query2 = "SELECT default_account_header_id FROM com.company WHERE id = %s"
+                logger.info(f"Executing query: {query2} with params: {(company_id,)}")
                 mycursor.execute(query2, (company_id,))
                 result2 = mycursor.fetchone()
                 logger.info(f"{USER_ID} --> {MODULE_NAME}: select from company {result2}")            
-                if result2 and 'default_account_header_id' in result2:
+                if result2 and result2.get('default_account_header_id') is not None:
                     default_account_header_id = result2['default_account_header_id']
+                    logger.info(f"FOUND default account header id is in company search : {default_account_header_id}")
                 else:
                     logger.error(f"{USER_ID} --> {MODULE_NAME}: No default_account_header_id found for company_id={company_id} and department_id={department_id}")
                     return None

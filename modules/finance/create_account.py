@@ -41,6 +41,11 @@ def create_account():
         else:
             data = request.form
 
+
+        department_id = data.get('department_id')
+        if department_id == '':
+            department_id = None
+
         # Log the received data
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
 
@@ -65,7 +70,7 @@ def create_account():
             data.get('email'),
             data.get('address'),
             data.get('is_active'),
-            data.get('department_id'),
+            department_id,
             data.get('company_id'),
             current_userid,  # created_by
             current_userid,   # updated_by

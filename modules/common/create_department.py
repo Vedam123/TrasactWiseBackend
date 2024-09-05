@@ -48,6 +48,8 @@ def create_department():
         manager_id = data.get('manager_id')
         description = data.get('description')
         account_group_id = data.get('account_group_id')
+        if account_group_id == '':
+            account_group_id = None
         created_by = current_userid
         updated_by = current_userid
 

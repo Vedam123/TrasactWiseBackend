@@ -33,10 +33,12 @@ def auto_process_tax_accounts(order, totalamount, account_types, account_lines, 
         input_tax_types = {tax_type}
     else:
         new_input_tax_types = set()
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}: In the Sales order no tax id is found so finding tax id at company level ----------->: {tax_id}")
         for input_tax_type in input_tax_types:
             tax_id, tax_rate = get_tax_rate_by_company_id(company_id, input_tax_type, USER_ID, MODULE_NAME, mydb)
             if tax_rate:
                 new_input_tax_types.add(input_tax_type)
+        logger.debug(f"{USER_ID} --> {MODULE_NAME}:company level tax_id and tax rate are found ----------->: {tax_id},---> {tax_rate} and tax types --> {input_tax_types}")
         input_tax_types = new_input_tax_types
 
     if not input_tax_types:
@@ -58,7 +60,7 @@ def auto_process_tax_accounts(order, totalamount, account_types, account_lines, 
                     company_id,
                     order["department_id"],
                     order["currency_id"],
-                    credit_account["account_name"],
+                    credit_account["account_type"],
                     mydb,
                     USER_ID,
                     MODULE_NAME

@@ -3,6 +3,7 @@ from modules.admin.list_ui_config_data import list_ui_config_data
 from modules.admin.create_ui_config_data import create_ui_config_data
 from modules.admin.create_db_config_data import create_db_config_data
 from modules.admin.list_db_config_data import list_db_config_data
+from modules.admin.get_next_free_number import get_next_free_number
 from modules.utilities.logger import logger  # Import the logger module
 
 list_admin_module = Blueprint('list_admin_module', __name__)
@@ -22,6 +23,15 @@ def list_db_config_info():
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Front end setups are going to be retrieved")
     return list_db_config_data()
+
+@list_admin_module.route('/get_next_free_number', methods=['GET'])
+def get_next_free_number_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Next Free Number of a squence")
+    return get_next_free_number()
+
+
 
 # POST Methods ----------------------------------------------------------
 @create_admin_module.route('/create_ui_config_data', methods=['POST'])
