@@ -10,9 +10,10 @@ def get_database_connection(USER_ID, MODULE_NAME):
         # Connect to MySQL database
         mydb = mysql.connector.connect(
             host="localhost",
-            user="vedam10",
-            password="Welcome@123",
-            database="adm"
+            user="vedamc0in1",
+            password="welcome",
+            database="adm",
+            port=3312
         )
 
         # Log the successful database connection

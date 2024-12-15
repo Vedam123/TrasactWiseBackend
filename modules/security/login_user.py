@@ -49,7 +49,10 @@ def login():
     MODULE_NAME = __name__
     username = request.json.get("username", None)
     password = request.json.get("password", None)
+    instance = request.json.get("instance", None)
     active_status = request.json.get("name", None)
+
+    print("Instance name sent from front end",instance)
 
     try:
         user_info = next(
