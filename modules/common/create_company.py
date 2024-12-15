@@ -24,7 +24,7 @@ def create_company():
             USER_ID = token_results["username"]
             token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
 
-        # Log entry point
+        # Log entry pointBXSSS
         logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the create company function")
 
         mydb = get_database_connection(USER_ID, MODULE_NAME)
