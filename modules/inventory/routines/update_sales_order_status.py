@@ -1,7 +1,7 @@
 from modules.utilities.logger import logger
 from flask import jsonify
 
-def update_sales_order_status(sales_header_id, full_qty_alloc_status, part_qty_alloc_status, mydb, current_userid, MODULE_NAME):
+def update_sales_order_status(sales_header_id, full_qty_alloc_status, part_qty_alloc_status, mydb, appuserid, MODULE_NAME):
     try:
         logger.debug(f"Updating Sales Order Status for Header ID: {sales_header_id}")
         query = """
@@ -15,7 +15,7 @@ def update_sales_order_status(sales_header_id, full_qty_alloc_status, part_qty_a
 
         new_status = None
 
-        logger.debug(f"{current_userid} --> {MODULE_NAME}:Sales Line Statuses: {sales_line_statuses}")
+        logger.debug(f"{appuserid} --> {MODULE_NAME}:Sales Line Statuses: {sales_line_statuses}")
 
         if all(status[0] == full_qty_alloc_status for status in sales_line_statuses):
             new_status = full_qty_alloc_status
@@ -34,7 +34,7 @@ def update_sales_order_status(sales_header_id, full_qty_alloc_status, part_qty_a
             SET status = %s, updated_by = %s, updated_at = CURRENT_TIMESTAMP
             WHERE header_id = %s;
             """
-            mycursor.execute(update_query, (new_status, current_userid, sales_header_id))
+            mycursor.execute(update_query, (new_status, appuserid, sales_header_id))
             mydb.commit()
             logger.debug(f"Updated Sales Order Header ID {sales_header_id} with Status {new_status}")
             return jsonify(message='Process completed Sales Order, Lines statuses are updated and available inventory allocated'), 200

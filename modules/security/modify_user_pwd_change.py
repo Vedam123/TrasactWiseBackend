@@ -1,18 +1,26 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
+from config import WRITE_ACCESS_TYPE
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
+from modules.security.permission_required import permission_required  # Import the decorator
 import bcrypt
-from modules.security.permission_required import permission_required
-from config import UPDATE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 from datetime import datetime
 
 modify_user_api = Blueprint('update_user_api', __name__)
 
 @modify_user_api.route('/modify_user_pwd_change', methods=['PUT'])
+@permission_required(WRITE_ACCESS_TYPE ,  __file__)  # Pass WRITE_ACCESS_TYPE as an argument
 def modify_user_pwd_change():
-    MODULE_NAME = __name__
+
+    authorization_header = request.headers.get('Authorization')
+
+    try:
+        company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401
+        
+    if not appuser:
+        return jsonify({"error": "Unauthorized. Username not found."}), 401
     
     # Extract parameters from the request
     user_id = request.json.get('id')
@@ -30,8 +38,6 @@ def modify_user_pwd_change():
         error_message = 'User ID is required for the update'
         logger.error(error_message)
         return jsonify({'error': error_message}), 400
-
-    mydb = get_database_connection(identifier, MODULE_NAME)
 
     # Prepare the update query and values
     update_query = "UPDATE adm.users SET "
@@ -63,28 +69,25 @@ def modify_user_pwd_change():
     update_query += "AND id = %s AND status = %s AND (expiry_date IS NULL OR expiry_date >= %s)"
     update_values.extend([user_id, status, datetime.now().strftime('%Y-%m-%d')])
 
-    logger.debug(f"Update Query: {update_query}")
-    logger.debug(f"Update Values: {update_values}")
 
-    print(f"Update Query: {update_query}")
-    print(f"Update Values: {update_values}")
+    logger.debug(f"{appuser} --> {__name__}: Update Query: {update_query}")   
+    logger.debug(f"{appuser} --> {__name__}: Update values: {update_values}")  
 
     # Execute the update query
     mycursor = mydb.cursor()
-    abc = mycursor.execute(update_query, tuple(update_values))
+    mycursor.execute(update_query, tuple(update_values))
     mydb.commit()
     print(mycursor.rowcount)
     # Check if any rows were affected (indicating a successful update)
-# Check if any rows were affected (indicating a successful update)
     if mycursor.rowcount > 0:
         response = {'message': 'User information updated successfully'}
-        logger.debug(response['message'])
+        logger.debug(f"{appuser} --> {__name__}: Successful: {response}") 
         mycursor.close()
         mydb.close()
         return jsonify(response), 200  # 200 OK for success
     else:
         error_message = 'No user found with the provided ID and conditions for update'
-        logger.error(error_message)
+        logger.error(f"{appuser} --> {__name__}: Update failed: {error_message}") 
         response = {'error': error_message}
         mycursor.close()
         mydb.close()

@@ -1,9 +1,7 @@
 from flask import abort, Blueprint, request, jsonify
-from modules.admin.databases.mydb import get_database_connection
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.purchase.routines.update_po_header_total_byline import update_po_header_total_byline
 from modules.utilities.logger import logger
 
@@ -12,30 +10,27 @@ create_purchase_order_line_api = Blueprint('create_purchase_order_line_api', __n
 @create_purchase_order_line_api.route('/create_purchase_order_line', methods=['POST'])
 @permission_required(WRITE_ACCESS_TYPE, __file__)
 def create_purchase_order_line():
-    MODULE_NAME = __name__
+    
 
     try:
         sum_of_line_total = 0
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-        else:
-            USER_ID = ""
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
         logger.debug(
-            f"{USER_ID} --> {MODULE_NAME}: Entered the 'create purchase order line' function")
+            f"{appuser} --> {__name__}: Entered the 'create purchase order line' function")
 
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
-
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
 
         try:
             json_data = request.get_json()
@@ -69,7 +64,7 @@ def create_purchase_order_line():
                 """
                 values = (
                     header_id, po_lnum, item_id, quantity, unit_price,
-                    line_total, tax_id, uom_id, notes, current_userid, current_userid, status
+                    line_total, tax_id, uom_id, notes, appuserid, appuserid, status
                 )
                 mycursor.execute(query, values)
 
@@ -82,14 +77,14 @@ def create_purchase_order_line():
                 })
 
             logger.debug(
-                f"{USER_ID} --> {MODULE_NAME}: Successfully created purchase order lines")
+                f"{appuser} --> {__name__}: Successfully created purchase order lines")
 
-            success = update_po_header_total_byline(USER_ID, MODULE_NAME, mydb, header_id, sum_of_line_total)
+            success = update_po_header_total_byline(appuser, __name__, mydb, header_id, sum_of_line_total)
 
             if success:
                 mydb.commit()
                 logger.debug(
-                    f"{USER_ID} --> {MODULE_NAME}: Successfully created purchase order lines")
+                    f"{appuser} --> {__name__}: Successfully created purchase order lines")
 
                 response = {
                     'success': True,
@@ -99,7 +94,7 @@ def create_purchase_order_line():
             else:
                 mydb.rollback()
                 logger.error(
-                    f"{USER_ID} --> {MODULE_NAME}: Failed to update total_amount for header_id {header_id}")
+                    f"{appuser} --> {__name__}: Failed to update total_amount for header_id {header_id}")
 
                 response = {
                     'success': False,
@@ -110,12 +105,12 @@ def create_purchase_order_line():
 
         except Exception as json_error:
             logger.error(
-                f"{USER_ID} --> {MODULE_NAME}: Error processing JSON input - {str(json_error)}")
+                f"{appuser} --> {__name__}: Error processing JSON input - {str(json_error)}")
             return 'error: Invalid JSON input', 400
 
     except Exception as e:
         logger.error(
-            f"{USER_ID} --> {MODULE_NAME}: Error creating purchase order lines - {str(e)}")
+            f"{appuser} --> {__name__}: Error creating purchase order lines - {str(e)}")
         mydb.rollback()
         return 'error: Internal Server Error', 500
 

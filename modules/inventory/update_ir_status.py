@@ -1,9 +1,7 @@
 from flask import jsonify, request, Blueprint
 from modules.security.permission_required import permission_required
-from modules.admin.databases.mydb import get_database_connection
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 update_ir_status_api = Blueprint('update_ir_status_api', __name__)
@@ -14,24 +12,23 @@ def update_ir_status():
     MODULE_NAME = __name__
 
     try:
+		
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-        else:
-            USER_ID = ""
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'update transaction status' function")
+        logger.debug(f"{appuser} --> {MODULE_NAME}: Entered the 'update transaction status' function")
 
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
         # Assuming you receive the updated data as JSON in the request body
         data = request.get_json()
 
@@ -42,7 +39,7 @@ def update_ir_status():
 
         # Check if transaction_id, transaction_type, and target_status are provided
         if transaction_id is None or transaction_type is None or target_status is None:
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Missing required parameters in the request")
+            logger.error(f"{appuser} --> {MODULE_NAME}: Missing required parameters in the request")
             return jsonify({'error': 'Missing required parameters in the request'}), 400
 
         # Construct the update query based on transaction_type
@@ -65,13 +62,13 @@ def update_ir_status():
                 WHERE inspection_id = %s
             """
         else:
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Invalid transaction_type provided in the request")
+            logger.error(f"{appuser} --> {MODULE_NAME}: Invalid transaction_type provided in the request")
             return jsonify({'error': 'Invalid transaction_type provided in the request'}), 400
 
         # Assuming you have the updated values in the request data
         values = (
             target_status,
-            current_userid,
+            appuserid,
             transaction_id
         )
 
@@ -81,7 +78,7 @@ def update_ir_status():
         if mycursor.rowcount > 0:
             mydb.commit()
             logger.info(
-                f"{USER_ID} --> {MODULE_NAME}: Successfully updated transaction status. "
+                f"{appuser} --> {MODULE_NAME}: Successfully updated transaction status. "
                 f"transaction_id: {transaction_id}, "
                 f"Updated values: {', '.join(f'{key}={value}' for key, value in zip(('status', 'updated_by'), values[:-2]))}, "
                 f"Request variables: {data}"
@@ -89,13 +86,13 @@ def update_ir_status():
             return jsonify({'message': 'Transaction status updated successfully'})
         else:
             logger.warning(
-                f"{USER_ID} --> {MODULE_NAME}: No rows were affected. Transaction status might not have been updated. "
+                f"{appuser} --> {MODULE_NAME}: No rows were affected. Transaction status might not have been updated. "
                 f"Request variables: {data}"
             )
             return jsonify({'message': 'No rows were affected. Transaction status might not have been updated.'}), 200
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error updating transaction status - {str(e)}")
+        logger.error(f"{appuser} --> {MODULE_NAME}: Error updating transaction status - {str(e)}")
         return jsonify({'error': 'Internal Server Error'}), 500
     finally:
         mycursor.close()

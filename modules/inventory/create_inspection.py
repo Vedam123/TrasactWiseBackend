@@ -1,14 +1,12 @@
 from flask import jsonify, request, Blueprint
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 create_inspection_api = Blueprint('create_inspection_api', __name__)
 
-def create_inspection_logic(data, USER_ID, current_userid, mydb):
+def create_inspection_logic(data, appuser, appuserid, mydb):
     try:
         # Extract additional fields from the data
         inspection_location_id = data['inspection_location_id']
@@ -27,10 +25,10 @@ def create_inspection_logic(data, USER_ID, current_userid, mydb):
         rejected_qty_details = data.get('rejected_qty_details', '')
 
         # Log parsed data
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed Inspection Location ID: {inspection_location_id}")
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed Item ID: {item_id}")
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed UOM ID: {uom_id}")
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed Transaction Quantity: {transaction_quantity}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Inspection Location ID: {inspection_location_id}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Item ID: {item_id}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed UOM ID: {uom_id}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Transaction Quantity: {transaction_quantity}")
         # ... (Other log statements)
 
         mycursor = mydb.cursor()
@@ -55,25 +53,25 @@ def create_inspection_logic(data, USER_ID, current_userid, mydb):
                 transaction_type,
                 accepted_qty_details,
                 rejected_qty_details,
-                current_userid,
-                current_userid
+                appuserid,
+                appuserid
             )
 
             mycursor.execute(query, values)
             mydb.commit()
 
             # Log success
-            logger.info(f"{USER_ID} --> {__name__}: Inspection data created successfully")
+            logger.info(f"{appuser} --> {__name__}: Inspection data created successfully")
             return {'message': 'Inspection data created successfully'}, 200
 
         except Exception as e:
             # Log the error
-            logger.error(f"{USER_ID} --> {__name__}: Unable to create inspection data: {str(e)}")
+            logger.error(f"{appuser} --> {__name__}: Unable to create inspection data: {str(e)}")
             return {'error': str(e)}, 500
 
     except Exception as e:
         # Log any exceptions
-        logger.error(f"{USER_ID} --> {__name__}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: An error occurred: {str(e)}")
         return {'error': str(e)}, 500
 
 
@@ -82,24 +80,20 @@ def create_inspection_logic(data, USER_ID, current_userid, mydb):
 def create_inspection():
     try:
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-        else:
-            USER_ID = ""
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
         # Log entry point
-        logger.debug(f"{USER_ID} --> {__name__}: Entered in the create inspection function")
-
-        mydb = get_database_connection(USER_ID, __name__)
-
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
+        logger.debug(f"{appuser} --> {__name__}: Entered in the create inspection function")
 
         if request.content_type == 'application/json':
             data = request.get_json()
@@ -107,9 +101,9 @@ def create_inspection():
             data = request.form
 
         # Log the received data
-        logger.debug(f"{USER_ID} --> {__name__}: Received data: {data}")
+        logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
-        result, status_code = create_inspection_logic(data, USER_ID, current_userid, mydb)
+        result, status_code = create_inspection_logic(data, appuser, appuserid, mydb)
 
         # Close the cursor and connection
         mydb.close()
@@ -118,5 +112,5 @@ def create_inspection():
 
     except Exception as e:
         # Log any exceptions
-        logger.error(f"{USER_ID} --> {__name__}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: An error occurred: {str(e)}")
         return jsonify({'error': str(e)}), 500

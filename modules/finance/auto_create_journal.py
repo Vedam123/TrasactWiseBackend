@@ -1,10 +1,9 @@
 from flask import request, jsonify, Blueprint
 from modules.utilities.logger import logger
-from flask_jwt_extended import decode_token
 import uuid
 from modules.security.permission_required import permission_required
-from modules.security.get_user_from_token import get_user_from_token
 from modules.finance.routines.auto_create_journal_logic import auto_create_journal_logic
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import WRITE_ACCESS_TYPE
 
 auto_create_journal_api = Blueprint('auto_create_journal_api', __name__)
@@ -14,30 +13,29 @@ auto_create_journal_api = Blueprint('auto_create_journal_api', __name__)
 def auto_create_journal():
     execution_id = str(uuid.uuid4())
     try:
+		
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header) if authorization_header else None
-        USER_ID = token_results["username"] if token_results else ""
-        MODULE_NAME = __name__
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'auto_create_journal' function")
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
+        
+
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'auto_create_journal' function")
 
         data = request.get_json() if request.content_type == 'application/json' else request.form
 
-        current_userid = None
-        if authorization_header and authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')   
-
-        context = {
-            'USER_ID': USER_ID,
-            'MODULE_NAME': MODULE_NAME,
-            'current_userid': current_userid
-        }
         
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before calling auto_create_journal_logic function sent data {data} ")
-        responses = auto_create_journal_logic(data, context)
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: After calling auto_create_journal_logic function {responses}")
+        logger.debug(f"{appuser} --> {__name__}: Before calling auto_create_journal_logic function sent data {data} ")
+        responses = auto_create_journal_logic(data,  mydb, __name__, appuser,appuserid)
+        logger.debug(f"{appuser} --> {__name__}: After calling auto_create_journal_logic function {responses}")
         
         return jsonify({"success": True, "responses": responses}), 200
 

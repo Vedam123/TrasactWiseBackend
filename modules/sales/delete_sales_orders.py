@@ -1,9 +1,7 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details	
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 # Define the Blueprint
@@ -16,13 +14,20 @@ def delete_sales_orders():
     try:
         # Get the user ID from the token
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header) if authorization_header else None
-        USER_ID = token_results["username"] if token_results else ""
-        MODULE_NAME = __name__
-        message = ""
+
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
         # Log entry point
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'delete_sales_order_lines' function")
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'delete_sales_order_lines' function")
 
         # Get the request data
         data = request.get_json()
@@ -33,9 +38,6 @@ def delete_sales_orders():
 
         if not so_nums or delete_lines_flag is None:
             raise ValueError("Both 'so_nums' and 'delete_lines_flag' are required.")
-
-        # Get the database connection
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
 
         # Initialize response message and success flag
         response_message = ""
@@ -64,7 +66,7 @@ def delete_sales_orders():
                 else:
                     response_message += f"The sales order {so_num} is not found .\n"
 
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: {response_message}")
+        logger.info(f"{appuser} --> {__name__}: {response_message}")
 
         # Close the database connection
         mydb.close()

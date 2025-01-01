@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, json
 from modules.security.create_role import create_role
-from modules.security.login_user import login, profile, generate_password_hash
+from modules.security.login_user import login, profile, generate_password_hash, verify_password
 from modules.security.refresh_token import refresh_token
 from modules.security.get_new_token import get_new_token
 from modules.security.logout_user import logout
@@ -100,6 +100,13 @@ def load_appl_modules():
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the load_appl_modules route")
     return load_application_modules()
 
+@post_user_roles_routes.route('/verify_password', methods=['POST'])
+def verify_password_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the verify_password route")
+    return verify_password()
+
 # GET methods ----------------------------------------------------
 @get_user_roles_routes.route('/my_profile', methods=['GET'])
 def my_profile():
@@ -169,7 +176,7 @@ def delete_user_module():
 def list_users_for_pwd_change():
     MODULE_NAME = __name__
     USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the list_users_data route")
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered list password change route")
     return list_users_pwd_change()
 
 # PUT / DELETE methods ----------------------------------------------------

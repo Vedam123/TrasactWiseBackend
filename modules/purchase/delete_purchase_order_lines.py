@@ -1,9 +1,7 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 # Define the Blueprint
@@ -16,13 +14,20 @@ def delete_purchase_order_lines():
     try:
         # Get the user ID from the token
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header) if authorization_header else None
-        USER_ID = token_results["username"] if token_results else ""
-        MODULE_NAME = __name__
-        message = ""
+
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
         # Log entry point
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'delete_purchase_order_lines' function")
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'delete_purchase_order_lines' function")
 
         # Get the request data
         data = request.get_json()
@@ -32,17 +37,11 @@ def delete_purchase_order_lines():
         if header_id is None:
             raise ValueError("header_id is required.")
 
-        # Get the database connection
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
-
-        # Get the current user ID from the token
-        current_userid = decode_token(authorization_header.replace('Bearer ', '')).get('Userid') if authorization_header.startswith('Bearer ') else None
-
         line_ids = data.get('line_ids', [])  # Accepting zero or more line_ids,
         print("What is the Line id value ",line_ids)
 
         # Log the received data
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
+        logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
         deleted_line_ids = []
         undeleted_line_ids = []
@@ -75,7 +74,7 @@ def delete_purchase_order_lines():
             response_message = "No lines are found so none deleted."
             success = False
 
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: {response_message}")
+        logger.info(f"{appuser} --> {__name__}: {response_message}")
 
         # Close the database connection
         mydb.close()

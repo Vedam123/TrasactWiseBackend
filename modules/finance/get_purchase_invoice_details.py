@@ -1,8 +1,7 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import READ_ACCESS_TYPE
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 purchase_invoice_details_api = Blueprint('purchase_invoice_details_api', __name__)
@@ -10,18 +9,24 @@ purchase_invoice_details_api = Blueprint('purchase_invoice_details_api', __name_
 @purchase_invoice_details_api.route('/get_purchase_invoice_details', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE, __file__)
 def get_purchase_invoice_details():
-    MODULE_NAME = __name__
+    
 
     try:
+        
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-        else:
-            USER_ID = ""
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'get_purchase_invoice_details' function")
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'get_purchase_invoice_details' function")
 
         invalid_params_present = any(param for param in request.args.keys() if param not in ['header_id', 'invoice_number', 'partnerid', 'invoicedate', 'status', 'tax_id', 'company_id', 'currency_id', 'department_id', 'transaction_source'])
         if invalid_params_present:
@@ -44,8 +49,7 @@ def get_purchase_invoice_details():
         department_id_str = request.args.get('department_id')
         department_id = int(department_id_str.strip('"')) if department_id_str is not None else None
         transaction_source_str = request.args.get('transaction_source')
-
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
+        
         mycursor = mydb.cursor()
 
         query = """
@@ -107,12 +111,12 @@ def get_purchase_invoice_details():
         mycursor.close()
         mydb.close()
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Successfully retrieved purchase invoice details data")
+        logger.debug(f"{appuser} --> {__name__}: Successfully retrieved purchase invoice details data")
 
         return jsonify({'purchase_invoice_headers': purchase_invoice_headers})
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error retrieving purchase invoice details data - {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: Error retrieving purchase invoice details data - {str(e)}")
         import traceback
         traceback.print_exc()  # Add this line to print the full stack trace
         return jsonify({'error': 'Internal Server Error'}), 500

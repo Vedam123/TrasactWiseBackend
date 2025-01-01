@@ -1,18 +1,12 @@
 from flask import jsonify, request, Blueprint
 from modules.security.permission_required import permission_required
-from decimal import Decimal
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import WRITE_ACCESS_TYPE
-from modules.admin.databases.mydb import get_database_connection
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.inventory.routines.update_pick_and_ship_stage import update_pick_and_ship_stage_status
 from modules.utilities.logger import logger
 
 reverse_pickrelease_inv_api = Blueprint('reverse_pickrelease_inv_api', __name__)
 
-def get_user_from_token(authorization_header):
-    token_results = decode_token(authorization_header.replace('Bearer ', ''))
-    return token_results.get('Userid')
 
 def fetch_pick_release_logs(mycursor, execution_id, sales_header_id, sales_order_line_id, inventory_id):
     query = "SELECT * FROM sal.pick_release_log WHERE execution_id = %s AND pick_release_status = 'RELEASED'"
@@ -87,10 +81,17 @@ def reverse_pick_release():
         logger.info(f"Received request: {request.method} {request.url}")
 
         authorization_header = request.headers.get('Authorization')
-        logger.debug(f"Authorization Header: {authorization_header}")
 
-        current_userid = get_user_from_token(authorization_header)
-        logger.debug(f"User ID from Token: {current_userid}")
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
         data = request.get_json()
         logger.debug(f"Request Data: {data}")
@@ -109,7 +110,6 @@ def reverse_pick_release():
             logger.error("The reverse Pick release status is needed to process ")
             return jsonify(message='The reverse Pick release status is needed to process'), 400
 
-        mydb = get_database_connection(current_userid, MODULE_NAME)
         mydb.start_transaction()
         mycursor = mydb.cursor(dictionary=True)  # Return rows as dictionaries
 
@@ -134,7 +134,7 @@ def reverse_pick_release():
             if inventory_id is not None:
                 update_item_inventory(mycursor, inventory_id)
 
-            update_pick_and_ship_stage_status(USER_ID=current_userid, MODULE_NAME=MODULE_NAME, mydb=mydb, 
+            update_pick_and_ship_stage_status(appuser=appuserid, MODULE_NAME=MODULE_NAME, mydb=mydb, 
                                               reverse_pick_release_status=reverse_pick_release_status, execution_id=execution_id, 
                                               order_id=sales_header_id, line_id=sales_order_line_id)
 

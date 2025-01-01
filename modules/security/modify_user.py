@@ -1,10 +1,8 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 import bcrypt
 from modules.security.permission_required import permission_required
 from config import UPDATE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.utilities.logger import logger
 
 modify_user_api = Blueprint('update_user_api', __name__)
@@ -12,21 +10,16 @@ modify_user_api = Blueprint('update_user_api', __name__)
 @modify_user_api.route('/modify_user', methods=['PUT'])
 @permission_required(UPDATE_ACCESS_TYPE, __file__)
 def modify_user():
-    MODULE_NAME = __name__
-    currentuserid = decode_token(request.headers.get('Authorization', '').replace('Bearer ', '')).get('Userid') if request.headers.get('Authorization', '').startswith('Bearer ') else None
-    token = request.headers.get('Authorization', '').replace('Bearer ', '')
-    logger.debug(f"Received token: {token}")
 
-    # Add this line to print or log the actual token content
-    print(currentuserid)
-    print(UPDATE_ACCESS_TYPE)
-    print( __file__)
+    authorization_header = request.headers.get('Authorization')
 
-    token_info = decode_token(token)
-    logger.debug(f"Decoded token information: {token_info}")
-
-    currentuserid = token_info.get('Userid') if token_info else None
-    logger.debug(f"Current User ID: {currentuserid}")
+    try:
+        company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401
+        
+    if not appuser:
+        return jsonify({"error": "Unauthorized. Username not found."}), 401
 
     # Extract parameters from the request
     user_id = request.json.get('id')
@@ -36,7 +29,7 @@ def modify_user():
     expiry_date = request.json.get('expiry_date')  # Add expiry_date to update
     expiry_date = None if expiry_date == "" else expiry_date
 
-    logger.debug(f"Current User ID: {currentuserid}")
+    logger.debug(f"Current User ID: {appuserid}")
     logger.debug(f"User ID to update: {user_id}")
     logger.debug(f"Email ID to update: {email_id}")
     logger.debug(f"Password to update: {password}")
@@ -48,8 +41,6 @@ def modify_user():
         error_message = 'User ID is required for the update'
         logger.error(error_message)
         return jsonify({'error': error_message}), 400
-
-    mydb = get_database_connection(currentuserid, MODULE_NAME)
 
     # Prepare the update query and values
     update_query = "UPDATE adm.users SET "
@@ -83,13 +74,11 @@ def modify_user():
 
     # Add the common fields for update (updated_by and updated_at)
     update_query += "updated_by = %s, updated_at = NOW() WHERE id = %s"
-    update_values.extend([currentuserid, user_id])
+    update_values.extend([appuserid, user_id])
 
-    logger.debug(f"Update Query: {update_query}")
-    logger.debug(f"Update Values: {update_values}")
+    logger.debug(f"{appuser} --> {__name__}: Update Query: {update_query}")   
+    logger.debug(f"{appuser} --> {__name__}: Update values: {update_values}")  
 
-    print(f"Update Query: {update_query}")
-    print(f"Update Values: {update_values}")
 
     # Execute the update query
     mycursor = mydb.cursor()
@@ -99,10 +88,10 @@ def modify_user():
     # Check if any rows were affected (indicating a successful update)
     if mycursor.rowcount > 0:
         response = {'message': 'User information updated successfully'}
-        logger.debug(response['message'])
+        logger.debug(f"{appuser} --> {__name__}: Successful: {response}") 
     else:
         error_message = 'No user found with the provided ID for update'
-        logger.error(error_message)
+        logger.error(f"{appuser} --> {__name__}: Update failed: {error_message}") 
         response = {'error': error_message}
 
     # Close the cursor and connection

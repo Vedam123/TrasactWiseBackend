@@ -10,7 +10,7 @@ from modules.inventory.routines.update_sales_order_lines_status import update_sa
 
 def allocate_inventory(line, execution_id,sales_header_id, look_only_inventory_ids,
                        full_qty_alloc_status,part_qty_alloc_status, shipping_method,shipping_address, 
-                       ship_status,picker_id,pick_status,mydb, current_userid, MODULE_NAME):
+                       ship_status,picker_id,pick_status,mydb, appuserid, MODULE_NAME):
     try:
         sales_order_line_id = line['sales_order_line_id']
         sales_item_id = line['sales_item_id']
@@ -26,7 +26,7 @@ def allocate_inventory(line, execution_id,sales_header_id, look_only_inventory_i
 
         logger.debug(f"Allocating Inventory for Line ID: {sales_order_line_id}, Item ID: {sales_item_id}, UOM ID: {sales_base_uom_id}, Quantity: {required_quantity}")
 
-        available_inventory = get_available_inventory(sales_item_id, look_only_inventory_ids,mydb, current_userid, MODULE_NAME)
+        available_inventory = get_available_inventory(sales_item_id, look_only_inventory_ids,mydb, appuserid, MODULE_NAME)
         logger.debug(f"Searched Available inventory for the item : {sales_item_id}")
         total_allocated = 0
 
@@ -43,8 +43,8 @@ def allocate_inventory(line, execution_id,sales_header_id, look_only_inventory_i
             if int(inv_uom_id) == int(sales_base_uom_id):
                 logger.debug(f"Processing Inventory if UOM id is matched")
                 conversion_factor = 1  # Default conversion factor when uom_id matches sales_base_uom_id
-                #result = find_lowest_uom_and_cf(inv_uom_id, mydb, current_userid, MODULE_NAME)
-                result = get_conversion_factor(inv_uom_id, inv_uom_id, mydb, current_userid, MODULE_NAME)
+                #result = find_lowest_uom_and_cf(inv_uom_id, mydb, appuserid, MODULE_NAME)
+                result = get_conversion_factor(inv_uom_id, inv_uom_id, mydb, appuserid, MODULE_NAME)
                 conversion_factor = result['conversion_factor']
                 lowest_base_unit = result['lowest_base_unit']
                 convertible_quantity = inv_quantity
@@ -52,7 +52,7 @@ def allocate_inventory(line, execution_id,sales_header_id, look_only_inventory_i
                 lowest_base_unit_conv_factor = result['lowest_conversion_factor']                
             else:
                 logger.debug(f"Processing Inventory where uom id is not matches ")
-                result = get_conversion_factor(inv_uom_id, sales_base_uom_id, mydb, current_userid, MODULE_NAME)
+                result = get_conversion_factor(inv_uom_id, sales_base_uom_id, mydb, appuserid, MODULE_NAME)
                 conversion_factor = result['conversion_factor']
                 lowest_base_unit = result['lowest_base_unit']
                 lowest_base_unit_conv_factor = result['lowest_conversion_factor']
@@ -97,7 +97,7 @@ def allocate_inventory(line, execution_id,sales_header_id, look_only_inventory_i
                 # Update inventory for the allocated quantity
                 response_json, status_code =update_inventory(execution_id,inventory, allocated_quantity_in_base_uom, sales_header_id, 
                                                              sales_order_line_id, sales_line_status,shipping_method,shipping_address,
-                                                             sales_item_id,ship_status,picker_id,pick_status,mydb, current_userid, MODULE_NAME)
+                                                             sales_item_id,ship_status,picker_id,pick_status,mydb, appuserid, MODULE_NAME)
                 
                 response_data = json.loads(response_json)
                 if status_code == 200:
@@ -136,7 +136,7 @@ def allocate_inventory(line, execution_id,sales_header_id, look_only_inventory_i
                     logger.debug(f"Yes, Remaining quantity is greater than 0: {remaining_quantity}")
                     response_json, status_code = create_new_inventory_row(execution_id,inventory, allocated_quantity_in_base_uom, lowest_base_unit, 
                                                                           sales_header_id,sales_order_line_id, sales_line_status,shipping_method,shipping_address,
-                                                                          sales_item_id,ship_status,picker_id,pick_status,mydb, current_userid, MODULE_NAME)
+                                                                          sales_item_id,ship_status,picker_id,pick_status,mydb, appuserid, MODULE_NAME)
                     
                     response_data = json.loads(response_json)
                     logger.debug(f"As the remaining quanity is greather than 0 so create_new_inventory row called and its status code is : {status_code} ")
@@ -149,14 +149,14 @@ def allocate_inventory(line, execution_id,sales_header_id, look_only_inventory_i
                         error_message = response_data.get('error')
                         logger.error(f"Error creating new inventory row: {error_message}")
 
-                    #update_inventory_remaining(inventory, remaining_quantity, lowest_base_unit, inv_uom_id, mydb, current_userid, MODULE_NAME, updated_by)
+                    #update_inventory_remaining(inventory, remaining_quantity, lowest_base_unit, inv_uom_id, mydb, appuserid, MODULE_NAME, updated_by)
                     update_inventory_remaining(inventory, remaining_quantity, lowest_base_unit,
-                                               mydb, current_userid, MODULE_NAME)
+                                               mydb, appuserid, MODULE_NAME)
                 else:
                     logger.debug(f"Yes, Remaining quantity less than  0 so calling update_inventory function : {remaining_quantity}")
                     response_json, status_code =update_inventory(execution_id, inventory, allocated_quantity_in_base_uom, sales_header_id, 
                                                                  sales_order_line_id, sales_line_status,shipping_method,shipping_address,
-                                                                 sales_item_id,ship_status,picker_id,pick_status,mydb, current_userid, MODULE_NAME)
+                                                                 sales_item_id,ship_status,picker_id,pick_status,mydb, appuserid, MODULE_NAME)
                     
                     response_data = json.loads(response_json)
                     logger.debug(f"Yes, Remaining quantity less than  0 so calling update_inventory function and its response is : {status_code}")
@@ -179,7 +179,7 @@ def allocate_inventory(line, execution_id,sales_header_id, look_only_inventory_i
         if total_allocated > 0 : 
             result, status_code = update_sales_order_lines_status(execution_id,sales_header_id,sales_order_line_id,full_qty_alloc_status,
                                                                   part_qty_alloc_status, total_allocated, shipping_method,shipping_address,
-                                                                  sales_item_id,ship_status,picker_id,pick_status,mydb, current_userid, MODULE_NAME)
+                                                                  sales_item_id,ship_status,picker_id,pick_status,mydb, appuserid, MODULE_NAME)
             logger.debug(f"sales order line status function is executed and came out for the line: {sales_order_line_id}")
             logger.debug(f"sales order line status update after result: {result}")
             if status_code == 200:
@@ -203,5 +203,5 @@ def allocate_inventory(line, execution_id,sales_header_id, look_only_inventory_i
 
         return result, status_code
     except Exception as e:
-        logger.error(f"{current_userid} --> {MODULE_NAME}: An error occurred: {str(e)}")
+        logger.error(f"{appuserid} --> {MODULE_NAME}: An error occurred: {str(e)}")
         return jsonify(message=f"Processing failed "),400

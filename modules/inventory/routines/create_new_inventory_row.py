@@ -6,7 +6,7 @@ from modules.inventory.routines.insert_pick_and_ship_stage import insert_pick_an
 
 def create_new_inventory_row(execution_id, inventory, remaining_quantity, sales_base_uom_id, sales_header_id, 
                              sales_order_line_id, sales_line_status,shipping_method,shipping_address,sales_item_id,
-                             ship_status,picker_id,pick_status,mydb, current_userid, MODULE_NAME):
+                             ship_status,picker_id,pick_status,mydb, appuserid, MODULE_NAME):
     try:
         mycursor = mydb.cursor()
         logger.debug(f"Creating New Inventory Row for Inventory ID: {inventory['inventory_id']}, Remaining Quantity: {remaining_quantity}")
@@ -31,8 +31,8 @@ def create_new_inventory_row(execution_id, inventory, remaining_quantity, sales_
             'Yes',
             f'Sales Order ID: {sales_header_id}, Sales Order Line ID: {sales_order_line_id}',
             inventory['additional_info'],
-            current_userid,
-            current_userid
+            appuserid,
+            appuserid
         ))
         #mydb.commit()
         logger.debug(f"New Inventory row created successfully for Inventory ID: {inventory['inventory_id']}")
@@ -41,9 +41,9 @@ def create_new_inventory_row(execution_id, inventory, remaining_quantity, sales_
         inventory_id = mycursor.lastrowid
      
         log_pick_release(execution_id, sales_header_id, sales_order_line_id, sales_line_status, 
-            inventory_id, remaining_quantity, pick_status, current_userid, mydb)
+            inventory_id, remaining_quantity, pick_status, appuserid, mydb)
         
-        insert_pick_and_ship_stage(current_userid, MODULE_NAME, mydb, execution_id, sales_header_id, sales_order_line_id, sales_item_id, 
+        insert_pick_and_ship_stage(appuserid, MODULE_NAME, mydb, execution_id, sales_header_id, sales_order_line_id, sales_item_id, 
                 inventory['inventory_id'], remaining_quantity, picker_id, 
                 ship_status, shipping_method, shipping_address) 
 
@@ -51,7 +51,7 @@ def create_new_inventory_row(execution_id, inventory, remaining_quantity, sales_
         return json.dumps({"inventory_id": inventory_id}), 200
 
     except Exception as e:
-        logger.error(f"{current_userid} --> {MODULE_NAME}: Error in creating new inventory row: {str(e)}")
+        logger.error(f"{appuserid} --> {MODULE_NAME}: Error in creating new inventory row: {str(e)}")
         return json.dumps({"error": str(e)}), 500  # Return error response in case of exception
 
     finally:

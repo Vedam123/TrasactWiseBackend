@@ -1,0 +1,51 @@
+Instances creation instructions after MySQL is installed and create all these with Administrator privileges
+
+1. Create directories as below 
+	1.C:\apps\instances
+	2.C:\apps\instances\instance1
+	3.C:\apps\instances\instance1\data
+	4.C:\apps\instances\instance1\logs
+	5.C:\apps\instances\instance1\uploads
+
+	OR
+	Run the batch file 01create_instance_folders.bat which is in the folder C:\apps\config
+2. Copy the file my.ini file in C:\apps\instances\instance1 folder from C:\ProgramData\MySQL\MySQL Server 8.0 for each instance (e,g instance1)
+	OR
+	Run the batch file 02_copy_config_file.bat which is in the folder C:\apps\config
+3. Change the my.ini file in each of the instance folder as mentioned in the file C:\apps\config\03_change_myini_manually.bat
+	Example changed my.ini file for instance0 is attached here with the port 3307 in the same folder where these instructions are present
+4. Initialize data folder for each instance for example instance1 
+	#Data Directory creation 
+	mysqld --initialize --datadir=C:\apps\instances\instance1
+
+	OR
+	Run the batch file 04_initialize_data_folder.bat which is in the folder C:\apps\config
+5. create Services for each instance 
+	#Service Creation 
+	mysqld --install VEDAM_instance1 --defaults-file=C:\apps\instances\instance1\my.ini
+
+	OR
+	Run the batch file 05_create_services.bat which is in the folder C:\apps\config
+6. Start the Services for each instance 
+	#Start Service
+	net start VEDAM_instance1
+
+	OR
+	Run the batch file 06_start_services.bat which is in the folder C:\apps\config
+
+Optionally you can also use the following steps to Stop or Remove services
+
+7. To Stop Services 
+	# To Stop the service is running
+	net stop VEDAM_instance1
+
+	OR
+	Run the batch file 07_stop_services.bat which is in the folder C:\apps\config
+8. To Remove Services 
+	# Remove the service
+	mysqld --remove VEDAM_instance1
+
+	OR
+	Run the batch file 08_Remove_services.bat which is in the folder C:\apps\config
+
+

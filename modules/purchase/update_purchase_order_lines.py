@@ -1,11 +1,9 @@
 # Import necessary modules and functions
 
 from flask import abort, Blueprint, request, jsonify
-from modules.admin.databases.mydb import get_database_connection
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.purchase.routines.update_po_header_total_cumulative import update_po_header_total_cumulative
 from modules.utilities.logger import logger
 
@@ -16,30 +14,27 @@ update_purchase_order_lines_api = Blueprint('update_purchase_order_lines_api', _
 @update_purchase_order_lines_api.route('/update_purchase_order_lines', methods=['PUT'])
 @permission_required(WRITE_ACCESS_TYPE, __file__)
 def update_purchase_order_lines():
-    MODULE_NAME = __name__
+    
 
     try:
         # Extract user information from token
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-        else:
-            USER_ID = ""
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
         logger.debug(
-            f"{USER_ID} --> {MODULE_NAME}: Entered the 'update purchase order line' function")
+            f"{appuser} --> {__name__}: Entered the 'update purchase order line' function")
 
-        # Get database connection
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
-
-        current_userid = None
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
 
         try:
             # Parse JSON request
@@ -135,7 +130,7 @@ def update_purchase_order_lines():
 
                     print("line_id ",line_id," Query", update_query)
                     print("line_id ",line_id,"  Values", query_values)                    
-                    query_values.extend([current_userid, header_id, line_id])
+                    query_values.extend([appuserid, header_id, line_id])
                     mycursor.execute(update_query, query_values)
 
                     if mycursor.rowcount > 0:
@@ -143,7 +138,7 @@ def update_purchase_order_lines():
                 else:
                     # Insert the line into the purchase_order_line table
                     print("No Line ID , Proceed to insert po_lnum",po_lnum)
-                    insert_line(mydb, header_id, po_lnum, line, current_userid, MODULE_NAME)
+                    insert_line(mydb, header_id, po_lnum, line, appuserid, __name__)
                     updated_lines.append(po_lnum)
                 all_lines.append({'line_id': line_id, 'po_lnum': po_lnum, 'header_id': header_id})
 
@@ -152,14 +147,14 @@ def update_purchase_order_lines():
                 mycursor.execute("SELECT SUM(line_total) FROM pur.purchase_order_line WHERE header_id = %s", (header_id,))
                 sum_of_line_total = mycursor.fetchone()[0]
                 print("Sum of all the lines ",sum_of_line_total)
-                success = update_po_header_total_cumulative(USER_ID, MODULE_NAME, mydb, header_id, sum_of_line_total)
+                success = update_po_header_total_cumulative(appuser, __name__, mydb, header_id, sum_of_line_total)
                 ##update_po_header_total(mydb, header_id,sum_of_line_total)
 
 
                 if success:
                     mydb.commit()
                     logger.debug(
-                        f"{USER_ID} --> {MODULE_NAME}: Successfully created purchase order lines")
+                        f"{appuser} --> {__name__}: Successfully created purchase order lines")
 
                     response = {
                         'success': True,
@@ -169,7 +164,7 @@ def update_purchase_order_lines():
                 else:
                     mydb.rollback()
                     logger.error(
-                        f"{USER_ID} --> {MODULE_NAME}: Failed to update total_amount for header_id {header_id}")
+                        f"{appuser} --> {__name__}: Failed to update total_amount for header_id {header_id}")
 
                     response = {
                         'success': False,
@@ -180,17 +175,17 @@ def update_purchase_order_lines():
             else:
                 mydb.rollback()
                 logger.error(
-                    f"{USER_ID} --> {MODULE_NAME}: Failed to update purchase order lines")
+                    f"{appuser} --> {__name__}: Failed to update purchase order lines")
                 return jsonify({'error': 'Failed to update records'}), 500
 
         except Exception as json_error:
             logger.error(
-                f"{USER_ID} --> {MODULE_NAME}: Error processing JSON input - {str(json_error)}")
+                f"{appuser} --> {__name__}: Error processing JSON input - {str(json_error)}")
             return jsonify({'error': 'Invalid JSON input'}), 400
 
     except Exception as e:
         logger.error(
-            f"{USER_ID} --> {MODULE_NAME}: Error updating purchase order lines - {str(e)}")
+            f"{appuser} --> {__name__}: Error updating purchase order lines - {str(e)}")
         mydb.rollback()
         return 'error: Internal Server Error', 500
 
@@ -200,7 +195,7 @@ def update_purchase_order_lines():
 
 
 # Define the function to insert line
-def insert_line(mydb, header_id, po_lnum, line_data, current_userid, MODULE_NAME):
+def insert_line(mydb, header_id, po_lnum, line_data, appuserid, __name__):
     try:
         # Build the insert query
         print("No Line ID , Inside insert Line function ",po_lnum, " and line data", line_data)        
@@ -227,7 +222,7 @@ def insert_line(mydb, header_id, po_lnum, line_data, current_userid, MODULE_NAME
         # Execute the insert query
         mycursor = mydb.cursor()
        # Execute the insert query
-        query_values = (header_id, po_lnum, quantity, unit_price, line_total, tax_id, notes, uom_id, status, item_id, current_userid, current_userid)
+        query_values = (header_id, po_lnum, quantity, unit_price, line_total, tax_id, notes, uom_id, status, item_id, appuserid, appuserid)
         print("No Line ID , Inside insert Line function Query --> ",insert_query, " and Query Values --> ", query_values)             
         mycursor.execute(insert_query, query_values)
 
@@ -240,7 +235,7 @@ def insert_line(mydb, header_id, po_lnum, line_data, current_userid, MODULE_NAME
     finally:
         mycursor.close()
         logger.debug(
-            f"{current_userid} --> {MODULE_NAME}: Successfully inserted purchase order line with po_lnum {po_lnum}")
+            f"{appuserid} --> {__name__}: Successfully inserted purchase order line with po_lnum {po_lnum}")
 
 
 # Define the function to check item_id existence

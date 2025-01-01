@@ -1,9 +1,8 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import READ_ACCESS_TYPE
 from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 validate_po_invoice_api = Blueprint('validate_po_invoice_api', __name__)
@@ -13,9 +12,18 @@ validate_po_invoice_api = Blueprint('validate_po_invoice_api', __name__)
 def validate_po_invoice():
     try:
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header) if authorization_header else None
-        USER_ID = token_results["username"] if token_results else ""
-        MODULE_NAME = __name__
+
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
+        
         message = ""
     
         # Extract input parameters (header_id, invoice_number, or both)
@@ -24,8 +32,6 @@ def validate_po_invoice():
 
         print("Invoice number and header id first ",invoice_number, header_id)
 
-        # Get the database connection
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
 
         if not header_id and invoice_number:
             header_id = find_header_id_by_invoice_number(mydb, invoice_number)
@@ -42,11 +48,7 @@ def validate_po_invoice():
 
         print("Invoice number and header id ",invoice_number, header_id)
         # Log entry point
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'update_purchase_invoice_lines' function")
-
-        current_userid = decode_token(authorization_header.replace('Bearer ', '')).get('Userid') if authorization_header.startswith('Bearer ') else None
-
-        # Initialize error list to collect validation errors
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'update_purchase_invoice_lines' function")
         validation_errors = []
 
         print("Validation Error is initialized")

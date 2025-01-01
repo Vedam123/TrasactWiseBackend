@@ -1,9 +1,7 @@
 from flask import jsonify, request, Blueprint
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
-from modules.admin.databases.mydb import get_database_connection
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.inventory.routines.convert_pack_and_split import convert_pack_and_split
 from modules.utilities.logger import logger
 
@@ -22,23 +20,21 @@ def pack_or_unpack():
 
         # Extract authorization token from the request header
         authorization_header = request.headers.get('Authorization')
-        logger.debug(f"Authorization Header: {authorization_header}")
 
-        # Get user information from the token
-        token_results = get_user_from_token(authorization_header)
-        USER_ID = token_results["username"] if token_results else ""
-        logger.debug(f"User ID from Token: {USER_ID}")
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
         # Extract input data from the request body
         data = request.get_json()
         logger.debug(f"Request Data: {data}")
-
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
 
         # Extract individual input parameters
         input_inventory_id = data.get('input_inventory_id')
@@ -76,9 +72,7 @@ def pack_or_unpack():
             logger.error(f"Both Input and Target UOM should not be same")
             return f'Both Input and Target UOM are Same, conversion is not possible {input_item_id} {input_target_uom_id}', 400
 
-        # Log database connection
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
-        logger.debug(f"Database Connection established for User ID: {USER_ID}")
+        logger.debug(f"Database Connection established for User ID: {appuser}")
 
         mycursor = mydb.cursor()
 
@@ -104,7 +98,7 @@ def pack_or_unpack():
         logger.debug(f"Fetched Row from Inventory table: {input_quantity}")
 
         # Log function call
-        result, status_code = convert_pack_and_split(input_params, input_quantity, mydb, USER_ID, MODULE_NAME,current_userid,current_userid)
+        result, status_code = convert_pack_and_split(input_params, input_quantity, mydb, appuser, MODULE_NAME,appuserid,appuserid)
         logger.debug(f"The return results of convert pack and split function: {result}")
         mycursor.close()
         mydb.close()

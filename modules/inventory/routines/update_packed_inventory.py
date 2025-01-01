@@ -1,14 +1,14 @@
 from modules.utilities.logger import logger
 
-def update_packed_inventory(input_params, result_params, mydb, USER_ID, MODULE_NAME, created_by, updated_by):
+def update_packed_inventory(input_params, result_params, mydb, appuser, MODULE_NAME, created_by, updated_by):
     try:
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Entered update_packed_inventory_for_sales_orders function")
+        logger.info(f"{appuser} --> {MODULE_NAME}: Entered update_packed_inventory_for_sales_orders function")
 
         mycursor = mydb.cursor()
         
         try:
             if result_params['remainder_quantity'] == 0:
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Remainder quantity is 0")
+                logger.debug(f"{appuser} --> {MODULE_NAME}: Remainder quantity is 0")
 
                 update_query = """
                     UPDATE inv.item_inventory
@@ -28,9 +28,9 @@ def update_packed_inventory(input_params, result_params, mydb, USER_ID, MODULE_N
                 )
                 mycursor.execute(update_query, update_params)
                 mydb.commit()
-                logger.info(f"{USER_ID} --> {MODULE_NAME}: Update successful for Sales Order ID {input_params['sales_header_id']}")
+                logger.info(f"{appuser} --> {MODULE_NAME}: Update successful for Sales Order ID {input_params['sales_header_id']}")
             else:
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Remainder quantity > 0")
+                logger.debug(f"{appuser} --> {MODULE_NAME}: Remainder quantity > 0")
 
                 update_query = """
                     UPDATE inv.item_inventory
@@ -63,11 +63,11 @@ def update_packed_inventory(input_params, result_params, mydb, USER_ID, MODULE_N
                 )
                 mycursor.execute(insert_query, insert_params)
                 mydb.commit()
-                logger.info(f"{USER_ID} --> {MODULE_NAME}: Insert and Update successful for Sales Order ID {input_params['sales_header_id']}")
+                logger.info(f"{appuser} --> {MODULE_NAME}: Insert and Update successful for Sales Order ID {input_params['sales_header_id']}")
 
         except Exception as operation_error:
             mydb.rollback()
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Error during DB operation: {str(operation_error)}")
+            logger.error(f"{appuser} --> {MODULE_NAME}: Error during DB operation: {str(operation_error)}")
             return 'Update Operation failed', 400
         
         finally:
@@ -76,5 +76,5 @@ def update_packed_inventory(input_params, result_params, mydb, USER_ID, MODULE_N
         return 'Update operation successful', 200
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {MODULE_NAME}: An error occurred: {str(e)}")
         return 'Update Operation failed', 400

@@ -1,13 +1,9 @@
 # Exclude Python virtual environment directories
-venv/
-.venv/
-erpenv1/
+erpenv/
 
 # Exclude log files
 *.log
-
-# Exclude database files
-db.sqlite
-
-# Exclude configuration files with sensitive data
-config.ini
+.git/
+.vscode/
+.VSCodeCounter/
+__pycache__/

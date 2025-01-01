@@ -1,13 +1,9 @@
 from modules.utilities.logger import logger
 
-def create_journal_header_logic(data, context):
-    USER_ID = context['USER_ID']
-    MODULE_NAME = context['MODULE_NAME']
-    current_userid = context['current_userid']
-    mydb = context['mydb']
+def create_journal_header_logic(data, mydb, module_name, appuser,appuserid):
 
     try:
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
+        logger.debug(f"{appuser} --> {module_name}: Received data: {data}")
 
         insert_query = """
             INSERT INTO fin.journal_headers (journal_number, company_id, department_id, journal_date, journal_type, source_number, description, currency_id, status, created_by, updated_by)
@@ -24,8 +20,8 @@ def create_journal_header_logic(data, context):
             data.get('description'),
             data.get('currency_id'),
             data.get('status'),
-            current_userid,
-            current_userid
+            appuserid,
+            appuserid
         )
 
         mycursor = mydb.cursor()
@@ -38,9 +34,8 @@ def create_journal_header_logic(data, context):
             currency_id = data.get('currency_id')
             status = data.get('status')
 
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Journal header data created successfully")
+            logger.info(f"{appuser} --> {module_name}: Journal header data created successfully")
             mycursor.close()
-            #mydb.close()
             
             response = {
                 'success': True,
@@ -54,11 +49,9 @@ def create_journal_header_logic(data, context):
             return response, 200
 
         except Exception as e:
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to create journal header data: {str(e)}")
-            #mycursor.close()
-            #mydb.close()
+            logger.error(f"{appuser} --> {module_name}: Unable to create journal header data: {str(e)}")
             return {'error': str(e)}, 500
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {module_name}: An error occurred: {str(e)}")
         return {'error': str(e)}, 500

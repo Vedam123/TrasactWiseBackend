@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required  # Import the decorator
 from config import WRITE_ACCESS_TYPE    # Import WRITE_ACCESS_TYPE
 from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger  # Import the logger module
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 
 create_role_data_api = Blueprint('create_role_data_api', __name__)
 
@@ -11,18 +11,17 @@ create_role_data_api = Blueprint('create_role_data_api', __name__)
 @permission_required(WRITE_ACCESS_TYPE ,  __file__)  # Pass WRITE_ACCESS_TYPE as an argument
 def create_role():
     authorization_header = request.headers.get('Authorization')
-    token_results = ""
-    USER_ID = ""
-    current_user_id = ""
-    MODULE_NAME = __name__
-    if authorization_header:
-        token_results = get_user_from_token(authorization_header)
 
-    if token_results:
-        USER_ID = token_results["username"]
-    token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the create role data function")    
-    mydb = get_database_connection(USER_ID, MODULE_NAME)
+    try:
+        company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401
+    
+    if not appuserid:
+        return jsonify({"error": "Unauthorized. Application user id" + {appuserid} + "not found."}), 401
+    
+    if not appuser:
+        return jsonify({"error": "Unauthorized. Application user " + {appuser} + "not found."}), 401
 
     # Retrieve role data from the request
     role_name = request.json.get('name', None)

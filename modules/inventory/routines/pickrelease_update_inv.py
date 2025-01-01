@@ -1,15 +1,15 @@
 from flask import jsonify
 from modules.utilities.logger import logger  # Ensure the logger is properly configured and accessible
 
-def pickrelease_update_inv(input_params, result_params, mydb, USER_ID, MODULE_NAME, created_by, updated_by):
+def pickrelease_update_inv(input_params, result_params, mydb, appuser, MODULE_NAME, created_by, updated_by):
     try:
         # Log entry point
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Entered pickrelease_update_inv function")
+        logger.info(f"{appuser} --> {MODULE_NAME}: Entered pickrelease_update_inv function")
 
         # Begin the transaction
         
         if result_params['remainder_quantity'] == 0:
-            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Remainder quantity is 0: {result_params['remainder_quantity']}")
+            logger.debug(f"{appuser} --> {MODULE_NAME}: Remainder quantity is 0: {result_params['remainder_quantity']}")
 
             update_query = """
                 UPDATE inv.item_inventory
@@ -35,12 +35,12 @@ def pickrelease_update_inv(input_params, result_params, mydb, USER_ID, MODULE_NA
                 # No need to commit here, as we're still within the transaction
                 # Log success for update
                 mydb.commit()
-                logger.info(f"{USER_ID} --> {MODULE_NAME}: Update successful")
+                logger.info(f"{appuser} --> {MODULE_NAME}: Update successful")
             except Exception as update_error:
                 # Rollback the transaction in case of failure
                 mydb.rollback()
                 # Log error details for update
-                logger.error(f"{USER_ID} --> {MODULE_NAME}: Error during update operation: {str(update_error)}")
+                logger.error(f"{appuser} --> {MODULE_NAME}: Error during update operation: {str(update_error)}")
                 return 'Update Operation failed', 400
             
             finally:
@@ -48,7 +48,7 @@ def pickrelease_update_inv(input_params, result_params, mydb, USER_ID, MODULE_NA
 
             return 'Update Operation Successful', 200
         else:
-            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Remainder quantity is greater than 0: {result_params['remainder_quantity']}")
+            logger.debug(f"{appuser} --> {MODULE_NAME}: Remainder quantity is greater than 0: {result_params['remainder_quantity']}")
 
             update_query = """
                 UPDATE inv.item_inventory
@@ -107,19 +107,19 @@ def pickrelease_update_inv(input_params, result_params, mydb, USER_ID, MODULE_NA
                 # Commit the transaction after successful insert and update
                 mydb.commit()
                 # Log success for both insert and update
-                logger.info(f"{USER_ID} --> {MODULE_NAME}: Insert and Update successful")
+                logger.info(f"{appuser} --> {MODULE_NAME}: Insert and Update successful")
             except Exception as operation_error:
                 # Rollback the transaction in case of failure
                 mydb.rollback()
                 # Log error details for either update or insert
-                logger.error(f"{USER_ID} --> {MODULE_NAME}: Error during database operation: {str(operation_error)}")
+                logger.error(f"{appuser} --> {MODULE_NAME}: Error during database operation: {str(operation_error)}")
                 return 'Update Operation failed', 400 
 
             finally:
                 mycursor.close()
     except Exception as e:
         # Log error details
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred during inventory update: {str(e)}")
+        logger.error(f"{appuser} --> {MODULE_NAME}: An error occurred during inventory update: {str(e)}")
         # Return failure for any other case
         return 'Update Operation failed', 400 
 

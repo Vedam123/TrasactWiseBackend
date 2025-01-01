@@ -1,9 +1,8 @@
 # invrows_routes.py
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import READ_ACCESS_TYPE
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 invrows_api = Blueprint('invrows_api', __name__)
@@ -15,16 +14,20 @@ def get_invrows():
 
     try:
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-        else:
-            USER_ID = ""
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'get invrows' function")
+        logger.debug(f"{appuser} --> {MODULE_NAME}: Entered the 'get invrows' function")
 
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
 
         row_id_param = request.args.get('row_id')
@@ -92,10 +95,10 @@ def get_invrows():
         mycursor.close()
         mydb.close()
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Successfully retrieved invrows data")
+        logger.debug(f"{appuser} --> {MODULE_NAME}: Successfully retrieved invrows data")
 
         return jsonify({'invrows_list': invrows_list})
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error retrieving invrows data - {str(e)}")
+        logger.error(f"{appuser} --> {MODULE_NAME}: Error retrieving invrows data - {str(e)}")
         return jsonify({'error': 'Internal Server Error', 'details': str(e)}), 500

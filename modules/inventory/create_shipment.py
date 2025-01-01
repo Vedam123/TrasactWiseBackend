@@ -1,9 +1,7 @@
 from flask import jsonify, request, Blueprint
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 shipments_api = Blueprint('shipments_api', __name__)
@@ -15,30 +13,26 @@ shipments_api = Blueprint('shipments_api', __name__)
 def create_shipment():
     try:
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-        else:
-            USER_ID = ""
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
-        logger.debug(f"{USER_ID} --> {__name__}: Entered in the create shipment function")
-
-        mydb = get_database_connection(USER_ID, __name__)
-
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
+        logger.debug(f"{appuser} --> {__name__}: Entered in the create shipment function")
 
         if request.content_type == 'application/json':
             data = request.get_json()
         else:
             data = request.form
 
-        logger.debug(f"{USER_ID} --> {__name__}: Received data: {data}")
+        logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
         item_id = data['item_id']
         shipment_name = data['shipment_name']
@@ -50,15 +44,15 @@ def create_shipment():
         transaction_number = data.get('transaction_number')
         transaction_status = data.get('status')
 
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed Item ID: {item_id}")
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed Shipment Name: {shipment_name}")
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed Staging Location ID: {staging_location_id}")
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed Quantity: {quantity}")
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed UOM ID: {uom_id}")
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed Comments: {comments}")
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed Inspect: {inspect}")
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed Transaction Number: {transaction_number}")
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed status: {transaction_status}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Item ID: {item_id}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Shipment Name: {shipment_name}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Staging Location ID: {staging_location_id}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Quantity: {quantity}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed UOM ID: {uom_id}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Comments: {comments}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Inspect: {inspect}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Transaction Number: {transaction_number}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed status: {transaction_status}")
 
         mycursor = mydb.cursor()
 
@@ -76,25 +70,25 @@ def create_shipment():
                 comments,
                 inspect,
                 transaction_number,
-                current_userid,
-                current_userid,
+                appuserid,
+                appuserid,
                 transaction_status
             )
 
             mycursor.execute(query, values)
             mydb.commit()
 
-            logger.info(f"{USER_ID} --> {__name__}: Shipment data created successfully")
+            logger.info(f"{appuser} --> {__name__}: Shipment data created successfully")
             mycursor.close()
             mydb.close()
             return jsonify({'message': 'Shipment data created successfully'}), 200
 
         except Exception as e:
-            logger.error(f"{USER_ID} --> {__name__}: Unable to create shipment data: {str(e)}")
+            logger.error(f"{appuser} --> {__name__}: Unable to create shipment data: {str(e)}")
             mycursor.close()
             mydb.close()
             return jsonify({'error': str(e)}), 500
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {__name__}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: An error occurred: {str(e)}")
         return jsonify({'error': str(e)}), 500

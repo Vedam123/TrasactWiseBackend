@@ -1,13 +1,8 @@
 from modules.utilities.logger import logger
 
-def create_journal_header_logic(data, context):
-    USER_ID = context['USER_ID']
-    MODULE_NAME = context['MODULE_NAME']
-    current_userid = context['current_userid']
-    mydb = context['mydb']
-
+def create_journal_header_logic(data, mydb, module_name, appuser,appuserid):
     try:
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
+        logger.debug(f"{appuser} --> {module_name}: Received data: {data}")
 
         insert_query = """
             INSERT INTO fin.journal_headers (journal_number, company_id, department_id, journal_date, journal_type, source_number, description, currency_id, status, created_by, updated_by)
@@ -24,8 +19,8 @@ def create_journal_header_logic(data, context):
             data.get('description'),
             data.get('currency_id'),
             data.get('status'),
-            current_userid,
-            current_userid
+            appuserid,
+            appuserid
         )
 
         cursor = mydb.cursor()
@@ -42,15 +37,10 @@ def create_journal_header_logic(data, context):
         return response, 200
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error in create_journal_header_logic: {str(e)}")
+        logger.error(f"{appuser} --> {module_name}: Error in create_journal_header_logic: {str(e)}")
         return {"error": str(e)}, 500
 
-def create_journal_line_logic(lines, context):
-    USER_ID = context['USER_ID']
-    MODULE_NAME = context['MODULE_NAME']
-    current_userid = context['current_userid']
-    mydb = context['mydb']
-
+def create_journal_line_logic(lines, mydb, module_name, appuser,appuserid):
     try:
         cursor = mydb.cursor()
 
@@ -67,8 +57,8 @@ def create_journal_line_logic(lines, context):
                 line['debit'],
                 line['credit'],
                 line['status'],
-                current_userid,
-                current_userid
+                appuserid,
+                appuserid
             )
             cursor.execute(insert_query, insert_values)
 
@@ -77,10 +67,10 @@ def create_journal_line_logic(lines, context):
         return {"success": True}, 200
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error in create_journal_line_logic: {str(e)}")
+        logger.error(f"{appuser} --> {module_name}: Error in create_journal_line_logic: {str(e)}")
         return {"success": False, "error": str(e)}, 500
 
-def update_sales_invoice_status(invoice_id, target_status, mydb, MODULE_NAME, USER_ID):
+def update_sales_invoice_status(invoice_id, target_status, mydb, module_name, appuser,appuserid):
     try:
         cursor = mydb.cursor()
         update_query = "UPDATE fin.salesinvoice SET status = %s WHERE header_id = %s"
@@ -89,10 +79,10 @@ def update_sales_invoice_status(invoice_id, target_status, mydb, MODULE_NAME, US
         cursor.close()
         return {"success": True}, 200
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error in update_sales_invoice_status: {str(e)}")
+        logger.error(f"{appuser} --> {module_name}: Error in update_sales_invoice_status: {str(e)}")
         return {"success": False, "error": str(e)}, 500
 
-def update_purchase_invoice_status(invoice_id, target_status, mydb, MODULE_NAME, USER_ID):
+def update_purchase_invoice_status(invoice_id, target_status, mydb, module_name, appuser,appuserid):
     try:
         cursor = mydb.cursor()
         update_query = "UPDATE fin.purchaseinvoice SET status = %s WHERE header_id = %s"
@@ -101,5 +91,5 @@ def update_purchase_invoice_status(invoice_id, target_status, mydb, MODULE_NAME,
         cursor.close()
         return {"success": True}, 200
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error in update_purchase_invoice_status: {str(e)}")
+        logger.error(f"{appuser} --> {module_name}: Error in update_purchase_invoice_status: {str(e)}")
         return {"success": False, "error": str(e)}, 500

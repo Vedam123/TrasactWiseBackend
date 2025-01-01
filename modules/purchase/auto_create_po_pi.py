@@ -1,9 +1,7 @@
 from flask import Blueprint, jsonify, request
 import uuid
-from flask_jwt_extended import decode_token
-from modules.admin.databases.mydb import get_database_connection
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.security.permission_required import permission_required
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 from config import WRITE_ACCESS_TYPE
 from datetime import datetime, timedelta
@@ -15,7 +13,7 @@ from modules.purchase.routines.auto_process_tax_accounts import auto_process_tax
 from decimal import Decimal,ROUND_HALF_UP
 
 # Helper function to create purchase invoice header
-def create_purchase_invoice(data, USER_ID, MODULE_NAME, mydb):
+def create_purchase_invoice(data, appuser, __name__, mydb):
     try:
         cursor = mydb.cursor(dictionary=True) 
 
@@ -56,21 +54,21 @@ def create_purchase_invoice(data, USER_ID, MODULE_NAME, mydb):
         }, 200
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to create purchase invoice header: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: Unable to create purchase invoice header: {str(e)}")
         return {"error": str(e)}, 500
 
 # Helper function to create purchase invoice lines
-def create_purchase_invoice_lines(header_id, lines, USER_ID, MODULE_NAME, mydb):
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the create purchase invoice lines function for header id: {header_id}")
+def create_purchase_invoice_lines(header_id, lines, appuser, __name__, mydb):
+    logger.debug(f"{appuser} --> {__name__}: Entered the create purchase invoice lines function for header id: {header_id}")
     try:
         cursor = mydb.cursor(dictionary=True)
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Try block with cursor: {header_id}")
+        logger.debug(f"{appuser} --> {__name__}: Try block with cursor: {header_id}")
         insert_query = """
             INSERT INTO fin.purchaseinvoicelines (line_number, header_id, item_id, quantity, unit_price, line_total, uom_id, created_by, updated_by)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: The query : {insert_query}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before forloop : {lines}")
+        logger.debug(f"{appuser} --> {__name__}: The query : {insert_query}")
+        logger.debug(f"{appuser} --> {__name__}: Before forloop : {lines}")
         response_lines = []
         for line in lines:
             cursor.execute('SET @next_val = 0;')
@@ -101,9 +99,9 @@ def create_purchase_invoice_lines(header_id, lines, USER_ID, MODULE_NAME, mydb):
                 "line_number": next_val,
                 "line_total": line["line_total"]
             })
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: After For loop : {lines}")
+        logger.debug(f"{appuser} --> {__name__}: After For loop : {lines}")
         cursor.close()
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before leaving the function: {response_lines}")
+        logger.debug(f"{appuser} --> {__name__}: Before leaving the function: {response_lines}")
    
         return {
             "header_id": header_id,
@@ -113,12 +111,12 @@ def create_purchase_invoice_lines(header_id, lines, USER_ID, MODULE_NAME, mydb):
         }, 200
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to create purchase invoice lines: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: Unable to create purchase invoice lines: {str(e)}")
         return {"error": str(e)}, 500
 
 # Main API to create purchase invoice and distribute
 
-def create_purchase_invoice_accounts(header_id, account_lines, current_userid, mydb):
+def create_purchase_invoice_accounts(header_id, account_lines, appuserid, mydb):
     logger.debug(f"Entered the create_purchase_invoice_accounts function for header_id: {header_id}, account lines --> {account_lines}")
     try:
         cursor = mydb.cursor(dictionary=True) 
@@ -148,8 +146,8 @@ def create_purchase_invoice_accounts(header_id, account_lines, current_userid, m
                 Decimal(account["debitamount"]).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP),         
                 Decimal(account["creditamount"]).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP),        
                 account.get("is_tax_line", False),  # Add is_tax_line field
-                current_userid,
-                current_userid
+                appuserid,
+                appuserid
             ))
 
         mydb.commit()
@@ -175,26 +173,29 @@ def auto_create_po_pi():
     mydb = None
     execution_id = str(uuid.uuid4())
     try:
+		
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header) if authorization_header else None
-        USER_ID = token_results["username"] if token_results else ""
-        MODULE_NAME = __name__
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'auto_create_po_pi' function")
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
+        
+
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'auto_create_po_pi' function")
 
         if request.content_type == 'application/json':
             data = request.get_json()
         else:
             data = request.form
 
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
-
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
+        logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
         purchase_order_numbers = data.get("purchase_order_numbers", [])
         po_new_status = data.get("po_new_status")
@@ -203,7 +204,6 @@ def auto_create_po_pi():
         account_types = data.get("account_types", {})
         po_order_status_filter = data.get("po_order_status_filter")
 
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
         cursor = mydb.cursor(dictionary=True)
 
         if not purchase_order_numbers:
@@ -243,7 +243,7 @@ def auto_create_po_pi():
                 tax_id = order["tax_id"]
                 new_tax_id = None
                 if not tax_id:
-                    new_tax_id, new_tax_rate = get_tax_rate_by_company_id(company_id, new_input_tax_type, USER_ID, MODULE_NAME, mydb)
+                    new_tax_id, new_tax_rate = get_tax_rate_by_company_id(company_id, new_input_tax_type, appuser, __name__, mydb)
 
                 tax_rate = 0.1  # Replace with actual logic if needed
 
@@ -270,8 +270,8 @@ def auto_create_po_pi():
                         "department_id": order["department_id"],
                         "company_id": order["company_id"],
                         "transaction_source": f"PO {order['header_id']}",
-                        "created_by": current_userid,
-                        "updated_by": current_userid
+                        "created_by": appuserid,
+                        "updated_by": appuserid
                     }
                 else:
                     invoice_data = {
@@ -287,18 +287,18 @@ def auto_create_po_pi():
                         "department_id": order["department_id"],
                         "company_id": order["company_id"],
                         "transaction_source": f"PO {order['header_id']}",
-                        "created_by": current_userid,
-                        "updated_by": current_userid
+                        "created_by": appuserid,
+                        "updated_by": appuserid
                     }
 
                 # Create Purchase Invoice
-                header_response, status_code = create_purchase_invoice(invoice_data, USER_ID, MODULE_NAME, mydb)
+                header_response, status_code = create_purchase_invoice(invoice_data, appuser, __name__, mydb)
                 if status_code != 200:
                     raise Exception(header_response.get("message", "Failed to create purchase invoice"))
 
                 header_id = header_response["header_id"]
 
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Main function   : {header_id}")
+                logger.debug(f"{appuser} --> {__name__}: Main function   : {header_id}")
 
                 # Fetch purchase order lines
                 cursor.execute("""
@@ -309,7 +309,7 @@ def auto_create_po_pi():
 
                 line_data = []
                 starting_line_number = 1  # Starting point for line numbers
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Main function   : {order_lines}")
+                logger.debug(f"{appuser} --> {__name__}: Main function   : {order_lines}")
                 for index, line in enumerate(order_lines):
                     line_number = starting_line_number + index
                     line_data.append({
@@ -320,12 +320,12 @@ def auto_create_po_pi():
                         "unit_price": Decimal(line["unit_price"]).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP),
                         "line_total": Decimal(line["line_total"]).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP),                       
                         "uom_id": line["uom_id"],
-                        "created_by": current_userid,
-                        "updated_by": current_userid
+                        "created_by": appuserid,
+                        "updated_by": appuserid
                     })
 
                 # Create Purchase Invoice Lines
-                lines_response, status_code = create_purchase_invoice_lines(header_id, line_data, USER_ID, MODULE_NAME, mydb)
+                lines_response, status_code = create_purchase_invoice_lines(header_id, line_data, appuser, __name__, mydb)
                 if status_code != 200:
                     raise Exception(lines_response.get("message", "Failed to create purchase invoice lines"))
 
@@ -336,17 +336,17 @@ def auto_create_po_pi():
 
                 # Process Credit accounts first
                 for credit_account in account_types.get("Credit", []):
-                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_type"], mydb, USER_ID, MODULE_NAME)
-                    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 00 , {account_details}") 
+                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_type"], mydb, appuser, __name__)
+                    logger.debug(f"{appuser} --> {__name__}: Decimal to float error  is it appeared here 00 , {account_details}") 
                     #distribution_percentage = credit_account.get("distribution_percentage", 0)
 
                     distribution_percentage = Decimal(credit_account.get("distribution_percentage", 0)) / 100
                     credit_amount = totalamount * distribution_percentage
 
                     credit_total += credit_amount
-                    logger.debug(f"{USER_ID} --> {MODULE_NAME}: TO BE INSERTED CREDIT before  ROUNDING: {credit_amount}")
+                    logger.debug(f"{appuser} --> {__name__}: TO BE INSERTED CREDIT before  ROUNDING: {credit_amount}")
                     credit_amount = Decimal(credit_amount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-                    logger.debug(f"{USER_ID} --> {MODULE_NAME}: TO BE INSERTED CREDIT AMOUNT AFTER ROUNDING: {credit_amount}")
+                    logger.debug(f"{appuser} --> {__name__}: TO BE INSERTED CREDIT AMOUNT AFTER ROUNDING: {credit_amount}")
 
                     account_lines.append({
                         "line_number": None,
@@ -355,26 +355,26 @@ def auto_create_po_pi():
                         "debitamount": 0,
                         "is_tax_line": False,  # Add is_tax_line field
                         "creditamount": credit_amount,
-                        "created_by": current_userid,
-                        "updated_by": current_userid
+                        "created_by": appuserid,
+                        "updated_by": appuserid
                     })
 
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 0000")
-                total_tax_amount= auto_process_tax_accounts(order, totalamount, account_types, account_lines, USER_ID, MODULE_NAME, mydb) 
+                logger.debug(f"{appuser} --> {__name__}: Decimal to float error  is it appeared here 0000")
+                total_tax_amount= auto_process_tax_accounts(order, totalamount, account_types, account_lines, appuser, __name__, mydb) 
                 
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 2 Total, remaining, tax total ,{totalamount} , {account_types} {total_tax_amount}")  
+                logger.debug(f"{appuser} --> {__name__}: Decimal to float error  is it appeared here 2 Total, remaining, tax total ,{totalamount} , {account_types} {total_tax_amount}")  
                 for debit_account in account_types.get("Debit", []):
                     if "Tax" not in debit_account["category"]:  # Only non-tax accounts
-                        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Total amount and total tax amount: {totalamount} {total_tax_amount} ") 
+                        logger.debug(f"{appuser} --> {__name__}: Total amount and total tax amount: {totalamount} {total_tax_amount} ") 
                         remaining_amount = totalamount - total_tax_amount
                         distribution_percentage = Decimal(debit_account.get("distribution_percentage", 0)) / 100
                         debit_amount = remaining_amount * distribution_percentage
                         debit_total += debit_amount
-                        logger.debug(f"{USER_ID} --> {MODULE_NAME}: TO BE INSERTED DEBIT AMOUNT before  ROUNDING: {debit_amount}")
+                        logger.debug(f"{appuser} --> {__name__}: TO BE INSERTED DEBIT AMOUNT before  ROUNDING: {debit_amount}")
                         debit_amount = Decimal(debit_amount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-                        logger.debug(f"{USER_ID} --> {MODULE_NAME}: TO BE INSERTED DEBIT AMOUNT AFTER ROUNDING: {debit_amount}")
+                        logger.debug(f"{appuser} --> {__name__}: TO BE INSERTED DEBIT AMOUNT AFTER ROUNDING: {debit_amount}")
 
-                        account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_type"], mydb, USER_ID, MODULE_NAME) 
+                        account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_type"], mydb, appuser, __name__) 
                         account_lines.append({
                             "line_number": debit_account["account_type"],
                             "header_id": header_id,
@@ -382,15 +382,15 @@ def auto_create_po_pi():
                             "debitamount": debit_amount,
                             "creditamount": 0,
                             "is_tax_line": False,  # Add is_tax_line field
-                            "created_by": current_userid,
-                            "updated_by": current_userid
+                            "created_by": appuserid,
+                            "updated_by": appuserid
                         })
                 
                 debit_total = debit_total + total_tax_amount
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Decimal to float error  is it appeared here 3 Debit total {debit_total}")  
+                logger.debug(f"{appuser} --> {__name__}: Decimal to float error  is it appeared here 3 Debit total {debit_total}")  
                 # Insert account lines into purchase invoice accounts table
 
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Total Debit and Credit amount Total amount comparision: {debit_total} {credit_total} {totalamount}")            
+                logger.debug(f"{appuser} --> {__name__}: Total Debit and Credit amount Total amount comparision: {debit_total} {credit_total} {totalamount}")            
 
                 debit_total = Decimal(debit_total).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
                 credit_total = Decimal(credit_total).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
@@ -401,7 +401,7 @@ def auto_create_po_pi():
                     raise Exception("Debit, Credit totals, and Total amount do not match after rounding to two decimal places.")               
 
                 # Insert Purchase Invoice Accounts
-                accounts_response, status_code = create_purchase_invoice_accounts(header_id, account_lines, current_userid, mydb)
+                accounts_response, status_code = create_purchase_invoice_accounts(header_id, account_lines, appuserid, mydb)
                 if status_code != 200:
                     raise Exception(accounts_response.get("message", "Failed to create purchase invoice accounts"))
 
@@ -414,16 +414,16 @@ def auto_create_po_pi():
                     "po_header_update_status": po_new_status,
                     "purchase_invoice_status": "CREATED",
                     "auto_purchase_status": "SUCCESS",
-                    "created_by": current_userid,
-                    "updated_by": current_userid
+                    "created_by": appuserid,
+                    "updated_by": appuserid
                 }
                 log_auto_purchase_invoice(log_data, mydb)
 
                 # Update the purchase order status
 
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Now going to update a function to update PO header and lines for the header {header_id}")
-                update_poheader_and_lines_status(USER_ID, MODULE_NAME, mydb, pur_order_header_id, po_new_status)
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: The Function is executed successfully for the header {header_id}")
+                logger.debug(f"{appuser} --> {__name__}: Now going to update a function to update PO header and lines for the header {header_id}")
+                update_poheader_and_lines_status(appuser, __name__, mydb, pur_order_header_id, po_new_status)
+                logger.debug(f"{appuser} --> {__name__}: The Function is executed successfully for the header {header_id}")
 
                 responses.append({
                     "header_response": header_response,
@@ -433,7 +433,7 @@ def auto_create_po_pi():
                 })
 
             except Exception as e:
-                logger.error(f"{USER_ID} --> {MODULE_NAME}: Error processing order {order['header_id']}: {str(e)}")
+                logger.error(f"{appuser} --> {__name__}: Error processing order {order['header_id']}: {str(e)}")
                 continue
 
         return jsonify({"success": True, "invoices": responses}), 200

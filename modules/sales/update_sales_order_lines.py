@@ -1,10 +1,8 @@
 # Import necessary modules and functions
-from flask import abort, Blueprint, request, jsonify
-from modules.admin.databases.mydb import get_database_connection
+from flask import Blueprint, request, jsonify
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details	
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.common.routines.find_lowest_uom_and_cf import find_lowest_uom_and_cf
 from modules.sales.routines.update_so_header_total_cumulative import update_so_header_total_cumulative
 from modules.utilities.logger import logger
@@ -16,30 +14,27 @@ update_sales_order_lines_api = Blueprint('update_sales_order_lines_api', __name_
 @update_sales_order_lines_api.route('/update_sales_order_lines', methods=['PUT'])
 @permission_required(WRITE_ACCESS_TYPE, __file__)
 def update_sales_order_lines():
-    MODULE_NAME = __name__
+    
 
     try:
         # Extract user information from token
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-        else:
-            USER_ID = ""
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
         logger.debug(
-            f"{USER_ID} --> {MODULE_NAME}: Entered the 'update sales order line' function")
+            f"{appuser} --> {__name__}: Entered the 'update sales order line' function")
 
-        # Get database connection
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
-
-        current_userid = None
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
 
         try:
             # Parse JSON request
@@ -114,7 +109,7 @@ def update_sales_order_lines():
 
                 if 'quantity' in line or 'unit_price' in line or 'uom_id' in line:
                     # Recalculate base_uom_id and base_quantity
-                    result = find_lowest_uom_and_cf(uom_id, mydb, current_userid, MODULE_NAME)
+                    result = find_lowest_uom_and_cf(uom_id, mydb, appuserid, __name__)
                     base_uom_id = result['base_unit']
                     base_uom_cf = result['conversion_factor']
                     base_quantity = line.get('quantity') * base_uom_cf
@@ -131,14 +126,14 @@ def update_sales_order_lines():
                     updated_by = %s
                     WHERE header_id = %s AND line_id = %s;
                     """
-                    query_values.extend([current_userid, header_id, line_id])
+                    query_values.extend([appuserid, header_id, line_id])
                     mycursor.execute(update_query, query_values)
 
                     if mycursor.rowcount > 0:
                         updated_lines.append(line_id)
                 else:
                     # Insert the line into the sales_order_line table
-                    insert_line(mydb, header_id, so_lnum, line, current_userid, MODULE_NAME)
+                    insert_line(mydb, header_id, so_lnum, line, appuserid, __name__)
                     updated_lines.append(so_lnum)
 
                 all_lines.append({'line_id': line_id, 'so_lnum': so_lnum, 'header_id': header_id})
@@ -147,12 +142,12 @@ def update_sales_order_lines():
                 # Update total amount in the header table
                 mycursor.execute("SELECT SUM(line_total) FROM sal.sales_order_lines WHERE header_id = %s", (header_id,))
                 sum_of_line_total = mycursor.fetchone()[0]
-                success = update_so_header_total_cumulative(USER_ID, MODULE_NAME, mydb, header_id, sum_of_line_total)
+                success = update_so_header_total_cumulative(appuser, __name__, mydb, header_id, sum_of_line_total)
 
                 if success:
                     mydb.commit()
                     logger.debug(
-                        f"{USER_ID} --> {MODULE_NAME}: Successfully created/updated sales order lines")
+                        f"{appuser} --> {__name__}: Successfully created/updated sales order lines")
 
                     response = {
                         'success': True,
@@ -162,7 +157,7 @@ def update_sales_order_lines():
                 else:
                     mydb.rollback()
                     logger.error(
-                        f"{USER_ID} --> {MODULE_NAME}: Failed to update total_amount for header_id {header_id}")
+                        f"{appuser} --> {__name__}: Failed to update total_amount for header_id {header_id}")
 
                     response = {
                         'success': False,
@@ -173,17 +168,17 @@ def update_sales_order_lines():
             else:
                 mydb.rollback()
                 logger.error(
-                    f"{USER_ID} --> {MODULE_NAME}: Failed to create/update sales order lines")
+                    f"{appuser} --> {__name__}: Failed to create/update sales order lines")
                 return jsonify({'error': 'Failed to create/update records'}), 500
 
         except Exception as json_error:
             logger.error(
-                f"{USER_ID} --> {MODULE_NAME}: Error processing JSON input - {str(json_error)}")
+                f"{appuser} --> {__name__}: Error processing JSON input - {str(json_error)}")
             return jsonify({'error': 'Invalid JSON input'}), 400
 
     except Exception as e:
         logger.error(
-            f"{USER_ID} --> {MODULE_NAME}: Error updating sales order lines - {str(e)}")
+            f"{appuser} --> {__name__}: Error updating sales order lines - {str(e)}")
         mydb.rollback()
         return 'error: Internal Server Error', 500
 
@@ -193,7 +188,7 @@ def update_sales_order_lines():
 
 
 # Define the function to insert line
-def insert_line(mydb, header_id, so_lnum, line_data, current_userid, MODULE_NAME):
+def insert_line(mydb, header_id, so_lnum, line_data, appuserid, __name__):
     try:
         # Build the insert query
         insert_query = """
@@ -212,7 +207,7 @@ def insert_line(mydb, header_id, so_lnum, line_data, current_userid, MODULE_NAME
 
         # Calculate base_uom_id and base_quantity
         if uom_id is not None:
-            result = find_lowest_uom_and_cf(uom_id, mydb, current_userid, MODULE_NAME)
+            result = find_lowest_uom_and_cf(uom_id, mydb, appuserid, __name__)
             base_uom_id = result['base_unit']
             base_uom_cf = result['conversion_factor']
             base_quantity = quantity * base_uom_cf
@@ -222,7 +217,7 @@ def insert_line(mydb, header_id, so_lnum, line_data, current_userid, MODULE_NAME
 
         # Execute the insert query
         mycursor = mydb.cursor()
-        query_values = (header_id, so_lnum, quantity, unit_price, line_total, notes, uom_id, status, item_id, base_uom_id, base_quantity, base_uom_cf,current_userid, current_userid)
+        query_values = (header_id, so_lnum, quantity, unit_price, line_total, notes, uom_id, status, item_id, base_uom_id, base_quantity, base_uom_cf,appuserid, appuserid)
         mycursor.execute(insert_query, query_values)
         mydb.commit()
 
@@ -232,7 +227,7 @@ def insert_line(mydb, header_id, so_lnum, line_data, current_userid, MODULE_NAME
     finally:
         mycursor.close()
         logger.debug(
-            f"{current_userid} --> {MODULE_NAME}: Successfully inserted sales order line with so_lnum {so_lnum}")
+            f"{appuserid} --> {__name__}: Successfully inserted sales order line with so_lnum {so_lnum}")
 
 
 # Define the function to check item_id existence

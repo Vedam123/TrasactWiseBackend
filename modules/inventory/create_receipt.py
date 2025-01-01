@@ -1,9 +1,7 @@
 from flask import jsonify, request, Blueprint
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 from modules.inventory.create_inspection import create_inspection_logic  
 from modules.purchase.routines.update_po_statuses import update_po_statuses
@@ -18,24 +16,20 @@ def create_receipt():
     MODULE_NAME = __name__
     try:
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-        else:
-            USER_ID = ""
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
         # Log entry point
-        logger.debug(f"{USER_ID} --> {__name__}: Entered in the create receipt function")
-
-        mydb = get_database_connection(USER_ID, __name__)
-
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
+        logger.debug(f"{appuser} --> {__name__}: Entered in the create receipt function")
 
         if request.content_type == 'application/json':
             data = request.get_json()
@@ -43,7 +37,7 @@ def create_receipt():
             data = request.form
 
         # Log the received data
-        logger.debug(f"{USER_ID} --> {__name__}: Received data: {data}")
+        logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
         # Extract data from the request
         receiving_location_id = data['receiving_location_id']
@@ -68,8 +62,8 @@ def create_receipt():
         update_comments = " ( " + receipt_name + ") - (" + str(transaction_number) + ") - (" + comments + ")"
 
         # Log the extracted data
-        logger.debug(f"{USER_ID} --> {__name__}: Receiving Location ID: {receiving_location_id}")
-        logger.debug(f"{USER_ID} --> {__name__}: Type Short: {type_short}")
+        logger.debug(f"{appuser} --> {__name__}: Receiving Location ID: {receiving_location_id}")
+        logger.debug(f"{appuser} --> {__name__}: Type Short: {type_short}")
         # Add similar logging for other extracted data
 
         mycursor = mydb.cursor()
@@ -116,15 +110,15 @@ def create_receipt():
                 inspection_id, 
                 inspection_location_id,  
                 transaction_status, 
-                current_userid, 
-                current_userid
+                appuserid, 
+                appuserid
             )
 
             mycursor.execute(query, values)
             logger.debug("After Inserting into receipts")
             receipt_id = mycursor.lastrowid
 
-            logger.info(f"{USER_ID} --> {__name__}: Receipt data created successfully with receipt_id: {receipt_id}")
+            logger.info(f"{appuser} --> {__name__}: Receipt data created successfully with receipt_id: {receipt_id}")
 
             logger.debug("Before Inspect check of receipts")
             if inspect:
@@ -147,28 +141,28 @@ def create_receipt():
 
                 logger.debug(f"Printing inspection data {inspection_data}")
 
-                result, status_code = create_inspection_logic(inspection_data, USER_ID, current_userid, mydb)
+                result, status_code = create_inspection_logic(inspection_data, appuser, appuserid, mydb)
 
                 if status_code == 200:
-                    logger.info(f"{USER_ID} --> {__name__}: Receipt data created successfully, and inspection performed. status code {status_code} and Result {result}")
+                    logger.info(f"{appuser} --> {__name__}: Receipt data created successfully, and inspection performed. status code {status_code} and Result {result}")
                 else:
                     mycursor.execute("ROLLBACK")
-                    logger.error(f"{USER_ID} --> {__name__}: Receipt data creation successful, but inspection failed with status code {status_code} and Result {result}. Transaction rolled back.")
+                    logger.error(f"{appuser} --> {__name__}: Receipt data creation successful, but inspection failed with status code {status_code} and Result {result}. Transaction rolled back.")
                     return jsonify({'error': f"Inspection failed with status code {status_code} and Result {result}."}), 500
 
                 logger.debug(f"After Inspect check and before Po UPDATE check of receipts {po_line_id}")
                 
             if po_line_id is not None and po_line_id > 0:
-                success = update_po_statuses(USER_ID, MODULE_NAME, mydb, transaction_number,transaction_header_number, transaction_status)
+                success = update_po_statuses(appuser, MODULE_NAME, mydb, transaction_number,transaction_header_number, transaction_status)
                 logger.debug(f"In PO line update if statement {po_line_id}")  
                 if success:
                     logger.debug(
-                        f"{USER_ID} --> {MODULE_NAME}: Successfully updated purchase order line status for po_line_id: {po_line_id}"
+                        f"{appuser} --> {MODULE_NAME}: Successfully updated purchase order line status for po_line_id: {po_line_id}"
                     )
                 else:
                     mydb.rollback()
                     logger.error(
-                        f"{USER_ID} --> {MODULE_NAME}: Failed to update status for purchase order line with po_line_id: {po_line_id}"
+                        f"{appuser} --> {MODULE_NAME}: Failed to update status for purchase order line with po_line_id: {po_line_id}"
                     )
 
             logger.debug(f"After PO line update {po_line_id}")  
@@ -182,10 +176,10 @@ def create_receipt():
         except Exception as e:
             mycursor.execute("ROLLBACK")
             mydb.rollback()
-            logger.error(f"{USER_ID} --> {__name__}: Unable to create receipt data: {str(e)}")
+            logger.error(f"{appuser} --> {__name__}: Unable to create receipt data: {str(e)}")
             mydb.close()
             return jsonify({'error': str(e)}), 500
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {__name__}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: An error occurred: {str(e)}")
         return jsonify({'error': str(e)}), 500

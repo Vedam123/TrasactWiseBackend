@@ -1,6 +1,6 @@
 from modules.utilities.logger import logger
 
-def insert_pick_and_ship_stage(USER_ID, MODULE_NAME, mydb, execution_id, order_id, line_id, item_id, 
+def insert_pick_and_ship_stage(appuser, MODULE_NAME, mydb, execution_id, order_id, line_id, item_id, 
                                inventory_id, picked_quantity, picker_id, shipping_status, shipping_method, destination):
     try:
         mycursor = mydb.cursor()
@@ -17,13 +17,13 @@ def insert_pick_and_ship_stage(USER_ID, MODULE_NAME, mydb, execution_id, order_i
         mycursor.execute(insert_query, insert_data)
         mydb.commit()
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Successfully inserted data into pick_and_ship_stage")
+        logger.debug(f"{appuser} --> {MODULE_NAME}: Successfully inserted data into pick_and_ship_stage")
 
         # Return success
         return True
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error inserting data into pick_and_ship_stage - {str(e)}")
+        logger.error(f"{appuser} --> {MODULE_NAME}: Error inserting data into pick_and_ship_stage - {str(e)}")
         return False
 
     finally:

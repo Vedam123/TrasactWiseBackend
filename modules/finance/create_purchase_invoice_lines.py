@@ -1,9 +1,7 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 purchase_invoice_lines_api = Blueprint('purchase_invoice_lines_api', __name__)
@@ -12,28 +10,21 @@ purchase_invoice_lines_api = Blueprint('purchase_invoice_lines_api', __name__)
 @permission_required(WRITE_ACCESS_TYPE, __file__)
 def create_purchase_invoice_lines():
     try:
+		
         authorization_header = request.headers.get('Authorization')
-        token_results = ""
-        USER_ID = ""
-        MODULE_NAME = __name__
-        if authorization_header:
-            token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-            token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
-
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
         # Log entry point
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'create_purchase_invoice_lines' function")
-
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
-
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'create_purchase_invoice_lines' function")
 
         if request.content_type == 'application/json':
             data = request.get_json()
@@ -41,7 +32,7 @@ def create_purchase_invoice_lines():
             data = request.form
 
         # Log the received data
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
+        logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
         # Assuming your purchaseinvoicelines table has columns like header_id, item_id, etc.
         insert_query = """
@@ -64,8 +55,8 @@ def create_purchase_invoice_lines():
                     line_data.get('unit_price'),
                     line_data.get('line_total'),
                     line_data.get('uom_id'),
-                    current_userid,  # created_by
-                    current_userid   # updated_by
+                    appuserid,  # created_by
+                    appuserid   # updated_by
                 )
 
                 mycursor.execute(insert_query, insert_values)
@@ -106,7 +97,7 @@ def create_purchase_invoice_lines():
             mydb.commit()
 
                 # Log success
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Updated totalamount for header_id: {header_id} to {total_amount}")
+            logger.info(f"{appuser} --> {__name__}: Updated totalamount for header_id: {header_id} to {total_amount}")
 
             # Close the cursor and connection
             mycursor.close()
@@ -123,12 +114,12 @@ def create_purchase_invoice_lines():
 
         except Exception as e:
             # Log the error and close the cursor and connection
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to create purchase invoice lines data: {str(e)}")
+            logger.error(f"{appuser} --> {__name__}: Unable to create purchase invoice lines data: {str(e)}")
             mycursor.close()
             mydb.close()
             return jsonify({'error': str(e)}), 500
 
     except Exception as e:
         # Log any exceptions
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: An error occurred: {str(e)}")
         return jsonify({'error': str(e)}), 500

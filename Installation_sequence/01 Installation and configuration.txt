@@ -1,0 +1,58 @@
+1. In stall MySQL and set a root password , create another user and set password
+2. Create MySQL instances (instnace0-3)
+	instructions (C:\apps\cleartrade\documents\installationsteps in the file "02 mysql Instances configuration.txt") to create instances
+2a.Connect to instances and change the root password and create new user and set password (example instance0)
+		my instance0 root password available in a file (DELPHI-K.err) of the folder C:\apps\instances\instance0\data
+		C:\Windows\System32>mysql -u root -p --port=3307
+		Enter password: ************   ( you get this existing password in the folder path of instance 0) 
+		mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'welcome'; this will change the password of root
+		create a new user instance0
+		CREATE USER 'instance0'@'%' IDENTIFIED BY 'welcome';
+		GRANT ALL PRIVILEGES ON *.* TO 'instance0'@'%' WITH GRANT OPTION;
+		FLUSH PRIVILEGES;
+		EXIT;
+		mysql -u instance0 -p -P 3307
+
+		repeate the above steps for all instances
+
+3. configure MySQL workbench
+4. uninstall any existing python versions
+5. Install python LTS
+6. Set the path to python
+	C:\Windows\System32>python --version
+	Python 3.13.0
+	C:\Windows\System32>where python
+	C:\Users\kishore\AppData\Local\Programs\Python\Python313\python.exe
+7. Install node JS, which also installs python (another version)
+	this will take long time and opens PowerShell etc.. wait until it is completed
+	C:\Windows\System32>node -v
+	v22.12.0
+	C:\Windows\System32>npm -v
+	10.9.0
+	C:\Windows\System32>where python
+	C:\Users\kishore\AppData\Local\Programs\Python\Python313\python.exe
+	C:\Python312\python.exe
+8. Move the path upwards (the python in step 6)
+9. Move the path downwards ( the python in step 7)
+10.npm install --global node-gyp (run the command prompt)
+	C:\Windows\System32>npm install --global node-gyp
+
+	added 98 packages in 5s
+
+	16 packages are looking for funding
+  	run `npm fund` for details
+	npm notice
+	npm notice New patch version of npm available! 10.9.0 -> 10.9.2
+	npm notice Changelog: https://github.com/npm/cli/releases/tag/v10.9.2
+	npm notice To update run: npm install -g npm@10.9.2
+	npm notice
+11. Install VS code and check if it is installed 
+	C:\Windows\System32>code --version
+	1.95.3
+	f1a4fb101478ce6ec82fe9627c43efbf9e98c813
+	x64
+
+	C:\Windows\System32>where code
+	C:\Users\kishore\AppData\Local\Programs\Microsoft VS Code\bin\code
+	C:\Users\kishore\AppData\Local\Programs\Microsoft VS Code\bin\code.cmd
+	

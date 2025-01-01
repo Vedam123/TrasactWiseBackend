@@ -1,9 +1,7 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 distribute_sales_invoice_to_accounts_api = Blueprint('distribute_sales_invoice_to_accounts_api', __name__)
@@ -12,17 +10,23 @@ distribute_sales_invoice_to_accounts_api = Blueprint('distribute_sales_invoice_t
 @permission_required(WRITE_ACCESS_TYPE, __file__)
 def distribute_sales_invoice_to_accounts():
     try:
+      	
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header) if authorization_header else None
-        USER_ID = token_results["username"] if token_results else ""
-        MODULE_NAME = __name__
+
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
+        
 
         # Log entry point
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'distribute_sales_invoice_to_accounts' function")
-
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
-
-        current_userid = decode_token(authorization_header.replace('Bearer ', '')).get('Userid') if authorization_header and authorization_header.startswith('Bearer ') else None
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'distribute_sales_invoice_to_accounts' function")
 
         if request.content_type == 'application/json':
             data = request.get_json()
@@ -30,7 +34,7 @@ def distribute_sales_invoice_to_accounts():
             data = request.form
 
         # Log the received data
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
+        logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
         # Updated SQL query to include the is_tax_line field
         insert_query = """
@@ -56,8 +60,8 @@ def distribute_sales_invoice_to_accounts():
                         item.get('debitamount'),
                         item.get('creditamount'),
                         is_tax_line,  # Include the is_tax_line value
-                        current_userid,  # created_by
-                        current_userid   # updated_by
+                        appuserid,  # created_by
+                        appuserid   # updated_by
                     )
 
                     mycursor.execute(insert_query, insert_values)
@@ -72,7 +76,7 @@ def distribute_sales_invoice_to_accounts():
                 raise ValueError("'lines' key not found in request data")
 
             # Log success and close the cursor and connection
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Sales invoice account data created successfully")
+            logger.info(f"{appuser} --> {__name__}: Sales invoice account data created successfully")
             mycursor.close()
             mydb.close()
 
@@ -87,12 +91,12 @@ def distribute_sales_invoice_to_accounts():
 
         except Exception as e:
             # Log the error and close the cursor and connection
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to create sales invoice account data: {str(e)}")
+            logger.error(f"{appuser} --> {__name__}: Unable to create sales invoice account data: {str(e)}")
             mycursor.close()
             mydb.close()
             return jsonify({'error': str(e)}), 500
 
     except Exception as e:
         # Log any exceptions
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: An error occurred: {str(e)}")
         return jsonify({'error': str(e)}), 500

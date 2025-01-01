@@ -1,9 +1,8 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 import base64
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import READ_ACCESS_TYPE
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 list_item_categories_api = Blueprint('list_item_categories_api', __name__)
@@ -12,24 +11,44 @@ list_item_categories_api = Blueprint('list_item_categories_api', __name__)
 @permission_required(READ_ACCESS_TYPE, __file__)
 def list_item_categories():
     authorization_header = request.headers.get('Authorization')
-    token_results = ""
-    USER_ID = ""
-    MODULE_NAME = __name__
-    
-    if authorization_header:
-        token_results = get_user_from_token(authorization_header) if authorization_header else None
 
-    if token_results:
-        USER_ID = token_results["username"]
+    try:
+        company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+        logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+    except ValueError as e:
+        logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+        return jsonify({"error": str(e)}), 401
+    
+    if not appuser:
+        logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+        return jsonify({"error": "Unauthorized. Username not found."}), 401
 
     # Log entry point
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the list item categories data function")
-    mydb = get_database_connection(USER_ID, MODULE_NAME)
+    logger.debug(f"{appuser} --> {__name__}: Entered in the list item categories data function")
 
-    # Retrieve all item categories from the database
+    # Retrieve query parameters (optional)
+    category_id = request.args.get('category_id')
+    category_name = request.args.get('category_name')
+
+    # Base query
     query = "SELECT * FROM com.itemcategory"
+    filters = []
+    values = []
+
+    # Add conditions based on parameters
+    if category_id:
+        filters.append("category_id = %s")
+        values.append(category_id)
+    if category_name:
+        filters.append("category_name LIKE %s")
+        values.append(f"%{category_name}%")
+
+    if filters:
+        query += " WHERE " + " AND ".join(filters)
+
+    # Execute query
     mycursor = mydb.cursor()
-    mycursor.execute(query)
+    mycursor.execute(query, values)
     item_categories = mycursor.fetchall()
 
     item_category_list = []
@@ -41,7 +60,7 @@ def list_item_categories():
         is_active = category[3]
         tax_information = category[4]
         default_uom = category[5]
-        
+
         # Initialize the image as None
         image_data = None
 
@@ -53,7 +72,7 @@ def list_item_categories():
         """
         mycursor.execute(image_mapping_query, (category_id,))
         image_mapping = mycursor.fetchone()
-        
+
         if image_mapping:
             image_id = image_mapping[0]
 
@@ -65,12 +84,12 @@ def list_item_categories():
             """
             mycursor.execute(image_query, (image_id,))
             image_record = mycursor.fetchone()
-            
+
             if image_record:
                 image_data = image_record[0]
                 if image_data is not None:
                     image_data = base64.b64encode(image_data).decode('utf-8')
-        
+
         # Construct the category dictionary
         item_category_dict = {
             'category_id': category_id,
@@ -82,7 +101,7 @@ def list_item_categories():
             'image': image_data,
         }
         item_category_list.append(item_category_dict)
-    
+
     # Close the cursor and connection
     mycursor.close()
     mydb.close()

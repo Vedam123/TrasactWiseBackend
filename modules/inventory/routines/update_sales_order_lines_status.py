@@ -5,7 +5,7 @@ from modules.sales.routines.log_pick_release import log_pick_release
 
 def update_sales_order_lines_status(execution_id, sales_header_id, sales_order_line_id, full_qty_alloc_status, 
                                     part_qty_alloc_status, total_allocated, shipping_method,shipping_address,sales_item_id,
-                                    ship_status,picker_id,pick_status, mydb, current_userid, MODULE_NAME):
+                                    ship_status,picker_id,pick_status, mydb, appuserid, MODULE_NAME):
     try:
         mycursor = mydb.cursor(dictionary=True)  # Use dictionary cursor to fetch results as dictionaries
         logger.debug(f"Updating Sales Order Line Status and Picked Quantity for Line ID: {sales_order_line_id}")
@@ -52,7 +52,7 @@ def update_sales_order_lines_status(execution_id, sales_header_id, sales_order_l
                 updated_by = %s
             WHERE line_id = %s
         """
-        mycursor.execute(update_query, (new_picked_quantity, current_userid, sales_order_line_id))
+        mycursor.execute(update_query, (new_picked_quantity, appuserid, sales_order_line_id))
         #mydb.commit()
 
         logger.debug(f"Picked quantity updated successfully for Line ID: {sales_order_line_id}")
@@ -77,13 +77,13 @@ def update_sales_order_lines_status(execution_id, sales_header_id, sales_order_l
                 updated_by = %s
             WHERE line_id = %s
         """
-        mycursor.execute(update_status_query, (status, current_userid, sales_order_line_id))
+        mycursor.execute(update_status_query, (status, appuserid, sales_order_line_id))
         #mydb.commit()
 
         logger.debug(f"Sales Order Line status updated to: {status} for Line ID: {sales_order_line_id}")
 
         log_pick_release(execution_id, sales_header_id, sales_order_line_id, current_sales_line_status, 
-                     None, new_picked_quantity, pick_status, current_userid, mydb)
+                     None, new_picked_quantity, pick_status, appuserid, mydb)
               
         response = {
             "message": f"Sales Order line {sales_order_line_id} is updated successfully with the status {status}",
@@ -92,7 +92,7 @@ def update_sales_order_lines_status(execution_id, sales_header_id, sales_order_l
         return jsonify(response), 200
 
     except Exception as e:
-        logger.error(f"{current_userid} --> {MODULE_NAME}: Error in updating sales order line status and picked quantity: {str(e)}")
+        logger.error(f"{appuserid} --> {MODULE_NAME}: Error in updating sales order line status and picked quantity: {str(e)}")
     finally:
         if mycursor:
             mycursor.close()

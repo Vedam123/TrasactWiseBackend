@@ -2,16 +2,16 @@ from flask import jsonify
 from modules.utilities.logger import logger
 
 def pack_or_unpack_quantity(input_params, qty, uom_id):
-    USER_ID = input_params.get('USER_ID', '')
+    appuser = input_params.get('appuser', '')
     MODULE_NAME = input_params.get('MODULE_NAME', '')
-    logger.info(f"{USER_ID} --> {MODULE_NAME}: Entered pack_or_unpack_quantity function")
+    logger.info(f"{appuser} --> {MODULE_NAME}: Entered pack_or_unpack_quantity function")
     mydb = input_params.get('mydb', None)
     mycursor = mydb.cursor()
 
     try:
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Constructing SQL query and parameters {input_params}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Input Parameters received  {input_params}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Quantity and UOM Id received {qty} --> {uom_id}")
+        logger.debug(f"{appuser} --> {MODULE_NAME}: Constructing SQL query and parameters {input_params}")
+        logger.debug(f"{appuser} --> {MODULE_NAME}: Input Parameters received  {input_params}")
+        logger.debug(f"{appuser} --> {MODULE_NAME}: Quantity and UOM Id received {qty} --> {uom_id}")
 
         # Replace empty strings with None
         bin_id = input_params.get('input_bin_id', '') or None
@@ -51,21 +51,21 @@ def pack_or_unpack_quantity(input_params, qty, uom_id):
             input_params.get('updated_by', '')
         )
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Executing SQL query")
+        logger.debug(f"{appuser} --> {MODULE_NAME}: Executing SQL query")
         print("Insert Params:", insert_params)
 
         mycursor.execute(insert_query, insert_params)
         mydb.commit()
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Insert and Update successful")
+        logger.info(f"{appuser} --> {MODULE_NAME}: Insert and Update successful")
 
     except Exception as operation_error:
         mydb.rollback()
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error during database operation: {str(operation_error)}")
+        logger.error(f"{appuser} --> {MODULE_NAME}: Error during database operation: {str(operation_error)}")
         print("I entered into exception , not sure why ")
         return {'error': 'The Data insertion is failed in inv.item_inventory table'} , 400 
 
     finally:
         mycursor.close()
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Closing database cursor")
+        logger.debug(f"{appuser} --> {MODULE_NAME}: Closing database cursor")
 
     return {'message': 'The Data insertion is successful in inv.item_inventory table'} , 200 

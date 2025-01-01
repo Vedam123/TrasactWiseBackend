@@ -1,61 +1,73 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 import bcrypt
 import datetime
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.utilities.logger import logger  # Import the logger module
 
 register_data_api = Blueprint('register_data_api', __name__)
 
 @register_data_api.route('/register', methods=['POST'])
-@permission_required(WRITE_ACCESS_TYPE, __file__)
+@permission_required(WRITE_ACCESS_TYPE, __file__)  # This will invoke permission check
 def register():
-    MODULE_NAME = __name__
-    currentuserid = decode_token(request.headers.get('Authorization', '').replace('Bearer ', '')).get('Userid') if request.headers.get('Authorization', '').startswith('Bearer ') else None
+    authorization_header = request.headers.get('Authorization')
+    logger.debug(f"Authorization header received: {authorization_header}")
+
+    try:
+        # Logging to check where the connection might be closed prematurely
+        logger.debug(f"{__name__}: Attempting to retrieve user and database details")
+        company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+        logger.debug(f"{appuser} --> {__name__}: User and DB details retrieved successfully")
+
+    except ValueError as e:
+        logger.error(f"{__name__}: Authorization failed for {appuser} --> {str(e)}")
+        return jsonify({"error": str(e)}), 401
+
+    if not appuser:
+        logger.error(f"{appuser} --> {__name__}: Unauthorized access attempt - Username not found.")
+        return jsonify({"error": "Unauthorized. Username not found."}), 401
+
+    # Process request data
     username = request.json['username']
     password = request.json['password']
-    logger.debug(f"Current User ID: {currentuserid}")
-    logger.debug(f"Username: {username}")
-    logger.debug("Before select statement: " + str(request.json['empid']))
-
-    if 'emailid' in request.json:
-        emailid = request.json['emailid']
-    else:
-        emailid = None
-
-    if 'empid' in request.json:
-        empid = request.json['empid']
-    elif 'empid' in request.form:
-        empid = request.form['empid']
-    else:
-        empid = None
-
-    logger.debug(f"Email ID: {emailid}")
-    logger.debug(f"Emp ID: {empid}")
+    logger.debug(f"{appuser} --> {__name__}: Retrieved username: {username}")
     
-    # Hash and store the user's password securely in the database
+    logger.debug(f"{appuser} --> {__name__}: Before Select statement - Empid: {str(request.json.get('empid'))}")
+
+    emailid = request.json.get('emailid', None)
+    empid = request.json.get('empid') or request.form.get('empid', None)
+
+    logger.debug(f"{appuser} --> {__name__}: Email ID: {emailid}, Emp ID: {empid}")
+    
+    # Hash the password before storing it
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    logger.debug(f"{appuser} --> {__name__}: Hashed password for the user {appuser}, Emp ID: {hashed_password}")
+    # Retrieve fields from the request JSON
+    status_value = request.json.get('status_value')
+    start_date_value = request.json.get('start_date_value')
+    expiry_date_value = request.json.get('expiry_date_value')
 
-    mydb = get_database_connection(username,MODULE_NAME)
-    
-    status_value = request.json['status_value']
-    start_date_value = request.json['start_date_value']
-    expiry_date_value = request.json['expiry_date_value']
-    #status_value = 'Active'  # You can set the initial status based on your business rules
-    #start_date_value = datetime.date.today()  # Set the start date to the current date
-    #expiry_date_value = None  # Set expiry_date_value to None if it can be null
-
+    # Prepare query to insert user into the database
     query = "INSERT INTO adm.users (username, password, empid, emailid, status, start_date, expiry_date, created_by, updated_by) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    values = (username, hashed_password, empid, emailid, status_value, start_date_value, expiry_date_value, currentuserid, currentuserid)
+    values = (username, hashed_password, empid, emailid, status_value, start_date_value, expiry_date_value, appuserid, appuserid)
 
-    mycursor = mydb.cursor()
-    mycursor.execute(query, values)
-    mydb.commit()
+    try:
+        mycursor = mydb.cursor()
+        logger.debug(f"{appuser} --> {__name__}: Executing Insert Query: {query}")
+        mycursor.execute(query, values)
+        mydb.commit()
+        logger.debug(f"{appuser} --> {__name__}: User registration successful for {username}")
+    except Exception as e:
+        logger.error(f"{appuser} --> {__name__}: Database error occurred during registration: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        # Close cursor and DB connection after execution
+        mycursor.close()
+        mydb.close()
+        logger.debug(f"{appuser} --> {__name__}: Database connection closed after successful registration")
 
-    # Return success message along with username, empid, and emailid
+    # Prepare response
     response = {
         'message': 'Registration successful',
         'username': username,
@@ -63,9 +75,4 @@ def register():
         'emailid': emailid
     }
 
-    # Close the cursor and connection
-    mycursor.close()
-    mydb.close()
-
-    logger.debug("Registration successful")
     return jsonify(response)

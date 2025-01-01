@@ -1,13 +1,9 @@
 from modules.utilities.logger import logger
 
-def update_journal_header_logic(data, context):
-    USER_ID = context['USER_ID']
-    MODULE_NAME = context['MODULE_NAME']
-    current_userid = context['current_userid']
-    mydb = context['mydb']
+def update_journal_header_logic(data, mydb, module_name, appuser,appuserid):
 
     try:
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
+        logger.debug(f"{appuser} --> {module_name}: Received data: {data}")
 
         # Ensure journal_number is present
         journal_number = data.get('journal_number')
@@ -42,22 +38,22 @@ def update_journal_header_logic(data, context):
 
         # Add the updated_by field
         update_fields.append("updated_by = %s")
-        update_values.append(current_userid)
+        update_values.append(appuserid)
 
         # Complete the update query
         update_query += ", ".join(update_fields)
         update_query += " WHERE journal_number = %s"
         update_values.append(journal_number)
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Update query: {update_query}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Update values: {update_values}")
+        logger.debug(f"{appuser} --> {module_name}: Update query: {update_query}")
+        logger.debug(f"{appuser} --> {module_name}: Update values: {update_values}")
 
         try:
             mycursor.execute(update_query, update_values)
             mydb.commit()
             rows_affected = mycursor.rowcount
 
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Journal header data updated successfully")
+            logger.info(f"{appuser} --> {module_name}: Journal header data updated successfully")
             
             if rows_affected == 0:
                 return {'error': 'No changes were made to the journal header.'}, 404
@@ -72,12 +68,11 @@ def update_journal_header_logic(data, context):
             return response, 200
 
         except Exception as e:
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to update journal header data: {str(e)}")
+            logger.error(f"{appuser} --> {module_name}: Unable to update journal header data: {str(e)}")
             return {'error': str(e)}, 500
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {module_name}: An error occurred: {str(e)}")
         return {'error': str(e)}, 500
     finally:
         mycursor.close()
-        mydb.close()

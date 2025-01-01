@@ -1,12 +1,12 @@
 from modules.utilities.logger import logger  # Assuming your logger is set up similarly
 
-def update_purchase_invoice_status(header_id, to_status, mydb,MODULE_NAME,USER_ID):
+def update_purchase_invoice_status(header_id, to_status,  mydb, module_name, appuser,appuserid):
     try:
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Entered Purchase Invoice update to the header {header_id} with the status {to_status}")
+        logger.info(f"{appuser} --> {module_name}: Entered Purchase Invoice update to the header {header_id} with the status {to_status}")
 
         cursor = mydb.cursor(dictionary=True)
 
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Entered Purchase Invoice update to the header After cursor {header_id} with the status {to_status}")
+        logger.info(f"{appuser} --> {module_name}: Entered Purchase Invoice update to the header After cursor {header_id} with the status {to_status}")
 
         # Fetch the purchase invoice based on the header_id
         fetch_query = """

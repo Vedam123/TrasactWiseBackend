@@ -1,12 +1,6 @@
 from modules.utilities.logger import logger
 
-# modules/finance/routines/update_journal_line_logic.py
-
-def update_journal_line_logic(data, context):
-    USER_ID = context['USER_ID']
-    MODULE_NAME = context['MODULE_NAME']
-    current_userid = context['current_userid']
-    mydb = context['mydb']
+def update_journal_line_logic(data, mydb, module_name, appuser,appuserid):
 
     try:
         if not isinstance(data, list):
@@ -35,15 +29,15 @@ def update_journal_line_logic(data, context):
 
             # Add the updated_by field
             update_fields.append("updated_by = %s")
-            update_values.append(current_userid)
+            update_values.append(appuserid)
 
             # Complete the update query
             update_query += ", ".join(update_fields)
             update_query += " WHERE header_id = %s AND line_id = %s"
             update_values.extend([header_id, line_id])
 
-            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Update query: {update_query}")
-            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Update values: {update_values}")
+            logger.debug(f"{appuser} --> {module_name}: Update query: {update_query}")
+            logger.debug(f"{appuser} --> {module_name}: Update values: {update_values}")
 
             try:
                 mycursor.execute(update_query, update_values)
@@ -51,7 +45,7 @@ def update_journal_line_logic(data, context):
                 rows_affected = mycursor.rowcount
 
                 if rows_affected == 0:
-                    logger.debug(f"{USER_ID} --> {MODULE_NAME}: No rows were updated for header_id {header_id} and line_id {line_id}. This might be due to identical values.")
+                    logger.debug(f"{appuser} --> {module_name}: No rows were updated for header_id {header_id} and line_id {line_id}. This might be due to identical values.")
                     # This can be a non-error case, so we do not return an error response here
                     response_lines.append({
                         'header_id': header_id,
@@ -66,18 +60,15 @@ def update_journal_line_logic(data, context):
                     })
 
             except Exception as e:
-                logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to update journal line data: {str(e)}")
+                logger.error(f"{appuser} --> {module_name}: Unable to update journal line data: {str(e)}")
                 return {'error': str(e)}, 500
 
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Journal line data update process is completed")
+        logger.info(f"{appuser} --> {module_name}: Journal line data update process is completed")
         mycursor.close()
-        mydb.close()
         return {'success': True, 'message': 'Journal Lines successfully updated', 'journal_lines': response_lines}, 200
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {module_name}: An error occurred: {str(e)}")
         if mycursor:
             mycursor.close()
-        if mydb:
-            mydb.close()
         return {'error': str(e)}, 500

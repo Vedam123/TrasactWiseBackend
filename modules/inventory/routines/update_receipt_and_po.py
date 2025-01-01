@@ -1,7 +1,7 @@
 from modules.utilities.logger import logger
 from modules.purchase.routines.update_po_statuses import update_po_statuses
 
-def update_receipt_and_po(USER_ID, MODULE_NAME, mydb, transaction_number, transaction_header_number, transaction_status, transaction_type,accepted_quantity):
+def update_receipt_and_po(appuser, MODULE_NAME, mydb, transaction_number, transaction_header_number, transaction_status, transaction_type,accepted_quantity):
     try:
         cursor = mydb.cursor()
 
@@ -17,7 +17,7 @@ def update_receipt_and_po(USER_ID, MODULE_NAME, mydb, transaction_number, transa
         print("Trasnsction type ",transaction_type)
         # Call update_po_statuses function
         if transaction_type == "PO":
-            if not update_po_statuses(USER_ID, MODULE_NAME, mydb, transaction_number, transaction_header_number, transaction_status):
+            if not update_po_statuses(appuser, MODULE_NAME, mydb, transaction_number, transaction_header_number, transaction_status):
                 raise ValueError("Failed to update po statuses")
 
         cursor.close()
@@ -25,5 +25,5 @@ def update_receipt_and_po(USER_ID, MODULE_NAME, mydb, transaction_number, transa
         return True
     except Exception as e:
         mydb.rollback()  # Rollback changes if any error occurs
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Failed to update receipt and po status: {str(e)}")
+        logger.error(f"{appuser} --> {MODULE_NAME}: Failed to update receipt and po status: {str(e)}")
         return False

@@ -1,7 +1,7 @@
 
 from modules.utilities.logger import logger  
 
-def get_available_inventory(item_id, look_only_inventory_ids, mydb, current_userid, MODULE_NAME):
+def get_available_inventory(item_id, look_only_inventory_ids, mydb, appuserid, MODULE_NAME):
     try:
         mycursor = mydb.cursor(dictionary=True)
 
@@ -34,7 +34,7 @@ def get_available_inventory(item_id, look_only_inventory_ids, mydb, current_user
         logger.debug(f"Fetched Available Inventory")
         return result
     except Exception as e:
-        logger.error(f"{current_userid} --> {MODULE_NAME}: Error in fetching inventory: {str(e)}")
+        logger.error(f"{appuserid} --> {MODULE_NAME}: Error in fetching inventory: {str(e)}")
         return []
     finally:
         mycursor.close()

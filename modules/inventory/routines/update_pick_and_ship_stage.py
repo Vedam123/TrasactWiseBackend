@@ -1,6 +1,6 @@
 from modules.utilities.logger import logger
 
-def update_pick_and_ship_stage_status(USER_ID, MODULE_NAME, mydb, reverse_pick_release_status, execution_id=None, order_id=None, line_id=None):
+def update_pick_and_ship_stage_status(appuser, MODULE_NAME, mydb, reverse_pick_release_status, execution_id=None, order_id=None, line_id=None):
     try:
         mycursor = mydb.cursor()
         #status = 'REVERSED' if reverse_pick_release else 'NOT_REVERSED'
@@ -24,13 +24,13 @@ def update_pick_and_ship_stage_status(USER_ID, MODULE_NAME, mydb, reverse_pick_r
         mycursor.execute(update_query, update_params)
         mydb.commit()
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Successfully updated status to '{reverse_pick_release_status}' in pick_and_ship_stage")
+        logger.debug(f"{appuser} --> {MODULE_NAME}: Successfully updated status to '{reverse_pick_release_status}' in pick_and_ship_stage")
 
         # Return success
         return True
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error updating status to '{reverse_pick_release_status}' in pick_and_ship_stage - {str(e)}")
+        logger.error(f"{appuser} --> {MODULE_NAME}: Error updating status to '{reverse_pick_release_status}' in pick_and_ship_stage - {str(e)}")
         return False
 
     finally:

@@ -1,8 +1,7 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import READ_ACCESS_TYPE
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 default_accounts_api = Blueprint('default_accounts_api', __name__)
@@ -10,20 +9,25 @@ default_accounts_api = Blueprint('default_accounts_api', __name__)
 @default_accounts_api.route('/get_default_accounts', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE, __file__)
 def get_default_accounts():
-    MODULE_NAME = __name__
+    
 
     try:
+       	
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-        else:
-            USER_ID = ""
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'get_default_accounts' function")
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'get_default_accounts' function")
 
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
 
         # Base query
@@ -70,7 +74,7 @@ def get_default_accounts():
         if currency_id:
             query += f" AND a.currency_id = {int(currency_id)}"
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Executing query: {query}")
+        logger.debug(f"{appuser} --> {__name__}: Executing query: {query}")
         mycursor.execute(query)
 
         result = mycursor.fetchall()
@@ -90,12 +94,12 @@ def get_default_accounts():
         mycursor.close()
         mydb.close()
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Successfully retrieved default accounts data")
+        logger.debug(f"{appuser} --> {__name__}: Successfully retrieved default accounts data")
 
         return jsonify({'default_accounts_list': default_accounts_list})
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error retrieving default accounts data - {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: Error retrieving default accounts data - {str(e)}")
         import traceback
         traceback.print_exc()  # Add this line to print the full stack trace
         return jsonify({'error': 'Internal Server Error'}), 500

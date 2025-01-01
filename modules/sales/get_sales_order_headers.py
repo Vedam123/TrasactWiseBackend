@@ -1,8 +1,7 @@
 from flask import abort, Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details	
 from modules.security.permission_required import permission_required
 from config import READ_ACCESS_TYPE
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 get_sales_order_headers_api = Blueprint('get_sales_order_headers_api', __name__)
@@ -18,22 +17,24 @@ def column_exists(cursor, table_name, column_name):
 @get_sales_order_headers_api.route('/get_sales_order_headers', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE, __file__)
 def get_sales_order_headers():
-    MODULE_NAME = __name__
-    USER_ID = ""
-
+    
     try:
         authorization_header = request.headers.get('Authorization')
-        if authorization_header:
-            token_results = get_user_from_token(authorization_header)
-            if token_results:
-                USER_ID = token_results["username"]
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'get sales order headers' function")
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'get sales order headers' function")
+
         mycursor = mydb.cursor()
-
-
 
         query_params = {f"param_{param}": request.args.get(param) for param in request.args}
 
@@ -43,9 +44,9 @@ def get_sales_order_headers():
                 for key, value in json_data.items():
                     query_params[f"param_{key}"] = value
         except Exception as json_error:
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Error extracting JSON input - {str(json_error)}")
+            logger.error(f"{appuser} --> {__name__}: Error extracting JSON input - {str(json_error)}")
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Extracted query parameters - {query_params}")
+        logger.debug(f"{appuser} --> {__name__}: Extracted query parameters - {query_params}")
 
         where_clauses = []
         for param, value in query_params.items():
@@ -65,10 +66,10 @@ def get_sales_order_headers():
                 elif param.startswith('param_so_num'):
                     where_clauses.append(f"(soh.so_num = %({param})s)")
                 else:
-                    logger.error(f"{USER_ID} --> {MODULE_NAME}: Invalid parameter - {param}")
+                    logger.error(f"{appuser} --> {__name__}: Invalid parameter - {param}")
                     return jsonify({'error': 'Invalid Parameters'}), 400
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Constructed WHERE clause - {where_clauses}")
+        logger.debug(f"{appuser} --> {__name__}: Constructed WHERE clause - {where_clauses}")
 
         where_clause = ' AND '.join(where_clauses) if where_clauses else '1'
 
@@ -121,7 +122,7 @@ def get_sales_order_headers():
 
 
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Constructed query - {query}")
+        logger.debug(f"{appuser} --> {__name__}: Constructed query - {query}")
         mycursor.execute(query, query_params)
 
         result = mycursor.fetchall()
@@ -131,7 +132,7 @@ def get_sales_order_headers():
         column_indices = {column: index for index, column in enumerate(columns)}
 
         if not result:
-            logger.warning(f"{USER_ID} --> {MODULE_NAME}: No results found for the given parameters.")
+            logger.warning(f"{appuser} --> {__name__}: No results found for the given parameters.")
             return jsonify({'error': 'No results found'}), 404
 
         for row in result:
@@ -142,13 +143,13 @@ def get_sales_order_headers():
         mydb.close()
 
         if not sales_order_headers_list:
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: No sales order header data found for the given parameters.")
+            logger.info(f"{appuser} --> {__name__}: No sales order header data found for the given parameters.")
             return jsonify({'error': 'No data found'}), 404
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Successfully retrieved sales order header data")
+        logger.debug(f"{appuser} --> {__name__}: Successfully retrieved sales order header data")
         return jsonify(sales_order_headers_list), 200
 
     except Exception as e:
         error_message = str(e)
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error retrieving sales order header data - {error_message}")
+        logger.error(f"{appuser} --> {__name__}: Error retrieving sales order header data - {error_message}")
         return jsonify({'error': 'Internal Server Error', 'message': error_message}), 500

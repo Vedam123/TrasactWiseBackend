@@ -1,7 +1,7 @@
 from mysql.connector import Error
 from modules.utilities.logger import logger  # Assuming your logger is set up similarly
 
-def update_sales_invoice_status(header_id, to_status, mydb,MODULE_NAME,USER_ID):
+def update_sales_invoice_status(header_id, to_status, mydb, module_name, appuser,appuserid):
     try:
         cursor = mydb.cursor(dictionary=True)
 
@@ -14,7 +14,7 @@ def update_sales_invoice_status(header_id, to_status, mydb,MODULE_NAME,USER_ID):
         sales_invoice = cursor.fetchone()
 
         if not sales_invoice:
-            logger.debug(f"No sales invoice found with header_id: {header_id}")
+            logger.debug(f"{appuser} --> {module_name}:No sales invoice found with header_id: {header_id}")
             return {'error': 'Sales invoice not found'}, 404
 
         # Update the status of the sales invoice
@@ -26,7 +26,7 @@ def update_sales_invoice_status(header_id, to_status, mydb,MODULE_NAME,USER_ID):
         cursor.execute(update_query, (to_status, header_id))
         mydb.commit()
 
-        logger.debug(f"Sales invoice status updated successfully for header_id: {header_id}")
+        logger.debug(f"{appuser} --> {module_name}:Sales invoice status updated successfully for header_id: {header_id}")
         return {'message': 'Status updated successfully'}, 200
 
     except Error as e:

@@ -1,9 +1,7 @@
 from flask import  Blueprint, jsonify, request
 import uuid
-from flask_jwt_extended import decode_token
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
-from modules.security.get_user_from_token import get_user_from_token
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details	
 from modules.utilities.logger import logger
 from config import WRITE_ACCESS_TYPE
 from datetime import datetime, timedelta
@@ -16,7 +14,7 @@ from decimal import Decimal,ROUND_HALF_UP
 import traceback
 
 # Helper function to create sales invoice header
-def create_sales_invoice(data, USER_ID, MODULE_NAME, mydb):
+def create_sales_invoice(data, appuser, __name__, mydb):
     try:
         cursor = mydb.cursor()
 
@@ -55,12 +53,12 @@ def create_sales_invoice(data, USER_ID, MODULE_NAME, mydb):
         }, 200
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to create sales invoice header: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: Unable to create sales invoice header: {str(e)}")
         return {"error": str(e)}, 500
 
 # Helper function to create sales invoice lines
-def create_sales_invoice_lines(header_id, lines, USER_ID, MODULE_NAME, mydb):
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the create sales invoice lines function for header id: {header_id}")
+def create_sales_invoice_lines(header_id, lines, appuser, __name__, mydb):
+    logger.debug(f"{appuser} --> {__name__}: Entered the create sales invoice lines function for header id: {header_id}")
     try:
         cursor = mydb.cursor(dictionary=True)  # Create cursor with dictionary=True
 
@@ -83,10 +81,10 @@ def create_sales_invoice_lines(header_id, lines, USER_ID, MODULE_NAME, mydb):
             if result is None or result['@next_val'] is None:
                 raise Exception("Failed to retrieve next line number.")
             
-            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Display Line data1 {line}")
+            logger.debug(f"{appuser} --> {__name__}: Display Line data1 {line}")
             next_val = result['@next_val']  # Assign the value to line_number
 
-            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Display Line data {line}")
+            logger.debug(f"{appuser} --> {__name__}: Display Line data {line}")
             cursor.execute(insert_query, (
                 next_val,
                 header_id,
@@ -108,7 +106,7 @@ def create_sales_invoice_lines(header_id, lines, USER_ID, MODULE_NAME, mydb):
             })
 
         cursor.close()
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before leaving the function: {response_lines}")
+        logger.debug(f"{appuser} --> {__name__}: Before leaving the function: {response_lines}")
         
         return {
             "header_id": header_id,
@@ -118,7 +116,7 @@ def create_sales_invoice_lines(header_id, lines, USER_ID, MODULE_NAME, mydb):
         }, 200
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to create sales invoice lines: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: Unable to create sales invoice lines: {str(e)}")
         return {"error": str(e)}, 500
 
 def generate_execution_id():
@@ -134,26 +132,29 @@ def auto_create_so_si():
     execution_id = generate_execution_id()
     responses = []
     try:
+		
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header) if authorization_header else None
-        USER_ID = token_results["username"] if token_results else ""
-        MODULE_NAME = __name__
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'auto_create_so_si' function")
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
+        
+
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'auto_create_so_si' function")
 
         if request.content_type == 'application/json':
             data = request.get_json()
         else:
             data = request.form
 
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
-
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
+        logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
         sales_order_numbers = data.get("sales_order_numbers", [])
         invoice_number = data.get("invoice_number")
@@ -162,10 +163,9 @@ def auto_create_so_si():
         account_types = data.get("account_types", {})
         so_order_status_filter = data.get("so_order_status_filter")
 
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
         cursor = mydb.cursor(dictionary=True)
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Sales order numbers: {sales_order_numbers}")
+        logger.debug(f"{appuser} --> {__name__}: Sales order numbers: {sales_order_numbers}")
 
         if not sales_order_numbers:
             placeholders = ', '.join(['%s'] * len(so_order_status_filter))
@@ -185,10 +185,10 @@ def auto_create_so_si():
 
         sales_orders = cursor.fetchall()
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Fetched Sales orders that match with status: {sales_orders}")
+        logger.debug(f"{appuser} --> {__name__}: Fetched Sales orders that match with status: {sales_orders}")
 
         #if not sales_orders:
-        #    logger.debug(f"{USER_ID} --> {MODULE_NAME}: No Sales Orders fetched with the given status: {sales_orders}")
+        #    logger.debug(f"{appuser} --> {__name__}: No Sales Orders fetched with the given status: {sales_orders}")
         #    return jsonify({'message': 'No Sales Orders fetched with the given status', 'sales_orders': sales_orders}), 404
         
         new_input_tax_type = None
@@ -208,7 +208,7 @@ def auto_create_so_si():
                 tax_id = order["tax_id"]
                 new_tax_id = None
                 if not tax_id:
-                    new_tax_id, new_tax_rate = get_tax_rate_by_company_id(company_id, new_input_tax_type, USER_ID, MODULE_NAME, mydb)
+                    new_tax_id, new_tax_rate = get_tax_rate_by_company_id(company_id, new_input_tax_type, appuser, __name__, mydb)
 
                 cursor.execute('SET @next_val = 0;')  # Initialize the variable
                 cursor.execute('CALL adm.get_next_sequence_value("SAL_HDR_INV_NUM", @next_val);')
@@ -219,7 +219,7 @@ def auto_create_so_si():
                     raise Exception("Failed to retrieve next line number.")
 
                 invoice_number = result['@next_val']
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Check the new tax_id  ? {new_tax_id}")                
+                logger.debug(f"{appuser} --> {__name__}: Check the new tax_id  ? {new_tax_id}")                
                 invoice_data = None
                 if tax_id:
                     invoice_data = {
@@ -235,8 +235,8 @@ def auto_create_so_si():
                         "department_id": order["department_id"],
                         "company_id": order["company_id"],
                         "transaction_source": f"SO {order['header_id']}",
-                        "created_by": current_userid,
-                        "updated_by": current_userid
+                        "created_by": appuserid,
+                        "updated_by": appuserid
                     }
                 else:
                     invoice_data = {
@@ -252,14 +252,14 @@ def auto_create_so_si():
                         "department_id": order["department_id"],
                         "company_id": order["company_id"],
                         "transaction_source": f"SO {order['header_id']}",
-                        "created_by": current_userid,
-                        "updated_by": current_userid
+                        "created_by": appuserid,
+                        "updated_by": appuserid
                     }
                 # Create Sales Invoice
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Invoice Header Creation failed for SO OBSERVE tax_id IS EMPTY ? {invoice_data}")
-                header_response, status_code = create_sales_invoice(invoice_data, USER_ID, MODULE_NAME, mydb)
+                logger.debug(f"{appuser} --> {__name__}: Invoice Header Creation failed for SO OBSERVE tax_id IS EMPTY ? {invoice_data}")
+                header_response, status_code = create_sales_invoice(invoice_data, appuser, __name__, mydb)
                 if status_code != 200:
-                    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Invoice Header Creation failed for SO {sales_header_id}. Response: {header_response}")
+                    logger.debug(f"{appuser} --> {__name__}: Invoice Header Creation failed for SO {sales_header_id}. Response: {header_response}")
                     continue  # Skip to the next sales order
 
                 header_id = header_response["header_id"]
@@ -283,14 +283,14 @@ def auto_create_so_si():
                         "unit_price": line["unit_price"],
                         "line_total": line["line_total"],
                         "uom_id": line["uom_id"],
-                        "created_by": current_userid,
-                        "updated_by": current_userid
+                        "created_by": appuserid,
+                        "updated_by": appuserid
                     })
 
                 # Create Sales Invoice Lines
-                lines_response, status_code = create_sales_invoice_lines(header_id, line_data, USER_ID, MODULE_NAME, mydb)
+                lines_response, status_code = create_sales_invoice_lines(header_id, line_data, appuser, __name__, mydb)
                 if status_code != 200:
-                    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Invoice Line Creation failed for SO {sales_header_id}. Response: {lines_response}")
+                    logger.debug(f"{appuser} --> {__name__}: Invoice Line Creation failed for SO {sales_header_id}. Response: {lines_response}")
                     continue  # Skip to the next sales order
 
                 account_lines = []
@@ -300,7 +300,7 @@ def auto_create_so_si():
 
                 # Process Debit accounts
                 for debit_account in account_types.get("Debit", []):
-                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_type"], mydb, USER_ID, MODULE_NAME)
+                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], debit_account["account_type"], mydb, appuser, __name__)
                     distribution_percentage = Decimal(debit_account.get("distribution_percentage", 0)) / 100
                     debit_amount = totalamount * distribution_percentage
 
@@ -314,19 +314,19 @@ def auto_create_so_si():
                     debit_total += debit_amount
 
                 # Process Tax accounts first
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before calling the Auto process tax accounts function START ----------->")
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before calling the Auto process tax accounts Orders ----------->: {order}")
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before calling the Auto process tax accounts account types  ----------->: {account_types} ")
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Before calling the Auto process tax accounts account lines  ----------->: {account_lines} ")
-                total_tax_amount = auto_process_tax_accounts(order, totalamount, account_types, account_lines, USER_ID, MODULE_NAME, mydb)       
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: After calling the Auto process tax accounts Orders ----------->: {order}")
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: After calling the Auto process tax accounts account types  ----------->: {account_types} ")
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: After calling the Auto process tax accounts account lines  ----------->: {account_lines} ")
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: After calling the Auto process tax accounts function END  ----------->")
+                logger.debug(f"{appuser} --> {__name__}: Before calling the Auto process tax accounts function START ----------->")
+                logger.debug(f"{appuser} --> {__name__}: Before calling the Auto process tax accounts Orders ----------->: {order}")
+                logger.debug(f"{appuser} --> {__name__}: Before calling the Auto process tax accounts account types  ----------->: {account_types} ")
+                logger.debug(f"{appuser} --> {__name__}: Before calling the Auto process tax accounts account lines  ----------->: {account_lines} ")
+                total_tax_amount = auto_process_tax_accounts(order, totalamount, account_types, account_lines, appuser, __name__, mydb)       
+                logger.debug(f"{appuser} --> {__name__}: After calling the Auto process tax accounts Orders ----------->: {order}")
+                logger.debug(f"{appuser} --> {__name__}: After calling the Auto process tax accounts account types  ----------->: {account_types} ")
+                logger.debug(f"{appuser} --> {__name__}: After calling the Auto process tax accounts account lines  ----------->: {account_lines} ")
+                logger.debug(f"{appuser} --> {__name__}: After calling the Auto process tax accounts function END  ----------->")
                 
                 # Now process other Credit accounts   
                 for credit_account in account_types.get("Credit", []):
-                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_type"], mydb, USER_ID, MODULE_NAME)
+                    account_details = get_account_details(order["company_id"], order["department_id"], order["currency_id"], credit_account["account_type"], mydb, appuser, __name__)
                     if credit_account["category"] != "Tax":
                         remaining_amount = totalamount - total_tax_amount
                         distribution_percentage = Decimal(credit_account.get("distribution_percentage", 0)) / 100
@@ -376,13 +376,13 @@ def auto_create_so_si():
                         line["debitamount"],
                         line["creditamount"],
                         line["is_tax_line"],  # Insert is_tax_line value
-                        current_userid,
-                        current_userid
+                        appuserid,
+                        appuserid
                     ))
                     mydb.commit()
 
-                if not update_soheader_and_lines_status(USER_ID, MODULE_NAME, mydb, sales_header_id, so_new_status):
-                    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Failed to update sales order status for SO {sales_header_id}")
+                if not update_soheader_and_lines_status(appuser, __name__, mydb, sales_header_id, so_new_status):
+                    logger.debug(f"{appuser} --> {__name__}: Failed to update sales order status for SO {sales_header_id}")
                     continue  # Skip to the next sales order
 
                 auto_invoice_log_data = {
@@ -393,8 +393,8 @@ def auto_create_so_si():
                     'so_header_update_status': so_new_status,
                     'sales_invoice_status': invoice_data["status"],
                     'auto_inv_status': 'COMPLETED',
-                    'created_by': current_userid,
-                    'updated_by': current_userid
+                    'created_by': appuserid,
+                    'updated_by': appuserid
                 }
 
                 log_auto_invoice(auto_invoice_log_data, mydb)
@@ -407,13 +407,13 @@ def auto_create_so_si():
                 })
 
             except Exception as e:
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Error processing sales order {order['header_id']}: {str(e)}")
+                logger.debug(f"{appuser} --> {__name__}: Error processing sales order {order['header_id']}: {str(e)}")
                 continue  # Continue to the next sales order
 
         return jsonify({"success": True, "invoices": responses}), 200
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: {str(e)} at line {traceback.extract_stack()[-2].lineno}")
+        logger.error(f"{appuser} --> {__name__}: An error occurred: {str(e)} at line {traceback.extract_stack()[-2].lineno}")
         if mydb:
             mydb.close()
         return jsonify({'error': str(e)}), 500

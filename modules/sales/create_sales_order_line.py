@@ -1,9 +1,7 @@
-from flask import abort, Blueprint, request, jsonify
-from modules.admin.databases.mydb import get_database_connection
+from flask import Blueprint, request, jsonify
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details	
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.sales.routines.update_so_header_total_byline import update_so_header_total_by_line
 from modules.common.routines.find_lowest_uom_and_cf import find_lowest_uom_and_cf
 from modules.utilities.logger import logger
@@ -13,30 +11,27 @@ create_sales_order_line_api = Blueprint('create_sales_order_line_api', __name__)
 @create_sales_order_line_api.route('/create_sales_order_line', methods=['POST'])
 @permission_required(WRITE_ACCESS_TYPE, __file__)
 def create_sales_order_line():
-    MODULE_NAME = __name__
+    
 
     try:
         sum_of_line_total = 0
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-        else:
-            USER_ID = ""
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
         logger.debug(
-            f"{USER_ID} --> {MODULE_NAME}: Entered the 'create sales order line' function")
+            f"{appuser} --> {__name__}: Entered the 'create sales order line' function")
 
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
-
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
 
         try:
             json_data = request.get_json()
@@ -50,7 +45,7 @@ def create_sales_order_line():
             print("Sales order lines request", sales_order_lines)
             response_lines = []
 
-            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Process the Sales order lines")
+            logger.debug(f"{appuser} --> {__name__}: Process the Sales order lines")
 
             for line_data in sales_order_lines:
                 header_id = int(line_data.get('header_id'))
@@ -75,16 +70,16 @@ def create_sales_order_line():
                 uom_id = int(line_data.get('uom_id'))
                 status = str(line_data.get('status'))  # Extract status from JSON
 
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Going to call find_lowest_uom_and_cf function ")
+                logger.debug(f"{appuser} --> {__name__}: Going to call find_lowest_uom_and_cf function ")
 
-                result = find_lowest_uom_and_cf(uom_id, mydb, current_userid, MODULE_NAME)
+                result = find_lowest_uom_and_cf(uom_id, mydb, appuserid, __name__)
                 base_uom_id = result['base_unit']
                 base_uom_cf = result['conversion_factor']
                 base_quantity = quantity * base_uom_cf
 
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Retrieved base uom id from the function function {base_uom_id}")
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Retrieved conversion factor from the function function {base_uom_cf}")
-                logger.debug(f"{USER_ID} --> {MODULE_NAME}: Calculated base quantity  {base_quantity}")
+                logger.debug(f"{appuser} --> {__name__}: Retrieved base uom id from the function function {base_uom_id}")
+                logger.debug(f"{appuser} --> {__name__}: Retrieved conversion factor from the function function {base_uom_cf}")
+                logger.debug(f"{appuser} --> {__name__}: Calculated base quantity  {base_quantity}")
 
                 query = """
                     INSERT INTO sal.sales_order_lines (
@@ -94,7 +89,7 @@ def create_sales_order_line():
                 """
                 values = (
                     header_id, so_lnum, item_id, quantity, unit_price,
-                    line_total, uom_id, base_uom_id,base_uom_cf,base_quantity,notes, current_userid, current_userid, status
+                    line_total, uom_id, base_uom_id,base_uom_cf,base_quantity,notes, appuserid, appuserid, status
                 )
                 mycursor.execute(query, values)
 
@@ -107,14 +102,14 @@ def create_sales_order_line():
                 })
 
             logger.debug(
-                f"{USER_ID} --> {MODULE_NAME}: Successfully created sales order lines")
+                f"{appuser} --> {__name__}: Successfully created sales order lines")
             print("Header id before calling totals", header_id)
-            success = update_so_header_total_by_line(USER_ID, MODULE_NAME, mydb, header_id, sum_of_line_total)
+            success = update_so_header_total_by_line(appuser, __name__, mydb, header_id, sum_of_line_total)
 
             if success:
                 mydb.commit()
                 logger.debug(
-                    f"{USER_ID} --> {MODULE_NAME}: Successfully created sales order lines")
+                    f"{appuser} --> {__name__}: Successfully created sales order lines")
 
                 response = {
                     'success': True,
@@ -124,7 +119,7 @@ def create_sales_order_line():
             else:
                 mydb.rollback()
                 logger.error(
-                    f"{USER_ID} --> {MODULE_NAME}: Failed to update total_amount for header_id {header_id}")
+                    f"{appuser} --> {__name__}: Failed to update total_amount for header_id {header_id}")
 
                 response = {
                     'success': False,
@@ -135,12 +130,12 @@ def create_sales_order_line():
 
         except Exception as json_error:
             logger.error(
-                f"{USER_ID} --> {MODULE_NAME}: Error processing JSON input - {str(json_error)}")
+                f"{appuser} --> {__name__}: Error processing JSON input - {str(json_error)}")
             return 'error: Invalid JSON input', 400
 
     except Exception as e:
         logger.error(
-            f"{USER_ID} --> {MODULE_NAME}: Error creating sales order lines - {str(e)}")
+            f"{appuser} --> {__name__}: Error creating sales order lines - {str(e)}")
         mydb.rollback()
         return 'error: Internal Server Error', 500
 

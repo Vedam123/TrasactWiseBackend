@@ -1,9 +1,7 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.security.permission_required import permission_required  # Import the decorator
 from config import WRITE_ACCESS_TYPE  # Import 
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger  # Import the logger module
 
 create_partner_data_api = Blueprint('create_partner_data_api', __name__)
@@ -12,36 +10,29 @@ create_partner_data_api = Blueprint('create_partner_data_api', __name__)
 @permission_required(WRITE_ACCESS_TYPE ,  __file__)  # Pass WRITE_ACCESS_TYPE as an argument
 def create_partner_data():
     try:
+		
         authorization_header = request.headers.get('Authorization')
-        token_results = ""
-        USER_ID = ""
-        MODULE_NAME = __name__
-        if authorization_header:
-            token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-            token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
         
-        # Log entry point
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the create partner data function")
-
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
-        
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
-        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
+           # Log entry point
+        logger.debug(f"{appuser} --> {__name__}: Entered in the create partner data function")      
+              
         if request.content_type == 'application/json':
             data = request.get_json()
         else:
             data = request.form
 
         # Log the received data
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
+        logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
         partner_type = data['partnertype']
         partner_name = data['partnername']
@@ -62,47 +53,47 @@ def create_partner_data():
         partner_image_data = partner_image.read() if partner_image else None
 
         # Log parsed data
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Partner Type: {partner_type}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Partner Name: {partner_name}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Contact Person: {contact_person}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Email: {email}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Phone: {phone}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Address: {address}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed City: {city}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed State: {state}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Postal Code: {postal_code}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Country: {country}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Tax ID: {tax_id}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Registration Number: {registration_number}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Additional Info: {additional_info}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Currency Code: {currency_id}")
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Status: {status}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Partner Type: {partner_type}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Partner Name: {partner_name}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Contact Person: {contact_person}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Email: {email}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Phone: {phone}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Address: {address}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed City: {city}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed State: {state}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Postal Code: {postal_code}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Country: {country}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Tax ID: {tax_id}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Registration Number: {registration_number}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Additional Info: {additional_info}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Currency Code: {currency_id}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Status: {status}")
         if partner_image:
-            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Partner Image: File detected")
+            logger.debug(f"{appuser} --> {__name__}: Parsed Partner Image: File detected")
         else:
-            logger.debug(f"{USER_ID} --> {MODULE_NAME}: Parsed Partner Image: Empty")
+            logger.debug(f"{appuser} --> {__name__}: Parsed Partner Image: Empty")
 
         mycursor = mydb.cursor()
 
         try:
             query = "INSERT INTO com.businesspartner (partnertype, partnername, contactperson, email, phone, address, city, state, postalcode, country, taxid, registrationnumber, additionalinfo, currency_id, status, customerimage, created_by, updated_by) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            values = (partner_type, partner_name, contact_person, email, phone, address, city, state, postal_code, country, tax_id, registration_number, additional_info, currency_id, status, partner_image_data, current_userid, current_userid)
+            values = (partner_type, partner_name, contact_person, email, phone, address, city, state, postal_code, country, tax_id, registration_number, additional_info, currency_id, status, partner_image_data, appuserid, appuserid)
             
             mycursor.execute(query, values)
             mydb.commit()
             
             # Log success and close the cursor and connection
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Partner data created successfully")
+            logger.info(f"{appuser} --> {__name__}: Partner data created successfully")
             mycursor.close()
             mydb.close()
             return jsonify({'message': 'Partner data created successfully'})
         except Exception as e:
             # Log the error and close the cursor and connection
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to create partner data: {str(e)}")
+            logger.error(f"{appuser} --> {__name__}: Unable to create partner data: {str(e)}")
             mycursor.close()
             mydb.close()
             return jsonify({'error': str(e)}), 500
     except Exception as e:
         # Log any exceptions
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: An error occurred: {str(e)}")
         return jsonify({'error': str(e)}), 500

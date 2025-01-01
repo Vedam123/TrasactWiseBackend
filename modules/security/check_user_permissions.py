@@ -1,55 +1,58 @@
-from modules.admin.databases.mydb import get_database_connection
 from config import APPLICATION_CREDENTIALS
 from modules.utilities.logger import logger  # Import the logger module
 
-def check_user_permissions(current_user_id, usernamex, module, access_type):
+def check_user_permissions(current_file_name, appuserid, appuser, module, access_type, connect_db):
     try:       
-        # Check if usernamex is present in APPLICATION_CREDENTIALS
-        logger.debug(f"current_user_id '{current_user_id}'")
-        logger.debug(f"usernamex '{usernamex}'")
-        logger.debug(f"module '{module}'")
-        logger.debug(f"access_type '{access_type}'") 
+        # Check if appuser is present in APPLICATION_CREDENTIALS
+        logger.debug(f"{appuser} --> {__name__}: appuserid '{appuserid}'")
+        logger.debug(f"{appuser} --> {__name__}: appuser '{appuser}'")
+        logger.debug(f"{appuser} --> {__name__}: module '{module}'")
+        logger.debug(f"{appuser} --> {__name__}: access_type '{access_type}'") 
 
-
-        if current_user_id is None or current_user_id == "":
-            # Fetch user_info based on usernamex
-            user_info = next((user for user in APPLICATION_CREDENTIALS if user["username"] == usernamex), None)
+        if appuserid is None or appuserid == "":
+            # Fetch user_info based on appuser
+            user_info = next((user for user in APPLICATION_CREDENTIALS if user["username"] == appuser and user["status"].lower() == "active"), None)
             
             if user_info:
-                logger.debug(f"User '{usernamex}' found in Super user list.")
+                logger.debug(f"{appuser} --> {__name__}: User '{appuser}' found in Super user list with active status.")
                 return True
 
-        # Continue with the rest of the function as before
-        current_user_id = str(current_user_id).strip()
-        user_info = next((user for user in APPLICATION_CREDENTIALS if user["userid"] == current_user_id), None)
+        appuserid = str(appuserid).strip()
+        user_info = next((user for user in APPLICATION_CREDENTIALS if user["userid"] == appuserid and user["status"].lower() == "active"), None)
         
         if user_info:
-            logger.debug(f"User '{current_user_id}' is in Super user list super user list.")
+            logger.debug(f"{appuser} --> {__name__}: User '{appuserid}' is in Super user list with active status.")
             return True
 
-        logger.debug(f"User '{usernamex}' not found in Super user list .")
-        db_connection = get_database_connection(usernamex,module)
-        permission_cursor = db_connection.cursor()
+        logger.debug(f"{appuser} --> {__name__}: User '{appuser}' not found in Super user list or status is not 'active'.")
+
+        # Get the cursor from the db connection
+        permission_cursor = connect_db.cursor()
+
         user_id = ""
-        logger.debug(f"User name -- to check in db: {usernamex}")
-        permission_cursor.execute("SELECT id FROM adm.users WHERE username like %s", (usernamex,))
+        logger.debug(f"{appuser} --> {__name__}: User name to check in db: {appuser}")
+
+        permission_cursor.execute("SELECT id FROM adm.users WHERE username like %s", (appuser,))
         result = permission_cursor.fetchone()
-        logger.debug(result)
+        logger.debug(f"{appuser} --> {__name__}: {result}")
         if result:
             user_id = result[0]
         else:
+            logger.debug(f"{appuser} --> {__name__}: User '{appuser}' not found in adm.users table")
+            permission_cursor.close()
             return False
         
         permission_cursor.execute(
             "SELECT 1 FROM adm.user_module_permissions WHERE module = %s LIMIT 1",
             (module,)
-            )
+        )
         
         module_exists = bool(permission_cursor.fetchone())
-        logger.debug("Seems user found  adm.users")
+        logger.debug(f"{appuser} --> {__name__}: Seems user found in adm.users")
 
         if not module_exists:
-            logger.debug(f"Module '{module}' not found in user_module_permissions")
+            logger.debug(f"{appuser} --> {__name__}: Module '{module}' not found in user_module_permissions")
+            permission_cursor.close()
             return False
 
         permission_cursor.execute(
@@ -59,12 +62,14 @@ def check_user_permissions(current_user_id, usernamex, module, access_type):
         )
         permission = permission_cursor.fetchone()
         if not permission:
+            logger.debug(f"{appuser} --> {__name__}: No permission found for user '{appuser}' in module '{module}' with access type '{access_type}'")
+            permission_cursor.close()
             return False
 
         permission_cursor.close()
-        db_connection.close()
+        logger.debug(f"{appuser} --> {__name__}: Permission for user '{appuser}' in module '{module}' with access type '{access_type}' is granted")
         return bool(permission[0])
 
     except Exception as e:
-        logger.error("Error checking permissions: %s", str(e))
+        logger.error(f"{appuser} --> {__name__}: Error checking permissions: {str(e)}")
         return False

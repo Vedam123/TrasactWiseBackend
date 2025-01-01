@@ -3,9 +3,9 @@ from modules.utilities.logger import logger
 
 def move_inventory(input_params):
     try:
-        USER_ID = input_params.get('USER_ID', '')
+        appuser = input_params.get('appuser', '')
         MODULE_NAME = input_params.get('MODULE_NAME', '')
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Entered move_inventory function")
+        logger.info(f"{appuser} --> {MODULE_NAME}: Entered move_inventory function")
 
         # Extracting necessary variables
         source_item_id = input_params.get('source_item_id', '')
@@ -35,10 +35,10 @@ def move_inventory(input_params):
 
         # Validate source_quantity against target_quantity
         if source_quantity < target_quantity:
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Not possible to Move More quantity than what is available in the warehouse")
+            logger.error(f"{appuser} --> {MODULE_NAME}: Not possible to Move More quantity than what is available in the warehouse")
             return 'Not possible to Move More quantity than what is available in the warehouse', 400
 
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Source quantity is greater than target quantity so it is fine to proceed")
+        logger.info(f"{appuser} --> {MODULE_NAME}: Source quantity is greater than target quantity so it is fine to proceed")
         #input_params_tuple = (
         #    source_item_id, source_uom_id, source_transaction_id,
         #    target_bin_id, target_rack_id, target_row_id,
@@ -85,7 +85,7 @@ def move_inventory(input_params):
             dynamic_conditions_clause = " ".join(dynamic_conditions)
             existing_record_query = existing_record_query.format(dynamic_conditions_clause)
 
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Find data with the parameters {input_params_tuple}")
+        logger.info(f"{appuser} --> {MODULE_NAME}: Find data with the parameters {input_params_tuple}")
 
         # with input_params['mydb'].cursor() as mycursor:
         #    print("Entered with condition")
@@ -97,13 +97,13 @@ def move_inventory(input_params):
             mycursor.execute(existing_record_query, input_params_tuple)
             existing_record = mycursor.fetchone()
             result_set = mycursor.fetchall()
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Is there more than one record present ?  {result_set}")
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Fetch only the first one   {existing_record}")
+            logger.info(f"{appuser} --> {MODULE_NAME}: Is there more than one record present ?  {result_set}")
+            logger.info(f"{appuser} --> {MODULE_NAME}: Fetch only the first one   {existing_record}")
 
             try:
                 if existing_record:
                     logger.info(
-                        f"{USER_ID} --> {MODULE_NAME}: As an existing record is found entered If condition with the data    {existing_record[0]}")
+                        f"{appuser} --> {MODULE_NAME}: As an existing record is found entered If condition with the data    {existing_record[0]}")
                     update_query = (
                         "UPDATE inv.item_inventory "
                         "SET quantity = quantity + %s, updated_by = %s "
@@ -112,10 +112,10 @@ def move_inventory(input_params):
                     update_params = (target_quantity, input_params['updated_by'], existing_record[0])
                     mycursor.execute(update_query, update_params)
                     logger.info(
-                        f"{USER_ID} --> {MODULE_NAME}: Quantity is added to the existing record   {update_params}")
+                        f"{appuser} --> {MODULE_NAME}: Quantity is added to the existing record   {update_params}")
                 else:
                     logger.info(
-                        f"{USER_ID} --> {MODULE_NAME}: New Record is going to be created as there is no existing record  ")
+                        f"{appuser} --> {MODULE_NAME}: New Record is going to be created as there is no existing record  ")
                     insert_query = (
                         "INSERT INTO inv.item_inventory "
                         "(transaction_id, transaction_type, item_id, uom_id, quantity, additional_info, "
@@ -131,17 +131,17 @@ def move_inventory(input_params):
                     )
                     mycursor.execute(insert_query, insert_params)
                     logger.info(
-                        f"{USER_ID} --> {MODULE_NAME}: Insert is done with the parameters ?  {insert_params}")
+                        f"{appuser} --> {MODULE_NAME}: Insert is done with the parameters ?  {insert_params}")
                 if source_quantity == target_quantity:
                     logger.info(
-                        f"{USER_ID} --> {MODULE_NAME}: Both source and target quantities are the same delete the source inventory_id  {source_inventory_id}")
+                        f"{appuser} --> {MODULE_NAME}: Both source and target quantities are the same delete the source inventory_id  {source_inventory_id}")
                     delete_query = "DELETE FROM inv.item_inventory WHERE inventory_id = %s"
                     mycursor.execute(delete_query, (source_inventory_id,))
                     logger.info(
-                        f"{USER_ID} --> {MODULE_NAME}: Data deleted for the source inventory id  {source_inventory_id}")
+                        f"{appuser} --> {MODULE_NAME}: Data deleted for the source inventory id  {source_inventory_id}")
                 elif source_quantity > target_quantity:
                     logger.info(
-                        f"{USER_ID} --> {MODULE_NAME}: source quantity {source_quantity} is more than target quantity {target_quantity} so update the source Inventory id  {source_inventory_id}")
+                        f"{appuser} --> {MODULE_NAME}: source quantity {source_quantity} is more than target quantity {target_quantity} so update the source Inventory id  {source_inventory_id}")
                     update_query = (
                         "UPDATE inv.item_inventory "
                         "SET quantity = quantity - %s, updated_by = %s "
@@ -150,18 +150,18 @@ def move_inventory(input_params):
                     update_params = (target_quantity, input_params['updated_by'], source_inventory_id)
                     mycursor.execute(update_query, update_params)
                     logger.info(
-                        f"{USER_ID} --> {MODULE_NAME}: quantity is updated for the inventory id  {source_inventory_id}")
+                        f"{appuser} --> {MODULE_NAME}: quantity is updated for the inventory id  {source_inventory_id}")
                 # Commit the changes
                 input_params['mydb'].commit()
 
-                logger.info(f"{USER_ID} --> {MODULE_NAME}: Inventory moved successfully")
+                logger.info(f"{appuser} --> {MODULE_NAME}: Inventory moved successfully")
                 return 'Inventory moved successfully', 200
             except Exception as e:
                 logger.error(
-                    f"{USER_ID} --> {MODULE_NAME}: Database operation failed: {str(e)}")
+                    f"{appuser} --> {MODULE_NAME}: Database operation failed: {str(e)}")
                 return 'Failed to move inventory. Database operation failed.', 500
 
     except Exception as e:
         logger.error(
-            f"{USER_ID} --> {MODULE_NAME}: An error occurred during inventory movement: {str(e)}")
+            f"{appuser} --> {MODULE_NAME}: An error occurred during inventory movement: {str(e)}")
         return 'Failed to move inventory', 500

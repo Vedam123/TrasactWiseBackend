@@ -1,36 +1,24 @@
 from flask import request, jsonify
-from flask_jwt_extended import decode_token
 from modules.security.check_user_permissions import check_user_permissions
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger  # Import the logger module
 
-def check_module_and_token(current_file_name, module, access_type):
-    authorization_header = request.headers.get('Authorization')
-    token_results = ""
-    USER_ID = ""
-    current_user_id = ""
-    MODULE_NAME = __name__
-    if authorization_header:
-        token_results = get_user_from_token(authorization_header)
+def check_module_and_token(current_file_name, module, access_type, connect_db, appuser, appuserid):
+    # No need to call get_user_and_db_details here, as appuser, appuserid, and connect_db are passed as arguments
+    
+    if not appuser:
+        logger.error(f"{appuser} --> {__name__}: The user {appuser} is Unauthorized to access the file  --> {current_file_name}: from the module {module}")
+        return jsonify({"error": f"The user {appuser} is Unauthorized to access the file --> {current_file_name}: from the module {module}"}), 401  
 
-    if token_results:
-        current_user_id = token_results["current_user_id"]
-        USER_ID = token_results["username"]
+    logger.debug(f"{appuser} --> {__name__}: The App user {appuser} is not empty , now try to find if he has access to the module {module} ")
 
-    if module:
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: The file '{current_file_name}' is in the module '{module}' and requested access is '{access_type}'.")
-    else:
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: The file '{current_file_name}' was not found in any module and requested access is '{access_type}'.")
-
-    authorization_header = request.headers.get('Authorization')   
-   
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the Check module token function")
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: TOKEN user and current user IN MODULE TOKEN: {USER_ID}, {current_user_id}")
-
-    has_permission = check_user_permissions(current_user_id, USER_ID, module, access_type)
+    has_permission = check_user_permissions(current_file_name,appuserid, appuser, module, access_type, connect_db)
     
     if has_permission:
+        logger.debug(f"{appuser} --> {__name__}: The user {appuser} is authorized to access the file  --> {current_file_name}: from the module {module}")
         return has_permission
 
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Seems the user doesn't have permissions")
+    logger.error(f"{appuser} --> {__name__}: The user {appuser} is Unauthorized to access the file  --> {current_file_name}: from the module {module}")
     return False
+

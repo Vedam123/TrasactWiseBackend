@@ -30,9 +30,13 @@ from modules.common.get_default_tax_codes import get_default_tax_codes
 from modules.common.get_default_tax_headers import get_default_tax_headers
 from modules.common.create_default_tax_headers import create_default_tax_headers
 
+from modules.common.create_bom import create_bom
+from modules.common.update_bom import update_bom
+
 from modules.utilities.logger import logger  # Import the logger module
 
 list_common_module = Blueprint('list_common_module', __name__)
+put_common_module = Blueprint('put_common_module', __name__)
 
 # GET Methods ---------------------------------------------------------
 @list_common_module.route('/get_company_tax_codes', methods=['GET'])
@@ -206,9 +210,23 @@ def create_default_tax_headers_all():
     return create_default_tax_headers()
 
 
+@list_common_module.route('/create_bom', methods=['POST'])
+def create_bom_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}:  Create BOM create_bom")
+    return create_bom()
+
 # PUT Methods -----------------------------------------------------------
 
+@put_common_module.route('/update_bom', methods=['PUT'])
+def update_bom_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}:  Create BOM update_bom")
+    return update_bom()
 # DELETE Methods ---------------------------------------------------------
 
 def register_common_module_routes(app):
     app.register_blueprint(list_common_module)
+    app.register_blueprint(put_common_module)

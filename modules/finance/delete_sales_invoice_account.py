@@ -1,9 +1,7 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 # Define the Blueprint
@@ -14,26 +12,32 @@ delete_sales_invoice_account_api = Blueprint('delete_sales_invoice_account_api',
 @permission_required(WRITE_ACCESS_TYPE, __file__)
 def delete_sales_invoice_account():
     try:
+       	
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header) if authorization_header else None
-        USER_ID = token_results["username"] if token_results else ""
-        MODULE_NAME = __name__
+
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
+        
 
         # Log entry point
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'delete_sales_invoice_account' function")
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'delete_sales_invoice_account' function")
 
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
-
-        current_userid = decode_token(authorization_header.replace('Bearer ', '')).get('Userid') if authorization_header.startswith('Bearer ') else None
-
-        # Check content type
+       # Check content type
         if request.content_type != 'application/json':
             return jsonify({'error': 'Content-Type must be application/json'}), 400
 
         data = request.get_json()
 
         # Log the received data
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
+        logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
         # Check required fields
         if 'line_id' not in data or 'header_id' not in data:
@@ -57,7 +61,7 @@ def delete_sales_invoice_account():
 
             if result == 0:
                 # Log warning and close the cursor and connection
-                logger.warning(f"{USER_ID} --> {MODULE_NAME}: No matching record found for deletion")
+                logger.warning(f"{appuser} --> {__name__}: No matching record found for deletion")
                 mycursor.close()
                 mydb.close()
                 return jsonify({'message': 'No matching record found for deletion'}), 404
@@ -73,19 +77,19 @@ def delete_sales_invoice_account():
             mydb.commit()
 
             # Log success and close the cursor and connection
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Account data deleted successfully")
+            logger.info(f"{appuser} --> {__name__}: Account data deleted successfully")
             mycursor.close()
             mydb.close()
             return jsonify({'message': 'Account deleted successfully'}), 200
 
         except Exception as e:
             # Log the error and close the cursor and connection
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Unable to delete account data: {str(e)}")
+            logger.error(f"{appuser} --> {__name__}: Unable to delete account data: {str(e)}")
             mycursor.close()
             mydb.close()
             return jsonify({'error': str(e)}), 500
 
     except Exception as e:
         # Log any exceptions
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: An error occurred: {str(e)}")
         return jsonify({'error': str(e)}), 500

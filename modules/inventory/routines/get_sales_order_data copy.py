@@ -1,7 +1,7 @@
 from modules.utilities.logger import logger
 from flask import jsonify
 
-def get_sales_order_data(sales_orders, sales_order_status, mydb, current_userid, MODULE_NAME):
+def get_sales_order_data(sales_orders, sales_order_status, mydb, appuserid, MODULE_NAME):
     """
     Fetches sales order data from the database based on the provided sales orders and status.
     
@@ -9,7 +9,7 @@ def get_sales_order_data(sales_orders, sales_order_status, mydb, current_userid,
     - sales_orders (list or None): List of sales order IDs or None to fetch all orders.
     - sales_order_status (str): The status of the sales orders to be retrieved.
     - mydb: Database connection object.
-    - current_userid (str): ID of the current user (contextual use).
+    - appuserid (str): ID of the current user (contextual use).
     - MODULE_NAME (str): The module name (contextual use).
     
     Returns:
@@ -18,7 +18,7 @@ def get_sales_order_data(sales_orders, sales_order_status, mydb, current_userid,
     # Create a cursor object using the provided database connection
     cursor = mydb.cursor()
 
-    logger.debug(f"{current_userid} --> {MODULE_NAME}: New cursor initiated to fetch input data: {sales_orders}")
+    logger.debug(f"{appuserid} --> {MODULE_NAME}: New cursor initiated to fetch input data: {sales_orders}")
 
     # Prepare SQL queries based on the presence of sales_orders
     if sales_orders:
@@ -31,7 +31,7 @@ def get_sales_order_data(sales_orders, sales_order_status, mydb, current_userid,
             WHERE so_num IN ({header_ids_placeholder}) AND status = %s
         """
         params = tuple(sales_orders) + (sales_order_status,)
-        logger.debug(f"{current_userid} --> {MODULE_NAME}: header ids placeholder and params {header_ids_placeholder}: {params}")        
+        logger.debug(f"{appuserid} --> {MODULE_NAME}: header ids placeholder and params {header_ids_placeholder}: {params}")        
     else:
         # If no sales_orders are provided, fetch all headers with the specified status
         header_query = """
@@ -43,7 +43,7 @@ def get_sales_order_data(sales_orders, sales_order_status, mydb, current_userid,
     # Execute the query to get the sales order headers
     cursor.execute(header_query, params)
     headers = cursor.fetchall()
-    logger.debug(f"{current_userid} --> {MODULE_NAME}: fetched headers: {headers}")    
+    logger.debug(f"{appuserid} --> {MODULE_NAME}: fetched headers: {headers}")    
 
     # Extract header IDs for the next query
     header_ids = [header[0] for header in headers]  # Ensure you are using the correct index for header_id
@@ -80,7 +80,7 @@ def get_sales_order_data(sales_orders, sales_order_status, mydb, current_userid,
             "sales_header_id": header_id,
             "sales_order_lines": []
         }
-    logger.debug(f"{current_userid} --> {MODULE_NAME}: inpput information orders byheader  {orders_by_header}")    
+    logger.debug(f"{appuserid} --> {MODULE_NAME}: inpput information orders byheader  {orders_by_header}")    
 
     for line in lines:
         header_id = line[1]  # Correct index for header_id in lines (was line[0], now line[1])
@@ -98,5 +98,5 @@ def get_sales_order_data(sales_orders, sales_order_status, mydb, current_userid,
 
     # Convert the grouped data to a list of orders
     sales_orders_data = list(orders_by_header.values())
-    logger.debug(f"{current_userid} --> {MODULE_NAME}: SALES ORDER DATA : {sales_orders_data}")
+    logger.debug(f"{appuserid} --> {MODULE_NAME}: SALES ORDER DATA : {sales_orders_data}")
     return {"sales_orders": sales_orders_data}

@@ -1,9 +1,7 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 # Define the Blueprint
@@ -15,27 +13,29 @@ def update_sales_invoice_lines():
     try:
         # Get the user ID from the token
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header) if authorization_header else None
-        USER_ID = token_results["username"] if token_results else ""
-        MODULE_NAME = __name__
+
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
+        
         message = ""
 
         # Log entry point
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'update_sales_invoice_lines' function")
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'update_sales_invoice_lines' function")
 
-        # Get the database connection
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
-
-        # Get the current user ID from the token
-        current_userid = decode_token(authorization_header.replace('Bearer ', '')).get('Userid') if authorization_header.startswith('Bearer ') else None
-
-        # Get the request data
         data = request.get_json()
 
         header_id = int(data.get('header_id'))
 
         # Log the received data
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
+        logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
         # Get lines from the request
         lines = data.get('lines', [])
@@ -63,19 +63,19 @@ def update_sales_invoice_lines():
 
                 if record_exists:
                     # Update the existing record
-                    update_existing_record(mydb, header_id, line_number, line_id, item_id, quantity, unit_price, line_total, uom_id, current_userid)
+                    update_existing_record(mydb, header_id, line_number, line_id, item_id, quantity, unit_price, line_total, uom_id, appuserid)
                     message += f"Data for line_id {line_id} is updated in the system\n"
                 else:
                     # Insert a new record
-                    insert_new_record(mydb, header_id, line_number, item_id, quantity, unit_price, line_total, uom_id, current_userid)
+                    insert_new_record(mydb, header_id, line_number, item_id, quantity, unit_price, line_total, uom_id, appuserid)
                     message += f"Data for line_id {line_number} is inserted in the system\n"
             else:
                 # Insert a new record without line_id
-                insert_new_record(mydb, header_id, line_number, item_id, quantity, unit_price, line_total, uom_id, current_userid)
+                insert_new_record(mydb, header_id, line_number, item_id, quantity, unit_price, line_total, uom_id, appuserid)
                 message += f"Data for line_id {line_number} is inserted in the system\n"
 
         # Log success
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Updated or inserted sales invoice lines")
+        logger.info(f"{appuser} --> {__name__}: Updated or inserted sales invoice lines")
 
         # Close the database connection
         mydb.close()
@@ -84,7 +84,7 @@ def update_sales_invoice_lines():
 
     except Exception as e:
         # Log any exceptions
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: An error occurred: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 def record_exists_in_database(mydb, header_id, line_number, line_id):
@@ -113,7 +113,7 @@ def record_exists_in_database(mydb, header_id, line_number, line_id):
         # Close the cursor
         mycursor.close()
 
-def update_existing_record(mydb, header_id, line_number, line_id, item_id, quantity, unit_price, line_total, uom_id, current_userid):
+def update_existing_record(mydb, header_id, line_number, line_id, item_id, quantity, unit_price, line_total, uom_id, appuserid):
     try:
         # Update query
         update_query = """
@@ -126,7 +126,7 @@ def update_existing_record(mydb, header_id, line_number, line_id, item_id, quant
         mycursor = mydb.cursor()
 
         # Execute the update query
-        mycursor.execute(update_query, (item_id, quantity, unit_price, line_total, uom_id, current_userid, header_id, line_number, line_id))
+        mycursor.execute(update_query, (item_id, quantity, unit_price, line_total, uom_id, appuserid, header_id, line_number, line_id))
         mydb.commit()
         update_totalamount(mydb, header_id)        
 
@@ -137,7 +137,7 @@ def update_existing_record(mydb, header_id, line_number, line_id, item_id, quant
         # Close the cursor
         mycursor.close()
 
-def insert_new_record(mydb, header_id, line_number, item_id, quantity, unit_price, line_total, uom_id, current_userid):
+def insert_new_record(mydb, header_id, line_number, item_id, quantity, unit_price, line_total, uom_id, appuserid):
     try:
         # Insert query
         insert_query = """
@@ -149,7 +149,7 @@ def insert_new_record(mydb, header_id, line_number, item_id, quantity, unit_pric
         mycursor = mydb.cursor()
 
         # Execute the insert query
-        mycursor.execute(insert_query, (header_id, line_number, item_id, quantity, unit_price, line_total, uom_id, current_userid, current_userid))
+        mycursor.execute(insert_query, (header_id, line_number, item_id, quantity, unit_price, line_total, uom_id, appuserid, appuserid))
         mydb.commit()
 
         update_totalamount(mydb, header_id)

@@ -1,10 +1,8 @@
 from flask import jsonify, request, Blueprint
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 import uuid
 from config import WRITE_ACCESS_TYPE
-from modules.admin.databases.mydb import get_database_connection
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.sales.routines.fetch_sales_order_details import fetch_sales_order_details
 from modules.employee.routines.fetch_employee_details import fetch_employee_details
 from modules.inventory.routines.allocate_inventory import allocate_inventory
@@ -23,14 +21,23 @@ def pickrelease_inv():
     execution_id = generate_execution_id()
 
     try:
-        logger.info(f"Received request: {request.method} {request.url}")
+
 
         authorization_header = request.headers.get('Authorization')
-        logger.debug(f"Authorization Header: {authorization_header}")
 
-        token_results = get_user_from_token(authorization_header)
-        USER_ID = token_results["username"] if token_results else ""
-        logger.debug(f"User ID from Token: {USER_ID}")
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"{appuser} --> {__name__}:Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"{appuser} --> {__name__}:Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
+        
+        logger.info(f"{appuser} --> {__name__}:Received request: {request.method} {request.url}")
+        logger.debug(f"{appuser} --> {__name__}:User ID from Token: {appuser}")
 
         data = request.get_json()
         logger.debug(f"Request Data: {data}")
@@ -49,37 +56,31 @@ def pickrelease_inv():
             logger.warning("Full picking is not enabled")
             return jsonify(message='Full picking is not enabled'), 400
 
-        current_userid = None
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
-        logger.debug(f"Current User ID from Token: {current_userid}")
+        logger.debug(f"Current User ID from Token: {appuserid}")
 
         sales_orders = data.get('sales_orders', [])
         logger.debug(f"Sales Orders: {sales_orders}")
 
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
-        logger.debug(f"Database Connection established for User ID: {USER_ID}")
+        logger.debug(f"{appuser} --> {__name__}: Database Connection established for User ID: {appuser}")
 
         # Fetch employee details
-        details_by_id = fetch_employee_details(USER_ID, MODULE_NAME, mydb, user_id=current_userid)
+        details_by_id = fetch_employee_details(appuser, MODULE_NAME, mydb, appuserid,appuser)
         if details_by_id:
             empid = details_by_id["empid"]
             name = details_by_id["name"]
             logger.debug(f"Employee ID: {empid}, Name: {name}")
         else:
-            logger.debug("No details found by user ID")
+            logger.debug(f"{appuser} --> {__name__}:No details found by user ID")
 
         picker_id = details_by_id["empid"]
 
         # Fetch sales order data
-        sales_order_data = get_sales_order_data(sales_orders, sales_order_status, mydb, current_userid, MODULE_NAME)
+        sales_order_data = get_sales_order_data(sales_orders, sales_order_status, mydb, appuserid, MODULE_NAME)
         sales_orders = sales_order_data.get("sales_orders", [])
 
-        logger.debug(f"{current_userid} --> {MODULE_NAME}: AFTER RETURN FROM FUNCTION SALES ORDER DATA : {sales_orders}")
+        logger.debug(f"{appuserid} --> {MODULE_NAME}: AFTER RETURN FROM FUNCTION SALES ORDER DATA : {sales_orders}")
         if not sales_orders:  # This will handle both None and empty list cases
-            logger.debug(f"{current_userid} --> {MODULE_NAME}: No Sales order is found , check its status: {sales_order_data}")
+            logger.debug(f"{appuserid} --> {MODULE_NAME}: No Sales order is found , check its status: {sales_order_data}")
             response = {
                 "message": "No Sales order is found, check its status",
                 "status": "NOSALES"
@@ -92,18 +93,18 @@ def pickrelease_inv():
             sales_header_id = sales_order.get('sales_header_id')
             shipping_method = ""
             shipping_address = ""
-            details = fetch_sales_order_details(USER_ID, MODULE_NAME, mydb, sales_header_id)
+            details = fetch_sales_order_details(appuser, MODULE_NAME, mydb, sales_header_id)
             if details:
-                logger.debug("Sales Order Details:")
+                logger.debug(f"{appuser} --> {__name__}:Sales Order Details:")
                 shipping_method = details.get("shipping_method")
                 shipping_address = details.get("shipping_address")
-                logger.debug(f"Shipping Method: {shipping_method}")
-                logger.debug(f"Shipping Address: {shipping_address}")
+                logger.debug(f"{appuser} --> {__name__}:Shipping Method: {shipping_method}")
+                logger.debug(f"{appuser} --> {__name__}:Shipping Address: {shipping_address}")
             else:
-                logger.debug(f"No details found for Header ID {sales_header_id}")
+                logger.debug(f"{appuser} --> {__name__}:No details found for Header ID {sales_header_id}")
             sales_order_lines = sales_order.get('sales_order_lines')
-            logger.debug(f"Processing Sales Header ID: {sales_header_id}")
-            logger.debug(f"Sales Order Lines: {sales_order_lines}")
+            logger.debug(f"{appuser} --> {__name__}:Processing Sales Header ID: {sales_header_id}")
+            logger.debug(f"{appuser} --> {__name__}:Sales Order Lines: {sales_order_lines}")
 
             for line in sales_order_lines:
                 result = None
@@ -113,37 +114,37 @@ def pickrelease_inv():
                 if current_status is None:
                     result = jsonify(message=f"Fetched status for Sales Order Line ID: {sales_order_line_id} is NULL : {current_status}")
                     status_code = 200
-                    logger.debug(f"Fetched status for Sales Order Line ID: {sales_order_line_id} is NULL : {current_status}")
+                    logger.debug(f"{appuser} --> {__name__}:Fetched status for Sales Order Line ID: {sales_order_line_id} is NULL : {current_status}")
                     continue
 
-                logger.debug(f"Fetched status for Sales Order Line ID: {sales_order_line_id} is {current_status}")
+                logger.debug(f"{appuser} --> {__name__}:Fetched status for Sales Order Line ID: {sales_order_line_id} is {current_status}")
 
                 if current_status == full_qty_alloc_status:
                     result = jsonify(message=f"The Sales order line: {sales_order_line_id} is already fully Picked and its status is  : {current_status}")
-                    logger.debug(f"Skipping allocation for Sales Order Line ID: {sales_order_line_id} as it is fully allocated")
+                    logger.debug(f"{appuser} --> {__name__}:Skipping allocation for Sales Order Line ID: {sales_order_line_id} as it is fully allocated")
                     continue
-                logger.debug(f"Processing Sales Order Line: {line}")
+                logger.debug(f"{appuser} --> {__name__}:Processing Sales Order Line: {line}")
                 result, status_code = allocate_inventory(line, execution_id, sales_header_id, look_only_inventory_ids,
                                                          full_qty_alloc_status, part_qty_alloc_status, shipping_method, shipping_address, ship_status,
-                                                         picker_id, pick_status, mydb, current_userid, MODULE_NAME)
+                                                         picker_id, pick_status, mydb, appuserid, MODULE_NAME)
                 if status_code == 200:
                     updated_headers.add(sales_header_id)
                     mydb.commit()
                 elif status_code != 200:
-                    logger.warning(f"Processing failed for sales header ID and line: {sales_header_id}, {line}")
+                    logger.warning(f"{appuser} --> {__name__}:Processing failed for sales header ID and line: {sales_header_id}, {line}")
                     mydb.rollback()
                     continue
 
             for sales_header_id in updated_headers:
-                result, status_code = update_sales_order_status(sales_header_id, full_qty_alloc_status, part_qty_alloc_status, mydb, current_userid, MODULE_NAME)
-                logger.debug(f"Updated Sales Order Status for Header ID: {sales_header_id}")
+                result, status_code = update_sales_order_status(sales_header_id, full_qty_alloc_status, part_qty_alloc_status, mydb, appuserid, MODULE_NAME)
+                logger.debug(f"{appuser} --> {__name__}:Updated Sales Order Status for Header ID: {sales_header_id}")
 
         mydb.commit()
-        logger.info("Process is completed")
+        logger.info(f"{appuser} --> {__name__}:Process is completed")
         return result, status_code
 
     except Exception as e:
-        logger.error(f"Error occurred: {str(e)}")
+        logger.error(f"{__name__}:Error occurred: {str(e)}")
         if mydb:
             mydb.rollback()
         return jsonify(message='Processing failed'), 422

@@ -1,10 +1,9 @@
 import json
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required  # Import the decorator
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
 from modules.utilities.logger import logger  # Import the logger module
-from modules.security.get_user_from_token import get_user_from_token
 
 exchange_rate_api = Blueprint('exchange_rate_api', __name__)
 
@@ -33,43 +32,45 @@ def fetch_exchange_rate(mycursor, from_currency, to_currency):
 @permission_required(READ_ACCESS_TYPE, __file__)  # Pass READ_ACCESS_TYPE as an argument
 def currency_conversion():
     authorization_header = request.headers.get('Authorization')
-    token_results = ""
-    USER_ID = ""
-    MODULE_NAME = __name__
-    if authorization_header:
-        token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
 
-    if token_results:
-        USER_ID = token_results["username"]
+    try:
+        company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+        logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+    except ValueError as e:
+        logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+        return jsonify({"error": str(e)}), 401
+    
+    if not appuser:
+        logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+        return jsonify({"error": "Unauthorized. Username not found."}), 401
 
     # Log entry point
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered in the currency conversion function")
+    logger.debug(f"{appuser} --> {__name__}: Entered in the currency conversion function")
 
     try:
         from_currency = request.args.get('from_currency')
         amount = request.args.get('amount')
         to_currency = request.args.get('to_currency')
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: from_currency: %s, amount: %s, to_currency: %s", from_currency, amount, to_currency)
+        logger.debug(f"{appuser} --> {__name__}: from_currency: %s, amount: %s, to_currency: %s", from_currency, amount, to_currency)
 
         if not from_currency or not amount or not to_currency:
-            logger.warning(f"{USER_ID} --> {MODULE_NAME}: Invalid input")
+            logger.warning(f"{appuser} --> {__name__}: Invalid input")
             return jsonify({'error': 'Invalid input'})
 
         try:
             amount = float(amount)
         except ValueError:
-            logger.warning(f"{USER_ID} --> {MODULE_NAME}: Invalid amount")
+            logger.warning(f"{appuser} --> {__name__}: Invalid amount")
             return jsonify({'error': 'Invalid amount'})
-
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
+        
         mycursor = mydb.cursor()
 
         exchange_rate = fetch_exchange_rate(mycursor, from_currency, to_currency)
         if exchange_rate is None:
             mycursor.close()
             mydb.close()
-            logger.warning(f"{USER_ID} --> {MODULE_NAME}: Exchange rate not found")
+            logger.warning(f"{appuser} --> {__name__}: Exchange rate not found")
             return jsonify({'message': 'Exchange rate not found'})
 
         exchange_rate = float(exchange_rate)  # Convert Decimal to float
@@ -82,5 +83,5 @@ def currency_conversion():
         return jsonify({'from_currency': from_currency, 'amount': amount, 'to_currency': to_currency, 'converted_amount': converted_amount})
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: %s", str(e))
+        logger.error(f"{appuser} --> {__name__}: An error occurred: %s", str(e))
         return jsonify({'error': str(e)})

@@ -1,26 +1,24 @@
 import mysql.connector
-from modules.utilities.logger import logger  # Import the logger module
-from modules.security.get_user_from_token import get_user_from_token
+from modules.utilities.logger import logger
 
-def get_database_connection(USER_ID, MODULE_NAME):
+def get_database_connection(db_user, db_request_file_name, host, port, password,appuser):
     try:
         # Log the database connection attempt
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Attempting to connect to the database...")
-
-        # Connect to MySQL database
+        logger.debug(f"{appuser} --> {__name__}: Attempting to connect to the database... by the user {appuser} for the file  {db_request_file_name}")
+        print("DB RECEUVERS ",db_user, db_request_file_name, host, port, password)
+        # Connect to MySQL database using dynamic parameters
         mydb = mysql.connector.connect(
-            host="localhost",
-            user="vedamc0in1",
-            password="welcome",
+            host=host,
+            user=db_user,  # Replace with actual user
+            password=password,
             database="adm",
-            port=3312
+            port=port
         )
 
         # Log the successful database connection
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Connected to the database successfully.")
-
+        logger.debug(f"{appuser} --> {__name__}: Database is connected by the user {appuser} for the file  {db_request_file_name}")
         return mydb
     except Exception as e:
         # Log any connection errors
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Failed to connect to the database: {str(e)}")
+        logger.error(f"{db_user} --> {db_request_file_name}: Failed to connect to the database: {str(e)}")
         return None

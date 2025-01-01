@@ -1,9 +1,7 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 # Define the Blueprint
@@ -15,20 +13,24 @@ delete_purchase_invoice_lines_api = Blueprint('delete_purchase_invoice_lines_api
 def delete_purchase_invoice_lines():
     try:
         # Get the user ID from the token
+      	
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header) if authorization_header else None
-        USER_ID = token_results["username"] if token_results else ""
-        MODULE_NAME = __name__
+
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
+        
         message = ""
 
         # Log entry point
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'delete_purchase_invoice_line' function")
-
-        # Get the database connection
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
-
-        # Get the current user ID from the token
-        current_userid = decode_token(authorization_header.replace('Bearer ', '')).get('Userid') if authorization_header.startswith('Bearer ') else None
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'delete_purchase_invoice_line' function")
 
         # Get the request data
         data = request.get_json()
@@ -37,7 +39,7 @@ def delete_purchase_invoice_lines():
         line_id = int(data.get('line_id'))
 
         # Log the received data
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Received data: {data}")
+        logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
         # Check if both header and line data exist
         if not record_exists_in_database(mydb, header_id, line_id):
@@ -47,7 +49,7 @@ def delete_purchase_invoice_lines():
         delete_line_from_database(mydb, header_id, line_id)
 
         # Log success
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Deleted purchase invoice line")
+        logger.info(f"{appuser} --> {__name__}: Deleted purchase invoice line")
 
         # Close the database connection
         mydb.close()
@@ -56,7 +58,7 @@ def delete_purchase_invoice_lines():
 
     except Exception as e:
         # Log any exceptions
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: An error occurred: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 def record_exists_in_database(mydb, header_id, line_id):

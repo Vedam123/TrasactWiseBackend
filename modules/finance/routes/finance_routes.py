@@ -53,188 +53,188 @@ finance_delete_routes = Blueprint('finance_delete_routes', __name__)
 # GET routes -----------------------------------------------------
 @finance_get_routes.route('/get_accounts', methods=['GET'])
 def get_all_accounts():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to get Accounts")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to get Accounts")
     return get_accounts()
 
 @finance_get_routes.route('/get_journal_headers', methods=['GET'])
 def get_journal_headers_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to get Journal Headers")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to get Journal Headers")
     return get_journal_headers()
 
 @finance_get_routes.route('/get_journal_lines', methods=['GET'])
 def get_journal_lines_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to get Journal Lines")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to get Journal Lines")
     return get_journal_lines()
 
 @finance_get_routes.route('/get_po_invoices', methods=['GET'])
 def get_purchase_invoice_details_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to get purchase Invoice headers")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to get purchase Invoice headers")
     return get_purchase_invoice_details()
 
 @finance_get_routes.route('/get_po_invoice_lines', methods=['GET'])
 def get_purchase_invoice_lines_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to get purchase Invoice Lines")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to get purchase Invoice Lines")
     return get_purchase_invoice_lines()
 
 @finance_get_routes.route('/get_po_invoice_distributions', methods=['GET'])
 def get_invoice_distributions_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to get invoice distributions")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to get invoice distributions")
     return get_invoice_distributions()
 
 @finance_get_routes.route('/validate_po_invoice', methods=['GET'])
 def validate_po_invoice_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Validate PO Invoice")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Validate PO Invoice")
     return validate_po_invoice()
 
 @finance_get_routes.route('/get_so_invoices', methods=['GET'])
 def get_sales_invoice_details_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to get Sales Invoices")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to get Sales Invoices")
     return get_sales_invoice_details()
 
 @finance_get_routes.route('/validate_sales_invoice', methods=['GET'])
 def validate_sales_invoice_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Validate sales Invoice")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Validate sales Invoice")
     return validate_sales_invoice()
 
 
 @finance_get_routes.route('/get_sales_invoice_distributions', methods=['GET'])
 def get_sales_invoice_accounts_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get sales Invoice accounts")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Get sales Invoice accounts")
     return get_sales_invoice_accounts()
 
 @finance_get_routes.route('/get_sales_invoice_lines', methods=['GET'])
 def get_sales_invoice_lines_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get sales Invoice lines")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Get sales Invoice lines")
     return get_sales_invoice_lines()
 
 @finance_get_routes.route('/get_default_accounts', methods=['GET'])
 def get_default_accounts_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get Default accounts")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Get Default accounts")
     return get_default_accounts()
 
 @finance_get_routes.route('/get_default_accounts_combined', methods=['GET'])
 def get_default_accounts_combined_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get Default account headers all combined")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Get Default account headers all combined")
     return get_default_accounts_combined()
 
 
 
 @finance_get_routes.route('/get_default_account_headers', methods=['GET'])
 def get_default_account_headers_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get get_default_account_headers")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Get get_default_account_headers")
     return get_default_account_headers()
 
 @finance_get_routes.route('/validate_journal', methods=['GET'])
 def validate_journal_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Get validate_journal")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Get validate_journal")
     return validate_journal()
 
 # POST routes -----------------------------------------------------
 @finance_post_routes.route('/create_account', methods=['POST'])
 def create_account_data():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to crete account")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to crete account")
     return create_account()
 
 @finance_post_routes.route('/create_journal_header', methods=['POST'])
 def create_journal_header_All():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to crete Journal Header")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to crete Journal Header")
     return create_journal_header()
 
 @finance_post_routes.route('/create_journal_line', methods=['POST'])
 def create_journal_line_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to crete Journal Lines")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to crete Journal Lines")
     return create_journal_line()
 
 @finance_post_routes.route('/create_po_invoice', methods=['POST'])
 def create_purchase_invoice_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to crete Purchase Invoice Header")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to crete Purchase Invoice Header")
     return create_purchase_invoice()
 
 @finance_post_routes.route('/create_po_invoice_lines', methods=['POST'])
 def create_purchase_invoice_lines_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to crete Purchase Invoice Lines")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to crete Purchase Invoice Lines")
     return create_purchase_invoice_lines()
 
 @finance_post_routes.route('/distribute_invoice_to_accounts', methods=['POST'])
 def distribute_invoice_to_accounts_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to Distribute Invoice to accounts")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to Distribute Invoice to accounts")
     return distribute_invoice_to_accounts()
 
 @finance_post_routes.route('/create_sales_invoice', methods=['POST'])
 def create_sales_invoices_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Create Sales Invoices")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Create Sales Invoices")
     return create_sales_invoice()
 
 @finance_post_routes.route('/create_sales_invoice_lines', methods=['POST'])
 def create_sales_invoice_lines_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Create Sales Invoice lines")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Create Sales Invoice lines")
     return create_sales_invoice_lines()
 
 @finance_post_routes.route('/distribute_sales_invoice_to_accounts', methods=['POST'])
 def distribute_sales_invoice_to_accounts_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Distribute Sales Invoice Accounts")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Distribute Sales Invoice Accounts")
     return distribute_sales_invoice_to_accounts()
 
 @finance_post_routes.route('/create_default_account', methods=['POST'])
 def create_default_accounts_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Create Default Accounts from Company or Departement Accounts")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Create Default Accounts from Company or Departement Accounts")
     return create_default_account()
 
 @finance_post_routes.route('/create_default_account_headers', methods=['POST'])
 def create_default_account_headers_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Create Default Account Headers from Company or Departement Accounts")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Create Default Account Headers from Company or Departement Accounts")
     return create_default_account_headers()
 
 
@@ -242,106 +242,106 @@ def create_default_account_headers_all():
 
 @finance_post_routes.route('/auto_create_journal', methods=['POST'])
 def auto_create_journal_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to auto_create_journal accounts")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to auto_create_journal accounts")
     return auto_create_journal()
 
 # PUT Methods -----------------------------------------------------------
 
 @finance_update_routes.route('/update_purchase_invoice', methods=['PUT'])
 def update_purchase_invoice_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to update Purchase Invoice Header")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to update Purchase Invoice Header")
     return update_purchase_invoice()
 
 
 @finance_update_routes.route('/update_purchase_invoice_lines', methods=['PUT'])
 def update_purchase_invoice_lines_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to update Purchase Invoice Lines")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to update Purchase Invoice Lines")
     return update_purchase_invoice_lines()
 
 @finance_update_routes.route('/update_invoice_accounts', methods=['PUT'])
 def update_invoice_accounts_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: update invoice accounts")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: update invoice accounts")
     return update_invoice_accounts()
 
 @finance_update_routes.route('/update_sales_invoice', methods=['PUT'])
 def update_sales_invoice_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: update sales invoice ")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: update sales invoice ")
     return update_sales_invoice()
 
 @finance_update_routes.route('/update_sales_invoice_lines', methods=['PUT'])
 def update_sales_invoice_lines_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: update sales invoice lines ")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: update sales invoice lines ")
     return update_sales_invoice_lines()
 
 @finance_update_routes.route('/update_sales_invoice_accounts', methods=['PUT'])
 def update_sales_invoice_accounts_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: update sales invoice accounts ")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: update sales invoice accounts ")
     return update_sales_invoice_accounts()
 
 @finance_update_routes.route('/update_journal_header', methods=['PUT'])
 def update_journal_headers_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to update Journal Headers")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to update Journal Headers")
     return update_journal_header()
 
 @finance_update_routes.route('/update_journal_line', methods=['PUT'])
 def update_journal_line_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to  update_journal_line")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to  update_journal_line")
     return update_journal_line()
 
 # DELETE Methods ---------------------------------------------------------
 
 @finance_delete_routes.route('/delete_purchase_invoice_lines', methods=['DELETE'])
 def delete_purchase_invoice_lines_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to Delete Invoice Lines")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to Delete Invoice Lines")
     return delete_purchase_invoice_lines()
 
 @finance_delete_routes.route('/delete_purchase_invoice_account', methods=['DELETE'])
 def delete_purchase_invoice_one_account():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to delete accounts")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to delete accounts")
     return delete_purchase_invoice_account()
 
 @finance_delete_routes.route('/delete_sales_invoice_lines', methods=['DELETE'])
 def delete_sales_invoice_lines_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to delete sales invoice lines")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to delete sales invoice lines")
     return delete_sales_invoice_lines()
 
 
 @finance_delete_routes.route('/delete_sales_invoice_account', methods=['DELETE'])
 def delete_sales_invoice_account_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to delete sales invoice accounts")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to delete sales invoice accounts")
     return delete_sales_invoice_account()
 
 @finance_delete_routes.route('/delete_journal_line', methods=['DELETE'])
 def delete_journal_line_all():
-    MODULE_NAME = __name__
-    USER_ID = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to delete_journal_line")
+    
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to delete_journal_line")
     return delete_journal_line()
 
 

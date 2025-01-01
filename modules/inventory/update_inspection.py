@@ -2,10 +2,8 @@
 
 from flask import jsonify, request, Blueprint
 from modules.security.permission_required import permission_required
-from modules.admin.databases.mydb import get_database_connection
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.inventory.routines.update_receipt_and_po import update_receipt_and_po
 from modules.utilities.logger import logger
 
@@ -17,24 +15,21 @@ def update_inspection():
 
     try:
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-        else:
-            USER_ID = ""
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'update inspection' function")
+        logger.debug(f"{appuser} --> {MODULE_NAME}: Entered the 'update inspection' function")
 
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
         mycursor = mydb.cursor()
-
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
 
         # Assuming you receive the updated data as JSON in the request body
         data = request.get_json()
@@ -48,7 +43,7 @@ def update_inspection():
 
         # Check if inspection_id and transaction_header_number are provided
         if inspection_id is None or transaction_header_number is None:
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: Missing inspection_id or transaction_header_number in the request")
+            logger.error(f"{appuser} --> {MODULE_NAME}: Missing inspection_id or transaction_header_number in the request")
             return jsonify({'error': 'Missing inspection_id or transaction_header_number in the request'}), 400
 
         # Additional validation: Check if sum of accepted_quantity and rejected_quantity matches transaction_quantity
@@ -56,17 +51,17 @@ def update_inspection():
         accepted_quantity = data.get('accepted_quantity')
         rejected_quantity = data.get('rejected_quantity')
         logger.debug(
-            f"{USER_ID} --> {MODULE_NAME}: Received update request for inspection_id {inspection_id}. "
+            f"{appuser} --> {MODULE_NAME}: Received update request for inspection_id {inspection_id}. "
             f"Transaction Quantity: {transaction_quantity}, Accepted Quantity: {accepted_quantity}, Rejected Quantity: {rejected_quantity}"
             )
         if (accepted_quantity + rejected_quantity) != transaction_quantity:
             logger.warning(
-                f"{USER_ID} --> {MODULE_NAME}: Sum of accepted_quantity and rejected_quantity does not match transaction_quantity. "
+                f"{appuser} --> {MODULE_NAME}: Sum of accepted_quantity and rejected_quantity does not match transaction_quantity. "
                 f"Request variables: {data}"
             )
             return jsonify({'error': 'Sum of accepted_quantity and rejected_quantity does not match transaction_quantity.'}), 400
         logger.debug(
-            f"{USER_ID} --> {MODULE_NAME}: Validation successful. Sum of accepted_quantity and rejected_quantity matches transaction_quantity."
+            f"{appuser} --> {MODULE_NAME}: Validation successful. Sum of accepted_quantity and rejected_quantity matches transaction_quantity."
             )
 
         # Construct the update query
@@ -97,7 +92,7 @@ def update_inspection():
             data.get('accepted_qty_details'),
             data.get('rejected_qty_details'),
             data.get('comments'),
-            current_userid,
+            appuserid,
             inspection_id,
             data.get('transaction_number'),
             data.get('transaction_type'),
@@ -112,7 +107,7 @@ def update_inspection():
             logger.info("Inspection data updated successfully")
 
             # Call the update_receipt_and_po_status function
-            if update_receipt_and_po(USER_ID, MODULE_NAME, mydb, transaction_number, transaction_header_number, transaction_status, transaction_type,accepted_quantity):
+            if update_receipt_and_po(appuser, MODULE_NAME, mydb, transaction_number, transaction_header_number, transaction_status, transaction_type,accepted_quantity):
                 return jsonify({'message': 'Inspection data updated successfully'}), 200
             else:
                 return jsonify({'error': 'Failed to update receipt and po status'}), 500
@@ -123,7 +118,7 @@ def update_inspection():
             return jsonify({'message': 'No rows were affected. Inspection data might not have been updated.'}), 200
         
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error updating inspection data - {str(e)}, Request variables: {data}")
+        logger.error(f"{appuser} --> {MODULE_NAME}: Error updating inspection data - {str(e)}, Request variables: {data}")
         return jsonify({'error': 'Internal Server Error'}), 500
     finally:
         mycursor.close()

@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify,request
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required  # Import the decorator
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
-from modules.security.get_user_from_token import get_user_from_token
+from modules.utilities.logger import logger  # Import the logger module
 
 list_db_config_data_api = Blueprint('list_db_config_data_api', __name__)
 
@@ -10,22 +10,22 @@ list_db_config_data_api = Blueprint('list_db_config_data_api', __name__)
 @permission_required(READ_ACCESS_TYPE ,  __file__)  # Pass READ_ACCESS_TYPE as an argument
 def list_db_config_data():
     authorization_header = request.headers.get('Authorization')
-    token_results = ""
-    USER_ID = ""
-    MODULE_NAME = __name__
-    if authorization_header:
-        token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
-
-    if token_results:
-        USER_ID = token_results["username"]  
     
-    mydb = get_database_connection(USER_ID, MODULE_NAME)
+    try:
+        company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+    except ValueError as e:
+        logger.error(f"Authorization failed for appuser {appuser} --> {__name__}: {str(e)}")
+        return jsonify({"error": str(e)}), 401
+    
+    if not appuser:
+        logger.error(f"Unauthorized access attempt for appuser {appuser} --> {__name__}: Application user not found")
+        return jsonify({"error": f"Unauthorized. Application user {appuser} not found."}), 401
 
     try:
         mycursor = mydb.cursor()
 
         # Fetch data from adm.bk_super_user table
-        query = "SELECT userid, username, name, password FROM adm.bk_super_user"
+        query = "SELECT id, username, name, password FROM adm.bk_super_user"
         mycursor.execute(query)
         user_data = mycursor.fetchall()
 

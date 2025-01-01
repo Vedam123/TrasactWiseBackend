@@ -1,10 +1,7 @@
 from flask import jsonify, request, Blueprint
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
-from modules.admin.databases.mydb import get_database_connection
-from flask_jwt_extended import decode_token
 from modules.products.routines.uom_conversion import uom_conversion
-from modules.security.get_user_from_token import get_user_from_token
 from modules.inventory.routines.bulk_packing_or_unpacking import bulk_packing_or_unpacking
 from modules.utilities.logger import logger
 
@@ -14,7 +11,7 @@ bulk_pack_or_unpack_api = Blueprint('bulk_pack_or_unpack_api', __name__)
 @permission_required(WRITE_ACCESS_TYPE, __file__)
 def bulk_pack_or_unpack():
     MODULE_NAME = __name__
-    mydb = None
+    mydb1 = None
     mycursor = None
 
     try:
@@ -24,16 +21,18 @@ def bulk_pack_or_unpack():
         # Extract input data from the request body
         data = request.get_json(silent=True)            
 
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
+        authorization_header = request.headers.get('Authorization')
 
-        token_results = get_user_from_token(authorization_header)
-        USER_ID = token_results["username"] if token_results else ""
-        logger.debug(f"User ID from Token: {USER_ID}")
+        try:
+            company, instance, dbuser, mydb1, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
         # Extract individual input parameters
         input_item_id = data.get('input_item_id')
@@ -79,8 +78,8 @@ def bulk_pack_or_unpack():
         logger.debug(f"Input input_bin_id: {input_bin_id}")
 
         # Log database connection
-        with get_database_connection(USER_ID, MODULE_NAME) as mydb:
-            logger.debug(f"Database Connection established for User ID: {USER_ID}")
+        with mydb1 as mydb:
+            logger.debug(f"Database Connection established for User ID: {appuser}")
             print("Reached Bulkpack function")
             with mydb.cursor() as mycursor:
                 inventory_query = "SELECT * FROM inv.item_inventory WHERE item_id = %s AND uom_id = %s AND (status != 'Yes' OR status IS NULL)"
@@ -102,7 +101,7 @@ def bulk_pack_or_unpack():
                 # Join the concatenated rows using a semicolon as a delimiter
                 target_additional_info = ';'.join(concatenated_rows)
                 logger.debug(f"Fetched Rows total quantity from Inventory table: {total_quantity}")
-                conversion_results, status_code = uom_conversion(input_source_uom_id, total_quantity, input_target_uom_id, mydb, USER_ID, MODULE_NAME)
+                conversion_results, status_code = uom_conversion(input_source_uom_id, total_quantity, input_target_uom_id, mydb, appuser, MODULE_NAME)
                 if status_code == 400:
                     logger.info("Not processed successfully")
                     return "Fail : UOM conversion is not possible", 422
@@ -121,10 +120,10 @@ def bulk_pack_or_unpack():
                     'input_transaction_type': input_transaction_type,
                     'target_additional_info': target_additional_info,
                     'mydb': mydb,
-                    'USER_ID': USER_ID,
+                    'appuser': appuser,
                     'MODULE_NAME': MODULE_NAME,
-                    'created_by': current_userid,
-                    'updated_by': current_userid
+                    'created_by': appuserid,
+                    'updated_by': appuserid
                 }
 
                 result, status_code = bulk_packing_or_unpacking(input_params, conversion_results)
@@ -137,14 +136,24 @@ def bulk_pack_or_unpack():
                 else:
                     logger.info("Item Inventory consolidation or UOM conversion is not done")
                     return "Fail : Item Inventory consolidation or UOM conversion is not done", status_code
-            mydb.commit()  
-            
+            mydb.commit()
+            if mydb:
+                mydb.close()
+
+        if mydb1:
+            mydb1.close()            
 
         # Log response
         logger.info("Request processed successfully")
         return f"Success: Item Inventory {input_transaction_type} or UOM conversion transaction No is {input_transaction_id}", 200
 
+
     except Exception as e:
         # Log exception details
+        if mydb:
+            mydb.close()
+        if mydb1:
+            mydb1.close() 
         logger.error(f"Error occurred: {str(e)}")
         return "Exception Error Item Inventory consolidation or UOM conversion is not done", 500
+

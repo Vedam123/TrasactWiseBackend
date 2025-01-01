@@ -1,9 +1,7 @@
 from flask import Blueprint, request, jsonify
-from modules.admin.databases.mydb import get_database_connection
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 update_purchase_order_header_api = Blueprint('update_purchase_order_header_api', __name__)
@@ -11,29 +9,25 @@ update_purchase_order_header_api = Blueprint('update_purchase_order_header_api',
 @update_purchase_order_header_api.route('/update_purchase_order_header', methods=['PUT'])
 @permission_required(WRITE_ACCESS_TYPE, __file__)
 def update_purchase_order_header():
-    MODULE_NAME = __name__
+    
 
     try:
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-        else:
-            USER_ID = ""
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
         logger.debug(
-            f"{USER_ID} --> {MODULE_NAME}: Entered the 'update purchase order header' function")
-
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
+            f"{appuser} --> {__name__}: Entered the 'update purchase order header' function")
         mycursor = mydb.cursor()
-
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
 
         # Extract data from JSON input
         try:
@@ -61,7 +55,7 @@ def update_purchase_order_header():
                 fields_to_update['department_id'] = int(json_data['department_id'])
             
             # Log input parameters
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: JSON Input Parameters - {fields_to_update}")
+            logger.info(f"{appuser} --> {__name__}: JSON Input Parameters - {fields_to_update}")
 
             # Extract query parameters
             header_id = request.args.get('header_id')
@@ -69,7 +63,7 @@ def update_purchase_order_header():
             rfq_header_id = request.args.get('rfq_header_id')
             
             # Log query parameters
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: Query Parameters - header_id: {header_id}, po_num: {po_num}, rfq_header_id: {rfq_header_id}")
+            logger.info(f"{appuser} --> {__name__}: Query Parameters - header_id: {header_id}, po_num: {po_num}, rfq_header_id: {rfq_header_id}")
             # Ensure at least one parameter is sent
             if not header_id and not po_num and not rfq_header_id:
                 return jsonify({'error': "At least one of 'header_id', 'po_num', or 'rfq_header_id' must be provided."}), 400
@@ -100,7 +94,7 @@ def update_purchase_order_header():
                 if result:
                     header_id = result[0]
                 else:
-                    logger.warning(f"{USER_ID} --> {MODULE_NAME}: No record found with the given parameters")
+                    logger.warning(f"{appuser} --> {__name__}: No record found with the given parameters")
                     return jsonify({'error': 'No record found with the given parameters'}), 404
 
             # Check if supplier_id exists, if provided
@@ -110,7 +104,7 @@ def update_purchase_order_header():
                 supplier_exists = mycursor.fetchone()[0]
 
                 if supplier_exists == 0:
-                    logger.warning(f"{USER_ID} --> {MODULE_NAME}: Supplier with ID {fields_to_update['supplier_id']} does not exist")
+                    logger.warning(f"{appuser} --> {__name__}: Supplier with ID {fields_to_update['supplier_id']} does not exist")
                     return jsonify({'error': f"Supplier with ID {fields_to_update['supplier_id']} does not exist"}), 404
 
             # Check if tax_id exists, if provided
@@ -120,7 +114,7 @@ def update_purchase_order_header():
                 tax_exists = mycursor.fetchone()[0]
 
                 if tax_exists == 0:
-                    logger.warning(f"{USER_ID} --> {MODULE_NAME}: Tax with ID {fields_to_update['tax_id']} does not exist")
+                    logger.warning(f"{appuser} --> {__name__}: Tax with ID {fields_to_update['tax_id']} does not exist")
                     return jsonify({'error': f"Tax with ID {fields_to_update['tax_id']} does not exist"}), 404
 
             # Check if currency_id exists, if provided
@@ -130,7 +124,7 @@ def update_purchase_order_header():
                 currency_exists = mycursor.fetchone()[0]
 
                 if currency_exists == 0:
-                    logger.warning(f"{USER_ID} --> {MODULE_NAME}: Currency with ID {fields_to_update['currency_id']} does not exist")
+                    logger.warning(f"{appuser} --> {__name__}: Currency with ID {fields_to_update['currency_id']} does not exist")
                     return jsonify({'error': f"Currency with ID {fields_to_update['currency_id']} does not exist"}), 404
                 
             if 'company_id' in fields_to_update:
@@ -139,7 +133,7 @@ def update_purchase_order_header():
                 company_exists = mycursor.fetchone()[0]
 
                 if company_exists == 0:
-                    logger.warning(f"{USER_ID} --> {MODULE_NAME}: Company with ID {fields_to_update['company_id']} does not exist")
+                    logger.warning(f"{appuser} --> {__name__}: Company with ID {fields_to_update['company_id']} does not exist")
                     return jsonify({'error': f"Company with ID {fields_to_update['company_id']} does not exist"}), 404
                 
             if 'department_id' in fields_to_update:
@@ -148,7 +142,7 @@ def update_purchase_order_header():
                 department_exists = mycursor.fetchone()[0]
 
                 if department_exists == 0:
-                    logger.warning(f"{USER_ID} --> {MODULE_NAME}: Department with ID {fields_to_update['department_id']} does not exist")
+                    logger.warning(f"{appuser} --> {__name__}: Department with ID {fields_to_update['department_id']} does not exist")
                     return jsonify({'error': f"Department with ID {fields_to_update['department_id']} does not exist"}), 404
 
             select_query = f"""
@@ -157,7 +151,7 @@ def update_purchase_order_header():
             mycursor.execute(select_query, where_query_values)
             record_count = mycursor.fetchone()[0]
             if record_count == 0:
-                logger.warning(f"{USER_ID} --> {MODULE_NAME}: No record found with the given parameters")
+                logger.warning(f"{appuser} --> {__name__}: No record found with the given parameters")
                 return jsonify({'error': 'No record found with the given parameters'}), 404
 
             # Build the SET clause and values dynamically
@@ -166,7 +160,7 @@ def update_purchase_order_header():
 
             # Include updated_by and its value
             set_clause += ", updated_by = %s"
-            update_query_values.append(current_userid)
+            update_query_values.append(appuserid)
 
             # Perform the update
             update_query = f"""
@@ -177,8 +171,8 @@ def update_purchase_order_header():
             update_query_values.extend(where_query_values)
 
             mycursor.execute(update_query, update_query_values)
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: The Query  : {update_query}")
-            logger.info(f"{USER_ID} --> {MODULE_NAME}: The Where clause  : {where_clause}")
+            logger.info(f"{appuser} --> {__name__}: The Query  : {update_query}")
+            logger.info(f"{appuser} --> {__name__}: The Where clause  : {where_clause}")
 
             # Commit the transaction
             mydb.commit()
@@ -186,10 +180,10 @@ def update_purchase_order_header():
             if mycursor.rowcount > 0:
                 # Update the status in purchase_order_line if status is changed
                 if 'status' in fields_to_update:
-                    update_purchase_order_lines_status(mydb, header_id, fields_to_update['status'], current_userid)
+                    update_purchase_order_lines_status(mydb, header_id, fields_to_update['status'], appuserid)
                 
                 # Log success
-                logger.info(f"{USER_ID} --> {MODULE_NAME}: Updated purchase order")
+                logger.info(f"{appuser} --> {__name__}: Updated purchase order")
                 # Close the cursor and connection
                 mycursor.close()
                 mydb.close()
@@ -197,7 +191,7 @@ def update_purchase_order_header():
                 return jsonify({'status': True, 'message': 'Purchase Order updated successfully'}), 200
             else:
                 # Log that no rows were updated
-                logger.warning(f"{USER_ID} --> {MODULE_NAME}: There is no purchase order with the given data")
+                logger.warning(f"{appuser} --> {__name__}: There is no purchase order with the given data")
                 # Close the cursor and connection
                 mycursor.close()
                 mydb.close()
@@ -206,12 +200,12 @@ def update_purchase_order_header():
 
         except Exception as json_error:
             logger.error(
-                f"{USER_ID} --> {MODULE_NAME}: Error processing JSON input - {str(json_error)}")
+                f"{appuser} --> {__name__}: Error processing JSON input - {str(json_error)}")
             return jsonify({'error': 'Invalid JSON input'}), 400
 
     except Exception as e:
         logger.error(
-            f"{USER_ID} --> {MODULE_NAME}: Error updating purchase order header - {str(e)}")
+            f"{appuser} --> {__name__}: Error updating purchase order header - {str(e)}")
         mydb.rollback()
         return jsonify({'error': 'Internal Server Error'}), 500
 
@@ -221,9 +215,9 @@ def update_purchase_order_header():
         except NameError:
             pass  # Cursor was not defined
 
-def update_purchase_order_lines_status(mydb, header_id, new_status, current_userid):
-    MODULE_NAME = __name__
-    USER_ID = "system"
+def update_purchase_order_lines_status(mydb, header_id, new_status, appuserid):
+    
+    appuser = "system"
     try:
         mycursor = mydb.cursor()
         update_lines_query = """
@@ -231,11 +225,11 @@ def update_purchase_order_lines_status(mydb, header_id, new_status, current_user
             SET status = %s, updated_by = %s
             WHERE header_id = %s;
         """
-        mycursor.execute(update_lines_query, (new_status, current_userid, header_id))
+        mycursor.execute(update_lines_query, (new_status, appuserid, header_id))
         mydb.commit()
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Updated purchase order lines status for header_id: {header_id} to status: {new_status}")
+        logger.info(f"{appuser} --> {__name__}: Updated purchase order lines status for header_id: {header_id} to status: {new_status}")
         mycursor.close()
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error updating purchase order lines status - {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: Error updating purchase order lines status - {str(e)}")
         mydb.rollback()
         raise

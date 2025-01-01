@@ -1,9 +1,7 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import WRITE_ACCESS_TYPE
-from flask_jwt_extended import decode_token
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 create_rack_api = Blueprint('create_rack_api', __name__)
@@ -13,23 +11,19 @@ create_rack_api = Blueprint('create_rack_api', __name__)
 def create_rack():
     try:
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-            token_results = get_user_from_token(request.headers.get('Authorization')) if request.headers.get('Authorization') else None
-
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
         # Log entry point
-        logger.debug(f"{USER_ID} --> {__name__}: Entered in the create rack function")
-
-        mydb = get_database_connection(USER_ID, __name__)
-
-        current_userid = None
-        authorization_header = request.headers.get('Authorization', '')
-        if authorization_header.startswith('Bearer '):
-            token = authorization_header.replace('Bearer ', '')
-            decoded_token = decode_token(token)
-            current_userid = decoded_token.get('Userid')
+        logger.debug(f"{appuser} --> {__name__}: Entered in the create rack function")
 
         if request.content_type == 'application/json':
             data = request.get_json()
@@ -37,18 +31,18 @@ def create_rack():
             data = request.form
 
         # Log the received data
-        logger.debug(f"{USER_ID} --> {__name__}: Received data: {data}")
+        logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
         row_id = data['row_id']
         rack_name = data['rack_name']
         description = data.get('description')
-        created_by = current_userid
-        updated_by = current_userid
+        created_by = appuserid
+        updated_by = appuserid
 
         # Log parsed data
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed Row ID: {row_id}")
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed Rack Name: {rack_name}")
-        logger.debug(f"{USER_ID} --> {__name__}: Parsed Description: {description}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Row ID: {row_id}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Rack Name: {rack_name}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Description: {description}")
 
         mycursor = mydb.cursor()
 
@@ -63,18 +57,18 @@ def create_rack():
             mydb.commit()
 
             # Log success and close the cursor and connection
-            logger.info(f"{USER_ID} --> {__name__}: Rack data created successfully")
+            logger.info(f"{appuser} --> {__name__}: Rack data created successfully")
             mycursor.close()
             mydb.close()
             return jsonify({'message': 'Rack data created successfully'}), 200
 
         except Exception as e:
             # Log the error and close the cursor and connection
-            logger.error(f"{USER_ID} --> {__name__}: Unable to create rack data: {str(e)}")
+            logger.error(f"{appuser} --> {__name__}: Unable to create rack data: {str(e)}")
             mycursor.close()
             mydb.close()
             return jsonify({'error': str(e)}), 500
     except Exception as e:
         # Log any exceptions
-        logger.error(f"{USER_ID} --> {__name__}: An error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: An error occurred: {str(e)}")
         return jsonify({'error': str(e)}), 500

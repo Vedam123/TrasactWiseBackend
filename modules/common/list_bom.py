@@ -1,8 +1,7 @@
 from flask import Blueprint, jsonify, request
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.permission_required import permission_required
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details	
 from config import READ_ACCESS_TYPE
-from modules.security.get_user_from_token import get_user_from_token
 from modules.utilities.logger import logger
 
 list_bom_api = Blueprint('list_bom_api', __name__)
@@ -10,20 +9,22 @@ list_bom_api = Blueprint('list_bom_api', __name__)
 @list_bom_api.route('/list_bom', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE, __file__)
 def list_bom_data():
-    MODULE_NAME = __name__
-
+    print("Entered list bom data function ")
     try:
         authorization_header = request.headers.get('Authorization')
-        token_results = get_user_from_token(authorization_header)
 
-        if token_results:
-            USER_ID = token_results["username"]
-        else:
-            USER_ID = ""
+        try:
+            company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info = get_user_and_db_details(authorization_header)
+            logger.debug(f"{appuser} --> {__name__}: Successfully retrieved user details from the token.")
+        except ValueError as e:
+            logger.error(f"Failed to retrieve user details from token. Error: {str(e)}")
+            return jsonify({"error": str(e)}), 401
+        
+        if not appuser:
+            logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
+            return jsonify({"error": "Unauthorized. Username not found."}), 401
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Entered the 'get BOM data' function")
-
-        mydb = get_database_connection(USER_ID, MODULE_NAME)
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'get BOM data' function")
         mycursor = mydb.cursor()
 
         # Check if 'model_item' parameter is in the request.args
@@ -85,13 +86,13 @@ def list_bom_data():
         mydb.close()
 
         # Log successful completion
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Successfully retrieved BOM data")
+        logger.debug(f"{appuser} --> {__name__}: Successfully retrieved BOM data")
 
         return jsonify({'bom_list': bom_list})
 
     except Exception as e:
         # Log error and return Internal Server Error response
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error retrieving BOM data - {str(e)}")
+        logger.error(f"{appuser} --> {__name__}: Error retrieving BOM data - {str(e)}")
         import traceback
         traceback.print_exc()  # Add this line to print the full stack trace
         return jsonify({'error': 'Internal Server Error'}), 500

@@ -1,8 +1,8 @@
 from modules.utilities.logger import logger  # Ensure the logger is properly configured and accessible
 
-def get_default_tax_rates(company_id, tax_types, mydb, USER_ID, MODULE_NAME):
+def get_default_tax_rates(company_id, tax_types, mydb, appuser, module_name):
     try:
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Fetching tax rates for company_id={company_id} and tax_types={tax_types}")
+        logger.info(f"{appuser} --> {module_name}: Fetching tax rates for company_id={company_id} and tax_types={tax_types}")
 
         mycursor = mydb.cursor(dictionary=True)
 
@@ -11,7 +11,7 @@ def get_default_tax_rates(company_id, tax_types, mydb, USER_ID, MODULE_NAME):
         mycursor.execute(query1, (company_id,))
         result1 = mycursor.fetchone()
         if not result1 or result1['default_tax_code_id'] is None:
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: No default_tax_code_id found for company_id={company_id}")
+            logger.error(f"{appuser} --> {module_name}: No default_tax_code_id found for company_id={company_id}")
             return None, 'No default_tax_code_id found for the given company_id'
 
         default_tax_code_id = result1['default_tax_code_id']
@@ -21,7 +21,7 @@ def get_default_tax_rates(company_id, tax_types, mydb, USER_ID, MODULE_NAME):
         mycursor.execute(query2, (default_tax_code_id,))
         default_tax_codes = mycursor.fetchall()
         if not default_tax_codes:
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: No tax codes found for default_tax_code_id={default_tax_code_id}")
+            logger.error(f"{appuser} --> {module_name}: No tax codes found for default_tax_code_id={default_tax_code_id}")
             return None, 'No tax codes found for the given default_tax_code_id'
 
         tax_id_map = {code['tax_type']: code['tax_id'] for code in default_tax_codes}
@@ -48,7 +48,7 @@ def get_default_tax_rates(company_id, tax_types, mydb, USER_ID, MODULE_NAME):
                         'tax_type': result3['tax_type']
                     }
                 else:
-                    logger.warning(f"{USER_ID} --> {MODULE_NAME}: No active tax_rate found for tax_id={tax_id} and tax_type={tax_type}")
+                    logger.warning(f"{appuser} --> {module_name}: No active tax_rate found for tax_id={tax_id} and tax_type={tax_type}")
                     tax_rates[tax_type] = {
                         'tax_id': 'No active tax_id found',
                         'tax_rate': 'No active tax_rate found',
@@ -56,14 +56,14 @@ def get_default_tax_rates(company_id, tax_types, mydb, USER_ID, MODULE_NAME):
                     }
 
         if not tax_rates:
-            logger.error(f"{USER_ID} --> {MODULE_NAME}: No tax rates found for the given tax types")
+            logger.error(f"{appuser} --> {module_name}: No tax rates found for the given tax types")
             return None, 'No tax rates found for the given tax types'
 
-        logger.info(f"{USER_ID} --> {MODULE_NAME}: Tax rates fetched successfully")
+        logger.info(f"{appuser} --> {module_name}: Tax rates fetched successfully")
         return tax_rates, 'Tax rates fetched successfully'
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error occurred: {str(e)}")
+        logger.error(f"{appuser} --> {module_name}: Error occurred: {str(e)}")
         return None, 'Error occurred in database operation'
     finally:
         if mycursor:
@@ -71,7 +71,7 @@ def get_default_tax_rates(company_id, tax_types, mydb, USER_ID, MODULE_NAME):
 
 # Example usage assuming you have a database connection `mydb` already established
 # Replace `company_id` with the actual company ID you want to use
-# Replace `USER_ID` and `MODULE_NAME` with actual values
-# result_tax_rates, result_msg = get_tax_rates(company_id, ['GST', 'VAT'], mydb, USER_ID, MODULE_NAME)
+# Replace `appuser` and `module_name` with actual values
+# result_tax_rates, result_msg = get_tax_rates(company_id, ['GST', 'VAT'], mydb, appuser, module_name)
 # print("Resulting tax rates:", result_tax_rates)
 # print("Result message:", result_msg)

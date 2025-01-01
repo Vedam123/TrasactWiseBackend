@@ -1,6 +1,6 @@
 from modules.utilities.logger import logger
 
-def delete_pick_and_ship_stage(USER_ID, MODULE_NAME, mydb, execution_id=None, order_id=None, line_id=None):
+def delete_pick_and_ship_stage(appuser, MODULE_NAME, mydb, execution_id=None, order_id=None, line_id=None):
     try:
         mycursor = mydb.cursor()
         logger.debug(f"Deleting data from pick_and_ship_stage - Execution ID: {execution_id}, Order ID: {order_id}, Line ID: {line_id}")
@@ -23,13 +23,13 @@ def delete_pick_and_ship_stage(USER_ID, MODULE_NAME, mydb, execution_id=None, or
         mycursor.execute(delete_query, delete_params)
         mydb.commit()
 
-        logger.debug(f"{USER_ID} --> {MODULE_NAME}: Successfully deleted data from pick_and_ship_stage")
+        logger.debug(f"{appuser} --> {MODULE_NAME}: Successfully deleted data from pick_and_ship_stage")
 
         # Return success
         return True
 
     except Exception as e:
-        logger.error(f"{USER_ID} --> {MODULE_NAME}: Error deleting data from pick_and_ship_stage - {str(e)}")
+        logger.error(f"{appuser} --> {MODULE_NAME}: Error deleting data from pick_and_ship_stage - {str(e)}")
         return False
 
     finally:
