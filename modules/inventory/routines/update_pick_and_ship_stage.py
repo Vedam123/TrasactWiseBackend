@@ -25,7 +25,7 @@ def update_pick_and_ship_stage_status(appuser, MODULE_NAME, mydb, reverse_pick_r
         mydb.commit()
 
         logger.debug(f"{appuser} --> {MODULE_NAME}: Successfully updated status to '{reverse_pick_release_status}' in pick_and_ship_stage")
-
+        mycursor.close()
         # Return success
         return True
 

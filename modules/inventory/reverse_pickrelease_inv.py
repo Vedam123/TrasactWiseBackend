@@ -25,7 +25,8 @@ def fetch_pick_release_logs(mycursor, execution_id, sales_header_id, sales_order
 
     logger.debug(f"Executing query: {query} with params: {params}")
     mycursor.execute(query, params)
-    return mycursor.fetchall()
+    rval = mycursor.fetchall()
+    return rval
 
 def update_item_inventory(mycursor, inventory_id):
     try:
@@ -109,11 +110,18 @@ def reverse_pick_release():
         if not reverse_pick_release_status:
             logger.error("The reverse Pick release status is needed to process ")
             return jsonify(message='The reverse Pick release status is needed to process'), 400
+        
+        logger.debug(f"After processing teh data: {data}")
+        # Start the transaction here, before initiating the cursor
+        #mydb.start_transaction()
+        logger.debug(f"Transaction started for execution_id: {execution_id}")
 
-        mydb.start_transaction()
+        logger.debug(f"my db started transaction: {data}")
         mycursor = mydb.cursor(dictionary=True)  # Return rows as dictionaries
+        logger.debug(f"Mycursor is initated and before calling the fetch pick relase logs function : {data}")
 
         rows = fetch_pick_release_logs(mycursor, execution_id, sales_header_id, sales_order_line_id, inventory_id)
+        logger.debug(f"After After fetch pick relase logs function : {data}")
         if not rows:
             logger.warning("No records found for the provided execution ID")
             return jsonify(message='No records found'), 404
@@ -121,7 +129,7 @@ def reverse_pick_release():
         inventory_ids = set()
         sales_order_line_ids = set()
         sales_header_ids = set()
-
+        logger.debug(f"Before for loop : {data}")
         for row in rows:
             inventory_id = row['inventory_id']
             sales_order_line_id = row['sales_order_line_id']
@@ -141,12 +149,12 @@ def reverse_pick_release():
             if row['sales_line_status'] is not None and row['sales_line_new_status'] is not None and row['sales_line_status'] != row['sales_line_new_status']:
                 updated_picked_quantity = calculate_updated_picked_quantity(row['already_picked_quantity'],row['picked_quantity'])
                 update_sales_order_lines(mycursor, row['sales_line_status'], updated_picked_quantity, sales_header_id, sales_order_line_id)           
-
+        logger.debug(f"Before for loop 3 : {data}")
         for sales_header_id in sales_header_ids:
             update_sales_order_headers(mycursor, rows[0]['sales_line_status'], sales_header_id)
-        
+        logger.debug(f"Before calling update pick release status function  : {data}")
         update_pick_release_status(mycursor, rows,reverse_pick_release_status)
-        
+        # Commit the transaction after all updates have been executed
         mydb.commit()
         logger.info("Pick release reversed successfully")
         return jsonify(message='Pick release reversed successfully'), 200
