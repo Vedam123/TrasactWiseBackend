@@ -1,9 +1,0 @@
-GIT hub configurations   
-
-1. Create a folder C:\apps\tradetrack
-	and create two folders in it 
-	C:\apps\tradetrack\AppService
-	C:\apps\tradetrack\WebClient
-2. cd C:\apps\tradetrack
-3. git clone https://github.com/Vedam123/TransactWiseFrontend WebClient
-4. git clone https://github.com/Vedam123/TrasactWiseBackend AppService

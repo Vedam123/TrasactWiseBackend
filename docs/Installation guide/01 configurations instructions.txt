@@ -56,3 +56,50 @@
 	C:\Users\kishore\AppData\Local\Programs\Microsoft VS Code\bin\code
 	C:\Users\kishore\AppData\Local\Programs\Microsoft VS Code\bin\code.cmd
 	
+	
+GIT hub configurations   
+
+1. Crete two folders AppService , WebClient in the folder C:\SAS Opera\Companies\Company_1\system\application
+2. cd C:\SAS Opera\Companies\Company_1\system\application
+3. git clone https://github.com/Vedam123/TransactWiseFrontend WebClient
+4. git clone https://github.com/Vedam123/TrasactWiseBackend AppService
+
+Python Virtual enviornment configuration for exmple to configure the folder C:\SAS Opera\Companies\Company_0\system\application\AppService in Company_0
+
+Using command Prompt how you can set virtual enviornment 
+
+In command prompt how to set the virtual environment in windows
+	>cd C:\SAS Opera\Companies\Company_0\system\application\AppService
+	>C:\SAS Opera\Companies\Company_0\system\application\AppService -m venv erpenv
+	> erpenv\Scripts\activate   --> Run activate file which will set the virtual enviornment like below for example
+	(erpenv) C:\SAS Opera\Companies\Company_0\system\application\AppService\erpenv\Scripts>
+	then cd ../..
+In VS code terminal how to set the virtual environment
+	PS C:\SAS Opera\Companies\Company_0\system\application\AppService> cd C:\SAS Opera\Companies\Company_0\system\application\AppService
+	PS C:\SAS Opera\Companies\Company_0\system\application\AppService> python -m venv erpenv
+	PS C:\apps\tradetrack\AppService> .\erpenv\Scripts\Activate.ps1
+	(erpenv) PS C:\apps\tradetrack\AppService>
+
+Open the enviornment in VS code like 
+1. In Windows file explorer navigate to C:\SAS Opera\Companies\Company_0\system\application\AppService>
+2. Open this in cmd in this folder and press code .  which opens the VS code
+3. Once after VS code is opened , Open the terminal in VS code and start the viritual environment
+4. check if the requirements.txt file exists in projects path (AppService )
+then start running the following 
+	python.exe -m pip install --upgrade pip
+	pip install flask
+	pip install requests
+	pip install numpy
+	pip install -r requirements.txt
+	pip freeze > requirements.txt
+	python.exe -m pip install --upgrade pip
+	flask run --port=8000
+	
+
+Change configuration file in the Python Flask code once the files are opened in AppService in VS code
+
+1. Open the file config.py under the folder AppService (:\SAS Opera\Companies\Company_0\system\application\AppService)
+2. Add the following DB_INSTANCES_BASE_PATH = "C:/SAS Opera/Companies"and save it 
+
+Restart the entire application both front end and back end.
+
