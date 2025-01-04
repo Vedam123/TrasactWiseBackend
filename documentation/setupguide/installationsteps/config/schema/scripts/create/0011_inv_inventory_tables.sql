@@ -23,30 +23,34 @@ CREATE TABLE inv.warehouses (
     state VARCHAR(100),
     postal_code VARCHAR(20),
     country VARCHAR(100),
-    capacity INT,
-    temperature_controlled ENUM('normal', 'cold', 'warm'),
-    security_level ENUM('low', 'medium', 'high'),
+    capacity INT DEFAULT NULL,
+    uom_id INT DEFAULT NULL, 
+    temperature_controlled VARCHAR(20),
+    security_level VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by INT,
-    updated_by INT
+    updated_by INT,
+    FOREIGN KEY (uom_id) REFERENCES com.uom(uom_id) ON DELETE SET NULL 
 ) AUTO_INCREMENT=10;
 
--- Table to store information about locations
+-- Table to store information about locations with VARCHAR fields for temperature_controlled and security_level
 CREATE TABLE inv.locations (
     location_id INT PRIMARY KEY AUTO_INCREMENT,
     location_name VARCHAR(255) NOT NULL,
-    location_type ENUM('store', 'distribution_center', 'other') NOT NULL,
+    location_type VARCHAR(255) NOT NULL, 
     description TEXT,
-    capacity INT,
-    temperature_controlled ENUM('normal', 'cold', 'warm'),
-    security_level ENUM('low', 'medium', 'high'),
+    capacity INT DEFAULT NULL,
+    uom_id INT DEFAULT NULL,
+    temperature_controlled VARCHAR(255),  
+    security_level VARCHAR(255),        
     warehouse_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by INT,
     updated_by INT,
-    FOREIGN KEY (warehouse_id) REFERENCES inv.warehouses(warehouse_id) ON DELETE CASCADE
+    FOREIGN KEY (warehouse_id) REFERENCES inv.warehouses(warehouse_id) ON DELETE CASCADE,
+    FOREIGN KEY (uom_id) REFERENCES com.uom(uom_id) ON DELETE SET NULL
 ) AUTO_INCREMENT=20;
 
 
@@ -56,12 +60,14 @@ CREATE TABLE inv.zones (
     location_id INT,
     zone_name VARCHAR(100) NOT NULL,
     description TEXT,
-    capacity INT,
+    capacity INT DEFAULT NULL,
+    uom_id INT DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by INT,
     updated_by INT,
-    FOREIGN KEY (location_id) REFERENCES inv.locations(location_id) ON DELETE CASCADE
+    FOREIGN KEY (location_id) REFERENCES inv.locations(location_id) ON DELETE CASCADE,
+    FOREIGN KEY (uom_id) REFERENCES com.uom(uom_id) ON DELETE SET NULL
 ) AUTO_INCREMENT=30;
 
 -- Table to store information about aisles within a zone
@@ -70,11 +76,14 @@ CREATE TABLE inv.aisles (
     zone_id INT,
     aisle_name VARCHAR(50) NOT NULL,
     description TEXT,
+    capacity INT DEFAULT NULL,
+    uom_id INT DEFAULT NULL, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by INT,
     updated_by INT,
-    FOREIGN KEY (zone_id) REFERENCES inv.zones(zone_id) ON DELETE CASCADE
+    FOREIGN KEY (zone_id) REFERENCES inv.zones(zone_id) ON DELETE CASCADE,
+    FOREIGN KEY (uom_id) REFERENCES com.uom(uom_id) ON DELETE SET NULL 
 ) AUTO_INCREMENT=40;
 
 -- Table to store information about invrows within an aisle
@@ -83,11 +92,14 @@ CREATE TABLE inv.invrows (
     aisle_id INT,
     row_name VARCHAR(50) NOT NULL,
     description TEXT,
+    capacity INT DEFAULT NULL,
+    uom_id INT DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by INT,
     updated_by INT,
-    FOREIGN KEY (aisle_id) REFERENCES inv.aisles(aisle_id) ON DELETE CASCADE
+    FOREIGN KEY (aisle_id) REFERENCES inv.aisles(aisle_id) ON DELETE CASCADE,
+    FOREIGN KEY (uom_id) REFERENCES com.uom(uom_id) ON DELETE SET NULL
 ) AUTO_INCREMENT=50;
 
 -- Table to store information about racks within a row
@@ -96,13 +108,15 @@ CREATE TABLE inv.racks (
     row_id INT,
     rack_name VARCHAR(50) NOT NULL,
     description TEXT,
+    capacity INT DEFAULT NULL,
+    uom_id INT DEFAULT NULL,  
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by INT,
     updated_by INT,
-    FOREIGN KEY (row_id) REFERENCES inv.invrows(row_id) ON DELETE CASCADE
+    FOREIGN KEY (row_id) REFERENCES inv.invrows(row_id) ON DELETE CASCADE,
+    FOREIGN KEY (uom_id) REFERENCES com.uom(uom_id) ON DELETE SET NULL
 ) AUTO_INCREMENT=70;
-
 
 -- Table to store information about bins within a rack
 CREATE TABLE inv.bins (
@@ -110,12 +124,14 @@ CREATE TABLE inv.bins (
     rack_id INT,
     bin_name VARCHAR(50) NOT NULL,
     description TEXT,
-    capacity INT,
+    capacity INT DEFAULT NULL,
+    uom_id INT DEFAULT NULL, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by INT,
     updated_by INT,
-    FOREIGN KEY (rack_id) REFERENCES inv.racks(rack_id) ON DELETE CASCADE
+    FOREIGN KEY (rack_id) REFERENCES inv.racks(rack_id) ON DELETE CASCADE,
+    FOREIGN KEY (uom_id) REFERENCES com.uom(uom_id) ON DELETE SET NULL
 ) AUTO_INCREMENT=70;
 
 -- Table for inspections

@@ -1,4 +1,3 @@
-# POST API for inv.locations
 from flask import Blueprint, jsonify, request
 from modules.security.permission_required import permission_required
 from modules.security.routines.get_user_and_db_details import get_user_and_db_details
@@ -7,9 +6,9 @@ from modules.utilities.logger import logger
 
 create_location_api = Blueprint('create_location_api', __name__)
 
-@create_location_api.route('/create_location', methods=['POST'])
+@create_location_api.route('/create_locations', methods=['POST'])
 @permission_required(WRITE_ACCESS_TYPE, __file__)
-def create_location():
+def create_locations():
     try:
         MODULE_NAME = __name__
         
@@ -31,7 +30,6 @@ def create_location():
 
         if request.content_type == 'application/json':
             data = request.get_json()
-            print(data)
         else:
             data = request.form
 
@@ -42,9 +40,20 @@ def create_location():
         location_type = data['location_type']
         description = data.get('description')
         capacity = data.get('capacity')
-        temperature_controlled = data.get('temperature_controlled')
-        security_level = data.get('security_level')
+        if capacity == '':  # Handle empty capacity
+            capacity = None
+        
+        # Handle uom_id: only set it if capacity is provided
+        uom_id = None
+        if capacity is not None:
+            uom_id = data.get('uom_id', None)
+
+        # Now handle temperature_controlled and security_level as simple strings
+        temperature_controlled = data.get('temperature_controlled')  # Accepts any string
+        security_level = data.get('security_level')  # Accepts any string
         warehouse_id = data.get('warehouse_id')
+        if warehouse_id == '':  # Handle empty capacity
+            warehouse_id = None        
         created_by = appuserid
         updated_by = appuserid
 
@@ -56,18 +65,26 @@ def create_location():
         logger.debug(f"{appuser} --> {MODULE_NAME}: Parsed Temperature Controlled: {temperature_controlled}")
         logger.debug(f"{appuser} --> {MODULE_NAME}: Parsed Security Level: {security_level}")
         logger.debug(f"{appuser} --> {MODULE_NAME}: Parsed Warehouse ID: {warehouse_id}")
+        logger.debug(f"{appuser} --> {MODULE_NAME}: Parsed UOM ID: {uom_id}")
+        
+                
+        # Convert capacity to float (if provided)
+        if capacity:
+            capacity = float(capacity)
 
         mycursor = mydb.cursor()
 
         try:
             query = """
                 INSERT INTO inv.locations (location_name, location_type, description, capacity,
-                                           temperature_controlled, security_level, warehouse_id,
-                                           created_at, updated_at, created_by, updated_by)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, %s, %s)
+                                           temperature_controlled, security_level, warehouse_id, uom_id,
+                                           created_at,  created_by, updated_by)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP, %s, %s)
             """
+            
+            # Insert values into the database (if capacity is None, uom_id will be None as well)
             values = (location_name, location_type, description, capacity,
-                      temperature_controlled, security_level, warehouse_id,
+                      temperature_controlled, security_level, warehouse_id, uom_id,
                       created_by, updated_by)
 
             mycursor.execute(query, values)

@@ -2,9 +2,9 @@ from flask import Blueprint
 from modules.inventory.get_warehouses import get_warehouses
 from modules.inventory.create_warehouse import create_warehouse
 from modules.inventory.get_locations import get_locations
-from modules.inventory.create_location import create_location
+from modules.inventory.create_locations import create_locations
 from modules.inventory.get_zones import get_zones
-from modules.inventory.create_zone import create_zone
+from modules.inventory.create_zones import create_zones
 from modules.inventory.get_aisles import get_aisles
 from modules.inventory.create_aisle import create_aisle
 from modules.inventory.get_invrows import get_invrows
@@ -196,19 +196,19 @@ def create_warehouse_data():
     logger.debug(f"{appuser} --> {MODULE_NAME}: Request to create warehouse")
     return create_warehouse()
 
-@inventory_post_routes.route('/create_location', methods=['POST'])
-def create_location_data():
+@inventory_post_routes.route('/create_locations', methods=['POST'])
+def create_locations_data():
     MODULE_NAME = __name__
     appuser = ""
-    logger.debug(f"{appuser} --> {MODULE_NAME}: Request to create location")
-    return create_location()
+    logger.debug(f"{appuser} --> {MODULE_NAME}: Request to create locations")
+    return create_locations()
 
-@inventory_post_routes.route('/create_zone', methods=['POST'])
-def create_zone_data():
+@inventory_post_routes.route('/create_zones', methods=['POST'])
+def create_zones_data():
     MODULE_NAME = __name__
     appuser = ""
-    logger.debug(f"{appuser} --> {MODULE_NAME}: Request to create zone")
-    return create_zone()
+    logger.debug(f"{appuser} --> {MODULE_NAME}: Request to create zones")
+    return create_zones()
 
 @inventory_put_routes.route('/put_away_inventory', methods=['POST'])
 def put_away_inventories():

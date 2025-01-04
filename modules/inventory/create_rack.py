@@ -22,6 +22,7 @@ def create_rack():
         if not appuser:
             logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
             return jsonify({"error": "Unauthorized. Username not found."}), 401
+        
         # Log entry point
         logger.debug(f"{appuser} --> {__name__}: Entered in the create rack function")
 
@@ -33,6 +34,16 @@ def create_rack():
         # Log the received data
         logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
+        # Handle capacity (if provided) and uom_id
+        capacity = data.get('capacity')
+        if capacity == '':  # Handle empty capacity
+            capacity = None
+        
+        # Handle uom_id: only set it if capacity is provided
+        uom_id = None
+        if capacity is not None:
+            uom_id = data.get('uom_id', None)
+
         row_id = data['row_id']
         rack_name = data['rack_name']
         description = data.get('description')
@@ -43,15 +54,25 @@ def create_rack():
         logger.debug(f"{appuser} --> {__name__}: Parsed Row ID: {row_id}")
         logger.debug(f"{appuser} --> {__name__}: Parsed Rack Name: {rack_name}")
         logger.debug(f"{appuser} --> {__name__}: Parsed Description: {description}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Capacity: {capacity}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed UOM ID: {uom_id}")
+
+        # Convert capacity to float (if provided)
+        if capacity:
+            try:
+                capacity = float(capacity)
+            except ValueError:
+                logger.error(f"{appuser} --> {__name__}: Invalid capacity value: {capacity}")
+                return jsonify({"error": "Capacity must be a valid number."}), 400
 
         mycursor = mydb.cursor()
 
         try:
             query = """
-                INSERT INTO inv.racks (row_id, rack_name, description, created_by, updated_by)
-                VALUES (%s, %s, %s, %s, %s)
+                INSERT INTO inv.racks (row_id, rack_name, description, capacity, uom_id, created_by, updated_by)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
-            values = (row_id, rack_name, description, created_by, updated_by)
+            values = (row_id, rack_name, description, capacity, uom_id, created_by, updated_by)
 
             mycursor.execute(query, values)
             mydb.commit()

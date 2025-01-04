@@ -22,6 +22,7 @@ def create_invrow():
         if not appuser:
             logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
             return jsonify({"error": "Unauthorized. Username not found."}), 401
+        
         # Log entry point
         logger.debug(f"{appuser} --> {__name__}: Entered in the create invrow function")
 
@@ -33,6 +34,16 @@ def create_invrow():
         # Log the received data
         logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
+        # Handle capacity (if provided) and uom_id
+        capacity = data.get('capacity')
+        if capacity == '':  # Handle empty capacity
+            capacity = None
+        
+        # Handle uom_id: only set it if capacity is provided
+        uom_id = None
+        if capacity is not None:
+            uom_id = data.get('uom_id', None)
+
         aisle_id = data['aisle_id']
         row_name = data['row_name']
         description = data.get('description')
@@ -43,15 +54,25 @@ def create_invrow():
         logger.debug(f"{appuser} --> {__name__}: Parsed Aisle ID: {aisle_id}")
         logger.debug(f"{appuser} --> {__name__}: Parsed Row Name: {row_name}")
         logger.debug(f"{appuser} --> {__name__}: Parsed Description: {description}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed Capacity: {capacity}")
+        logger.debug(f"{appuser} --> {__name__}: Parsed UOM ID: {uom_id}")
+
+        # Convert capacity to float (if provided)
+        if capacity:
+            try:
+                capacity = float(capacity)
+            except ValueError:
+                logger.error(f"{appuser} --> {__name__}: Invalid capacity value: {capacity}")
+                return jsonify({"error": "Capacity must be a valid number."}), 400
 
         mycursor = mydb.cursor()
 
         try:
             query = """
-                INSERT INTO inv.invrows (aisle_id, row_name, description, created_by, updated_by)
-                VALUES (%s, %s, %s, %s, %s)
+                INSERT INTO inv.invrows (aisle_id, row_name, description, capacity, uom_id, created_by, updated_by)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
-            values = (aisle_id, row_name, description, created_by, updated_by)
+            values = (aisle_id, row_name, description, capacity, uom_id, created_by, updated_by)
 
             mycursor.execute(query, values)
             mydb.commit()

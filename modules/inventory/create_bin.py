@@ -1,6 +1,4 @@
-# modules/inventory/create_bin.py
-
-from flask import jsonify, request,Blueprint
+from flask import jsonify, request, Blueprint
 from modules.security.permission_required import permission_required
 from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from config import WRITE_ACCESS_TYPE
@@ -24,6 +22,7 @@ def create_bin():
         if not appuser:
             logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
             return jsonify({"error": "Unauthorized. Username not found."}), 401
+
         # Log entry point
         logger.debug(f"{appuser} --> {__name__}: Entered in the create bin function")
 
@@ -38,7 +37,12 @@ def create_bin():
         rack_id = data['rack_id']
         bin_name = data['bin_name']
         description = data.get('description')
+        
+        # Handle capacity (if provided) and convert to float
         capacity = data.get('capacity')
+        if capacity == '':  # Handle empty capacity
+            capacity = None
+
         created_by = appuserid
         updated_by = appuserid
 
@@ -47,6 +51,14 @@ def create_bin():
         logger.debug(f"{appuser} --> {__name__}: Parsed Bin Name: {bin_name}")
         logger.debug(f"{appuser} --> {__name__}: Parsed Description: {description}")
         logger.debug(f"{appuser} --> {__name__}: Parsed Capacity: {capacity}")
+
+        # Convert capacity to float (if provided)
+        if capacity:
+            try:
+                capacity = float(capacity)
+            except ValueError:
+                logger.error(f"{appuser} --> {__name__}: Invalid capacity value: {capacity}")
+                return jsonify({"error": "Capacity must be a valid number."}), 400
 
         mycursor = mydb.cursor()
 

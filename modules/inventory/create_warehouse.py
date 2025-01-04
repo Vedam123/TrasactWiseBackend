@@ -45,13 +45,22 @@ def create_warehouse():
         state = data.get('state')
         postal_code = data.get('postal_code')
         country = data.get('country')
+        
+        # Handle capacity and uom_id
         capacity = data.get('capacity')
+        if capacity == '':
+            capacity = None
+        
+        uom_id = None
+        if capacity is not None:
+            uom_id = data.get('uom_id', None)  # Only set uom_id if capacity is not None
+
         temperature_controlled = data.get('temperature_controlled')
         security_level = data.get('security_level')
         created_by = appuserid
         updated_by = appuserid
 
-        # Log parsed data
+         # Log parsed data
         logger.debug(f"{appuser} --> {MODULE_NAME}: Parsed Warehouse Name: {warehouse_name}")
         logger.debug(f"{appuser} --> {MODULE_NAME}: Parsed Description: {description}")
         logger.debug(f"{appuser} --> {MODULE_NAME}: Parsed Address Line 1: {address_line1}")
@@ -63,18 +72,19 @@ def create_warehouse():
         logger.debug(f"{appuser} --> {MODULE_NAME}: Parsed Capacity: {capacity}")
         logger.debug(f"{appuser} --> {MODULE_NAME}: Parsed Temperature Controlled: {temperature_controlled}")
         logger.debug(f"{appuser} --> {MODULE_NAME}: Parsed Security Level: {security_level}")
+        logger.debug(f"{appuser} --> {MODULE_NAME}: Parsed UOM ID: {uom_id}")
 
         mycursor = mydb.cursor()
 
         try:
             query = """
                 INSERT INTO inv.warehouses (warehouse_name, description, address_line1, address_line2, city, state,
-                                            postal_code, country, capacity, temperature_controlled, security_level,
-                                            created_at, updated_at, created_by, updated_by)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, %s, %s)
+                                            postal_code, country, capacity, uom_id, temperature_controlled, security_level,
+                                            created_by, updated_by)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s)
             """
             values = (warehouse_name, description, address_line1, address_line2, city, state,
-                      postal_code, country, capacity, temperature_controlled, security_level,
+                      postal_code, country, capacity, uom_id, temperature_controlled, security_level,
                       created_by, updated_by)
 
             mycursor.execute(query, values)
