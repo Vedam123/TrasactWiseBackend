@@ -5,6 +5,9 @@ from blueprints import register_blueprints
 from config import JWT_SECRET_KEY, JWT_ACCESS_TOKEN_EXPIRES,APP_SERVER_HOST,APP_SERVER_PORT
 #from modules.security.refresh_token import refresh_token
 #from authorization import authorize_user
+
+# Type-cast APP_SERVER_PORT to an integer
+APP_SERVER_PORT = int(APP_SERVER_PORT)
  
 app = Flask(__name__)
 CORS(app)
