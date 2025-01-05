@@ -24,3 +24,4 @@ LOG_FILE_PATH = "modules/utilities/logs/"
 DB_INSTANCES_BASE_PATH = "C:/SAS Opera/Companies"
 APP_SERVER_HOST = "localhost"
 APP_SERVER_PORT = 8012
+APP_SERVER_PROTOCAL = "http"
