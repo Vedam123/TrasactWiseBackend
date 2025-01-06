@@ -46,61 +46,79 @@ if !errorlevel! neq 0 (
     exit /b
 )
 
+REM Create two empty lines before appending the [InstanceFolders] section
+echo. >> "%INI_FILE%"
+
+REM Check if the [InstanceFolders] section exists. If not, append it.
+findstr /i "InstanceFolders" "%INI_FILE%" >nul
+if %errorlevel% neq 0 (
+    echo [InstanceFolders] >> "%INI_FILE%"
+    echo Added [InstanceFolders] section to the INI file.
+)
+
 REM Loop through the instances and create the required subfolders
 for /L %%i in (0,1,%instances%) do (
-    REM Define folder structure for each instance
-    set INSTANCE_DIR=%ROOT_DIR%\instance%%i
-    set DATA_DIR=!INSTANCE_DIR!\data
-    set LOGS_DIR=!INSTANCE_DIR!\logs
-    set UPLOADS_DIR=!INSTANCE_DIR!\uploads
+    REM Check if the instance folder already exists in the INI file
+    findstr /i "INSTANCE%%i=" "%INI_FILE%" >nul
+    if %errorlevel% neq 0 (
+        REM Define folder structure for each instance
+        set INSTANCE_DIR=%ROOT_DIR%\instance%%i
+        set DATA_DIR=!INSTANCE_DIR!\data
+        set LOGS_DIR=!INSTANCE_DIR!\logs
+        set UPLOADS_DIR=!INSTANCE_DIR!\uploads
 
-    REM Create the instance folder and subfolders
-    echo Creating folder structure for instance %%i...
+        REM Create the instance folder and subfolders
+        echo Creating folder structure for instance %%i...
 
-    REM Create the instance and its subfolders
-    mkdir "!INSTANCE_DIR!" >nul 2>&1
-    mkdir "!DATA_DIR!" >nul 2>&1
-    mkdir "!LOGS_DIR!" >nul 2>&1
-    mkdir "!UPLOADS_DIR!" >nul 2>&1
+        REM Create the instance and its subfolders
+        mkdir "!INSTANCE_DIR!" >nul 2>&1
+        mkdir "!DATA_DIR!" >nul 2>&1
+        mkdir "!LOGS_DIR!" >nul 2>&1
+        mkdir "!UPLOADS_DIR!" >nul 2>&1
 
-    REM Check if the folders are created successfully
-    if exist "!INSTANCE_DIR!" (
-        echo Instance folder created: !INSTANCE_DIR!
+        REM Check if the folders are created successfully
+        if exist "!INSTANCE_DIR!" (
+            echo Instance folder created: !INSTANCE_DIR!
+            REM Append the instance name to the INI file in the format INSTANCEi=instancei
+            echo INSTANCE%%i=instance%%i >> "%INI_FILE%"
+        ) else (
+            echo Failed to create instance folder: !INSTANCE_DIR!
+        )
+        if exist "!DATA_DIR!" (
+            echo Data folder created: !DATA_DIR!
+        ) else (
+            echo Failed to create data folder: !DATA_DIR!
+        )
+        if exist "!LOGS_DIR!" (
+            echo Logs folder created: !LOGS_DIR!
+        ) else (
+            echo Failed to create logs folder: !LOGS_DIR!
+        )
+        if exist "!UPLOADS_DIR!" (
+            echo Uploads folder created: !UPLOADS_DIR!
+        ) else (
+            echo Failed to create uploads folder: !UPLOADS_DIR!
+        )
+
+        REM Grant full access permissions to all users for the created folders and subfolders
+        echo Granting full access to all users for the folder: !INSTANCE_DIR!
+        icacls "!INSTANCE_DIR!" /grant Everyone:(F) >nul 2>&1
+        echo Full permissions granted for: !INSTANCE_DIR!
+
+        echo Granting full access to all users for the folder: !DATA_DIR!
+        icacls "!DATA_DIR!" /grant Everyone:(F) >nul 2>&1
+        echo Full permissions granted for: !DATA_DIR!
+
+        echo Granting full access to all users for the folder: !LOGS_DIR!
+        icacls "!LOGS_DIR!" /grant Everyone:(F) >nul 2>&1
+        echo Full permissions granted for: !LOGS_DIR!
+
+        echo Granting full access to all users for the folder: !UPLOADS_DIR!
+        icacls "!UPLOADS_DIR!" /grant Everyone:(F) >nul 2>&1
+        echo Full permissions granted for: !UPLOADS_DIR!
     ) else (
-        echo Failed to create instance folder: !INSTANCE_DIR!
+        echo Instance %%i already exists in the INI file. Skipping folder creation.
     )
-    if exist "!DATA_DIR!" (
-        echo Data folder created: !DATA_DIR!
-    ) else (
-        echo Failed to create data folder: !DATA_DIR!
-    )
-    if exist "!LOGS_DIR!" (
-        echo Logs folder created: !LOGS_DIR!
-    ) else (
-        echo Failed to create logs folder: !LOGS_DIR!
-    )
-    if exist "!UPLOADS_DIR!" (
-        echo Uploads folder created: !UPLOADS_DIR!
-    ) else (
-        echo Failed to create uploads folder: !UPLOADS_DIR!
-    )
-
-    REM Grant full access permissions to all users for the created folders and subfolders
-    echo Granting full access to all users for the folder: !INSTANCE_DIR!
-    icacls "!INSTANCE_DIR!" /grant Everyone:(F) >nul 2>&1
-    echo Full permissions granted for: !INSTANCE_DIR!
-
-    echo Granting full access to all users for the folder: !DATA_DIR!
-    icacls "!DATA_DIR!" /grant Everyone:(F) >nul 2>&1
-    echo Full permissions granted for: !DATA_DIR!
-
-    echo Granting full access to all users for the folder: !LOGS_DIR!
-    icacls "!LOGS_DIR!" /grant Everyone:(F) >nul 2>&1
-    echo Full permissions granted for: !LOGS_DIR!
-
-    echo Granting full access to all users for the folder: !UPLOADS_DIR!
-    icacls "!UPLOADS_DIR!" /grant Everyone:(F) >nul 2>&1
-    echo Full permissions granted for: !UPLOADS_DIR!
 )
 
 echo.
