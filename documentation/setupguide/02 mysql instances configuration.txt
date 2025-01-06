@@ -28,6 +28,7 @@ The data file will be located in each instance for example in case of instance1 
 C:\SAS Opera\Companies\Company_0\system\db_instances\instance1\data
 when installed the data directory as per the below steps you can see a file DELPHI-K.err in the data directory in which you can find root password
 2024-12-11T20:34:14.665632Z 6 [Note] [MY-010454] [Server] A temporary password is generated for root@localhost: :bfXda>*=9jk
+Note : Run the file 10_get_mysql_root_pwd.bat which will run the python file 10_get_mysql_root_pwd.py and it generates a file root_password.txt in each of the instance folder which contains root password for that instance.
 you can change the password for the root user later
 connect mysql and create a new user and create the file below with that info
 C:\SAS Opera\Companies\Company_0\system\db_instances\instance1
@@ -54,6 +55,13 @@ In order to create all the above follow the steps
 9. In delete directory place 0000_delete_schemas.sql
 10. Place the follwoing 4 .py , .bat files in schema directory 
      create_scehmas_py.py, create_schemas_bat.bat, delete_schemas_bat.bat, delete_schemas_py.py
+	 
+OR 
+
+These are all will be created automatically if you run the following script in case of Company_1
+YOu will see two files config.ini , start_project.bat in the folder C:\SAS Opera\start\Company_1
+Run the start_project.bat 
+
 
 Now do the following
 
