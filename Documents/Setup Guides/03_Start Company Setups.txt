@@ -1,0 +1,30 @@
+
+1. Copy the Company_X folder from application\AppService\Documents\Setup Guides\Start to C:\SAS Opera\start folder
+2. Rename the Company_X folder to the identified Company (f.ex Company_1 or Company_2 ...etc)
+	This folder contains two essential files: config.ini and start_project.bat.
+	
+3. Update the config.ini file with the relevant details
+	Generally, you need to update the global information, Git credentials, communication settings, database details, 
+	application server, web client, and SMTP configurations according to your requirements. You’ll notice that the config.ini 
+	file already contains an example as a reference. Simply make a local copy of the file and update it as needed.
+4. While updating the config.ini file remember to update the available ports carefully for mySQL, Application Server, Web Client
+3. Ensure the port numbers are not allocated or free before updating the config.ini file 
+4.Run the start_project.bat batch file, which will create the following directories and files, and generate a log file (setup_log.txt) in the same directory upon successful execution:
+	C:\SAS Opera\Companies\Company_1
+	C:\SAS Opera\Companies\Company_1\system
+	C:\SAS Opera\Companies\Company_1\system\application
+	C:\SAS Opera\Companies\Company_1\system\application\AppService
+	C:\SAS Opera\Companies\Company_1\system\application\WebClient
+	C:\SAS Opera\Companies\Company_1\system\config
+	C:\SAS Opera\Companies\Company_1\system\config\instance
+	C:\SAS Opera\Companies\Company_1\system\config\schema
+	C:\SAS Opera\Companies\Company_1\system\documentation
+	Additionally, the batch file will:
+
+	Create a shortcut on the desktop for the 00_application_start.bat file, located in C:\SAS Opera\Companies\Company_1\system\config\instance.
+	Update the 00_config.ini file in the directory C:\SAS Opera\Companies\Company_1\system\config\instance\cnf.
+	Update the global_variables.ini file with the relevant paths.
+	Run the necessary packages for the React application in the WebClient directory.
+	Install the required Python Flask packages for the Python environment, and set up the Python virtual environment.
+	
+	

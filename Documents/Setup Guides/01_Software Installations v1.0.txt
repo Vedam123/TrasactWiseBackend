@@ -1,0 +1,62 @@
+One time Activities once the workstation or server is ready to configure.
+
+1. Install MySQL and set a root password , create another user and set password
+2. Install MySQL Workbench
+3. Uninstall any python versions if any
+4. Install Python LTS
+5. Set the path to Python 
+	for example
+	C:\Windows\System32>python --version
+	Python 3.13.0
+	C:\Windows\System32>where python
+	C:\Users\kishore\AppData\Local\Programs\Python\Python313\python.exe
+6. install node JS, which also installs python (another version)
+	this will take long time and opens PowerShell etc.. wait until it is completed
+	C:\Windows\System32>node -v
+	v22.12.0
+	C:\Windows\System32>npm -v
+	10.9.0
+	C:\Windows\System32>where python
+	C:\Users\kishore\AppData\Local\Programs\Python\Python313\python.exe
+	C:\Python312\python.exe
+7. Now there will be two pythons in your server or workstation , now adjust the python paths as below	
+8. Move the path upwards (the python in step 5)
+9. Move the path downwards ( the python in step 6)
+10. Install npm 
+	npm install --global node-gyp (run the command prompt)
+	C:\Windows\System32>npm install --global node-gyp
+
+	added 98 packages in 5s
+
+	16 packages are looking for funding
+  	run `npm fund` for details
+	npm notice
+	npm notice New patch version of npm available! 10.9.0 -> 10.9.2
+	npm notice Changelog: https://github.com/npm/cli/releases/tag/v10.9.2
+	npm notice To update run: npm install -g npm@10.9.2
+	npm notice
+11. Install VS code and verify if it is successfully installed or not
+	C:\Windows\System32>code --version
+	1.95.3
+	f1a4fb101478ce6ec82fe9627c43efbf9e98c813
+	x64
+
+	C:\Windows\System32>where code
+	C:\Users\kishore\AppData\Local\Programs\Microsoft VS Code\bin\code
+	C:\Users\kishore\AppData\Local\Programs\Microsoft VS Code\bin\code.cmd
+
+12. At this moment we have not created any Companies or their configurations or instances , we need to check if the data base is working or not so execute the below steps
+13. In the step1 you captured the root user and password and another use and its password right , using that in the command prompt you can execute the following. 
+	mysql -u root -p --port=3306    (mysql default port  , you would have noticed this during installation )
+	C:\Windows\System32>mysql -u root -p --port=3306
+	Enter password: ************    
+	mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'welcome'; this will change the password of root
+	create an addtional user if needed 
+	CREATE USER 'test'@'%' IDENTIFIED BY 'welcome';
+	GRANT ALL PRIVILEGES ON *.* TO 'test'@'%' WITH GRANT OPTION;
+	FLUSH PRIVILEGES;
+	EXIT;
+14. Configure mySQL workbench and access database with the newly created users and root user as well.
+
+
+

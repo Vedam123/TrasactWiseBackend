@@ -1,0 +1,17 @@
+# This below file create databases in the mysql instance
+
+1. Create Schemas : 
+	a.	Run the batch file create_schemas_bat:
+			The batch file is located in the following path:Company_0\system\application\AppService\Documents\Setup Guides\Config files\config\schema
+			This will execute the Python script create_schemas_py.py, which in turn runs a series of batch files 
+			located at Companies\Company_1\system\config\schema\scripts\create
+	RESULT : After successful execution, a log file named sorted_sql_files.txt will be created in the following directory:
+			C:\SAS Opera\Companies\Company_1\system\config\schema
+2. Delete Schemas :
+	a.	Run the batch file delete_schemas_bat:
+			The batch file is located in the following path:Company_0\system\application\AppService\Documents\Setup Guides\Config files\config\schema
+			This will execute the Python script delete_schemas_py.py, which in turn runs a series of batch files 
+			located at Companies\Company_1\system\config\schema\scripts\delete
+	RESULT : After successful execution, a log file named sorted_sql_files.txt will be created in the following directory:
+			C:\SAS Opera\Companies\Company_1\system\config\schema
+	
