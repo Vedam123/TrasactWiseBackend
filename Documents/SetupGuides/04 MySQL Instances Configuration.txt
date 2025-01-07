@@ -122,7 +122,7 @@ The above activites are partly automated , so follow the instructions below
 		
 		RESULT : The my.ini file in the location C:\SAS Opera\Companies\Company_1\system\db_instances\instance1 has updated information 		
 		
-4. Initialize data folder for an isntance 
+6. Initialize data folder for an instance 
 		
 		a.  MANUALLY  run the command in command prompt mysqld --initialize --datadir=C:\SAS Opera\Companies\Company_1\system\db_instances\instance1
 			OR
@@ -130,8 +130,19 @@ The above activites are partly automated , so follow the instructions below
 		
 		RESULT : A data folder will be created or updated within the corresponding instance folder, located at:C:\SAS Opera\Companies\Company_0\system\db_instances\instance0
 		Note: The root password can be found in the err file located in the data directory:C:\SAS Opera\Companies\Company_0\system\db_instances\instance0\data
+		
+7. Get Root password of an instance 
 
-6.	Create Services
+		a. MANUALLY Open the data folder and find err file of an instance for example C:\SAS Opera\Companies\Company_0\system\db_instances\instance0\data
+				there is a an error file with the hostname.err file (DELPHI-K.err) 
+				find text similar to this and find the root password A temporary password is generated for root@localhost: :bfXda>*=9jk
+			OR
+		b. (ALTERNATIVELY ) RUNTHE BATCH FILE :10_get_mysql_root_pwd.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance , which will run	
+			python file 10_get_mysql_root_pwd.py . Once after successfully executed it will create a file root_password.txt in the folder C:\SAS Opera\Companies\Company_0\system\db_instances\instance0 
+		
+		RESULT : The root password can be found in the err file or in the root_password.txt file
+
+8.	Create Services
 
 		a.  MANUALLY to create a service run the command  mysqld --install COMPANY0_instance1 --defaults-file=C:\SAS Opera\Companies\Company_1\system\db_instances\instance1\my.ini
 			OR
@@ -139,7 +150,7 @@ The above activites are partly automated , so follow the instructions below
 		
 		RESULT : In windows services you can find there will be a service COMPANY0_instance1  successfully created 
 
-7. 	START Service 
+9. 	START Service 
 
 		a.  MANUALLY to start the service run the command net start COMPANY0_instance1
 			OR
@@ -147,7 +158,7 @@ The above activites are partly automated , so follow the instructions below
 		
 		RESULT : Open the services window and see if  COMPANY0_instance1  successfully running 
 
-8. Create new user and change root password
+10. Create new user and change root password
 		a. Now, connect to MySQL using the root password that you got in Step 4 
 			For instance1, run the following command:mysql -u root -p -P 3312
 				ALTER USER 'root'@'localhost' IDENTIFIED BY 'welcome';
@@ -157,7 +168,7 @@ The above activites are partly automated , so follow the instructions below
 				ALTER USER 'root'@'localhost' IDENTIFIED BY 'welcome';
 				CREATE USER 'vedamc1in1'@'localhost' IDENTIFIED BY 'welcome';
 				GRANT ALL PRIVILEGES ON *.* TO 'vedamc1in1'@'localhost' WITH GRANT OPTION;
-9. Create / update .instance.cnf file 
+11. Create / update .instance.cnf file 
 	a.	Create the .instance.cnf file in the corresponding folder. For example, for instance1, the path will be:
 		C:\SAS Opera\Companies\Company_0\system\db_instances\instance1
 		The file should contain the following details:
@@ -166,6 +177,17 @@ The above activites are partly automated , so follow the instructions below
 		password=welcome
 		host=localhost
 		port=3312
+		
+12. Update ConstDecl.js file in WebClient Project
+
+		a. MANUALLY update the ENV_INSTANCES const in the ConstDecl.js file which is located in the directory path application\WebClient\src\modules\admin\setups
+			OR
+		b. (ALTERNATIVELY ) RUNTHE BATCH FILE :09_update_const_decl_js_file.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance , which will run	
+			python file 09_update_const_decl_js_file to update hte ENV_INSTANCES  
+			
+		RESULT : The ENV_INSTANCES constant is updated to ConstDecl.js
+		
+
 
 		
 Optionally 

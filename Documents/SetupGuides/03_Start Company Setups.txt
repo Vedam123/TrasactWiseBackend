@@ -18,7 +18,7 @@
 	C:\SAS Opera\Companies\Company_1\system\config
 	C:\SAS Opera\Companies\Company_1\system\config\instance
 	C:\SAS Opera\Companies\Company_1\system\config\schema
-	C:\SAS Opera\Companies\Company_1\system\documentation
+	C:\SAS Opera\Companies\Company_1\system\Documents
 	Additionally, the batch file will:
 
 	Create a shortcut on the desktop for the 00_application_start.bat file, located in C:\SAS Opera\Companies\Company_1\system\config\instance.
