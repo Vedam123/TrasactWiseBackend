@@ -9,11 +9,13 @@ REM Get the directory where the batch file is located
 set BATCH_DIR=%~dp0
 echo Batch Directory : %BATCH_DIR%
 
-EM Define the cnf directory (which is in the same directory as the batch file)
+REM Define the cnf directory (which is in the same directory as the batch file)
 set CNF_DIR=%BATCH_DIR%cnf
+echo CNF DIRECTORY  : %CNF_DIR%
 
 REM Define the global_variables.ini file path
 set GLOBAL_VARS_FILE=%CNF_DIR%\global_variables.ini
+echo Global ini files  : %GLOBAL_VARS_FILE%
 
 REM Read the MYSQL_BIN value from the global_variables.ini file
 for /f "tokens=1,2 delims==" %%A in ('findstr /i "MYSQL_BIN" "%GLOBAL_VARS_FILE%"') do set "MYSQL_BIN=%%B"
@@ -40,6 +42,10 @@ echo Grand Parent Directory : %GRANDPARENT_DIR%
 REM Define the INI configuration file path based on the batch file location
 set INI_FILE=%BATCH_DIR%cnf\00_config.ini
 echo Ini file  Directory : %INI_FILE%
+
+
+set CONFIG_FILE=%BATCH_DIR%cnf\00_config.ini
+echo config file  Directory : %CONFIG_FILE%
 
 set ROOT_DIR=%BATCH_DIR%..\..\db_instances
 echo Root Directory : %ROOT_DIR%

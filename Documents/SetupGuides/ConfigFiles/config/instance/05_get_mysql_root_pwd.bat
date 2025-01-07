@@ -19,7 +19,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 REM Check if the script file exists in the expected path
-set SCRIPT_PATH=%~dp011_find_root_pwd_of_my_sql.py
+set SCRIPT_PATH=%~dp005_get_mysql_root_pwd.py
 
 echo Checking if the script exists at: %SCRIPT_PATH%
 

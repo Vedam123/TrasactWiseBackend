@@ -30,7 +30,7 @@ Database
 		After installation or data directory created successfully , you can find a file named DELPHI-K.err in the data directory. This file contains the root password, which can be identified in the following entry:
 		2024-12-11T20:34:14.665632Z 6 [Note] [MY-010454] [Server] A temporary password is generated for root@localhost: :bfXda>*=9jk
 		
-		NOTE : Once the data directory is successfully created, run the 10_get_mysql_root_pwd.bat file. This will execute the Python script 10_get_mysql_root_pwd.py, 
+		NOTE : Once the data directory is successfully created, run the 05_get_mysql_root_pwd.bat file. This will execute the Python script 05_get_mysql_root_pwd.py, 
 		which generates a file named root_password.txt in each instance folder.	This file contains the root password for that specific instance. 
 		You can change the root password later if required.
 		
@@ -52,7 +52,7 @@ Update my.ini file
 		for example in case of instance1 this file is located in the directory 
 		C:\SAS Opera\Companies\Company_0\system\db_instances\instance1
 	
-The above activites are partly automated , so follow the instructions below 
+The above activates are partly automated , so follow the instructions below 
 
 1.	Create the instance directories (for the number of instances you need):
 		a. MANUALLY create instance directories 
@@ -137,8 +137,8 @@ The above activites are partly automated , so follow the instructions below
 				there is a an error file with the hostname.err file (DELPHI-K.err) 
 				find text similar to this and find the root password A temporary password is generated for root@localhost: :bfXda>*=9jk
 			OR
-		b. (ALTERNATIVELY ) RUNTHE BATCH FILE :10_get_mysql_root_pwd.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance , which will run	
-			python file 10_get_mysql_root_pwd.py . Once after successfully executed it will create a file root_password.txt in the folder C:\SAS Opera\Companies\Company_0\system\db_instances\instance0 
+		b. (ALTERNATIVELY ) RUNTHE BATCH FILE :05_get_mysql_root_pwd.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance , which will run	
+			python file 05_get_mysql_root_pwd.py . Once after successfully executed it will create a file root_password.txt in the folder C:\SAS Opera\Companies\Company_0\system\db_instances\instance0 
 		
 		RESULT : The root password can be found in the err file or in the root_password.txt file
 
@@ -146,7 +146,7 @@ The above activites are partly automated , so follow the instructions below
 
 		a.  MANUALLY to create a service run the command  mysqld --install COMPANY0_instance1 --defaults-file=C:\SAS Opera\Companies\Company_1\system\db_instances\instance1\my.ini
 			OR
-		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :05_create_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
+		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :06_create_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
 		
 		RESULT : In windows services you can find there will be a service COMPANY0_instance1  successfully created 
 
@@ -154,7 +154,7 @@ The above activites are partly automated , so follow the instructions below
 
 		a.  MANUALLY to start the service run the command net start COMPANY0_instance1
 			OR
-		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :06_start_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
+		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :07_start_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
 		
 		RESULT : Open the services window and see if  COMPANY0_instance1  successfully running 
 
@@ -182,8 +182,8 @@ The above activites are partly automated , so follow the instructions below
 
 		a. MANUALLY update the ENV_INSTANCES const in the ConstDecl.js file which is located in the directory path application\WebClient\src\modules\admin\setups
 			OR
-		b. (ALTERNATIVELY ) RUNTHE BATCH FILE :09_update_const_decl_js_file.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance , which will run	
-			python file 09_update_const_decl_js_file to update hte ENV_INSTANCES  
+		b. (ALTERNATIVELY ) RUNTHE BATCH FILE :10_update_const_decl_js_file.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance , which will run	
+			python file 10_update_const_decl_js_file.py to update hte ENV_INSTANCES  
 			
 		RESULT : The ENV_INSTANCES constant is updated to ConstDecl.js
 		
@@ -195,7 +195,7 @@ Optionally
 
 		a.  MANUALLY to stop a running service, use the following command: net stop COMPANY0_instance1
 			OR
-		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :07_stop_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
+		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :08_stop_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
 		
 		RESULT : Open the services window and see if  COMPANY0_instance1  successfully stopped 
 
@@ -203,7 +203,7 @@ Optionally
 
 		a.  MANUALLY to remove the service, use the following command:mysqld --remove COMPANY0_instance1
 			OR
-		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :08_Remove_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
+		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :09_Remove_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
 		
 		RESULT : Open the services window and see if  COMPANY0_instance1  successfully removed 
 		

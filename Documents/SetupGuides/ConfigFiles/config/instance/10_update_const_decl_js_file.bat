@@ -14,7 +14,7 @@ if %ERRORLEVEL% NEQ 0 (
 
 REM If Python is installed, run the create.py script
 echo Python is installed. Running create_scehmas_py script...
-python "%~dp009_update_const_decl_js_file.py"
+python "%~dp010_update_const_decl_js_file.py"
 
 REM Check if the script executed successfully
 if %ERRORLEVEL% NEQ 0 (
