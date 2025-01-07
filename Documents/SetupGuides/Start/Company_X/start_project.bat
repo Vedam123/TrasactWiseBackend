@@ -187,7 +187,7 @@ powershell -Command "$filePath = '%WEB_CLIENT_ENV_PATH%'; $content = Get-Content
 
 REM Step 14: Copy config and configfiles directories
 echo Copying config and configfiles directories to system folder...   >> "%LOG_FILE%"
-xcopy /e /i /y "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%app_root%\Documents\ConfigFiles\config\*" "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\config"
+xcopy /e /i /y "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%app_root%\Documents\SetupGuides\ConfigFiles\config\*" "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\config"
 xcopy "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%app_root%\Documents\SetupGuides\*.*" "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\Documents\SetupGuides\" /i /y /h /r
 echo Config and configfiles directories copied successfully.    >> "%LOG_FILE%"
 
