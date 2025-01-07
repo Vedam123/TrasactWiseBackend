@@ -7,3 +7,4 @@ erpenv/
 .vscode/
 .VSCodeCounter/
 __pycache__/
+*.pyc
