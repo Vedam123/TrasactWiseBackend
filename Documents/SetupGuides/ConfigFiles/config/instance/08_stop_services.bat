@@ -2,6 +2,15 @@
 REM This batch script stops a MySQL service for each instance.
 REM It reads the company name, gcname, and the number of instances from the 00_config.ini file.
 
+REM Check if the script is running as administrator
+NET SESSION >nul 2>&1
+if %errorlevel% NEQ 0 (
+    echo This script requires Administrator privileges. Restarting as Administrator...
+    REM Request administrator privileges using PowerShell
+    powershell -Command "Start-Process '%~f0' -Verb runAs"
+    exit /b
+)
+
 REM Enable delayed variable expansion
 setlocal enabledelayedexpansion
 

@@ -1,4 +1,13 @@
 @echo off
+:: Check if the script is running as Administrator
+NET SESSION >nul 2>&1
+if %errorlevel% NEQ 0 (
+    echo This script requires Administrator privileges. Restarting as Administrator...
+    :: Request administrator privileges
+    powershell -Command "Start-Process '%~f0' -Verb runAs"
+    exit /b
+)
+
 REM This batch script starts a MySQL service for each instance.
 REM It reads the company name, gcname, and the number of instances from the 00_config.ini file.
 
@@ -102,7 +111,7 @@ for /L %%i in (0,1,%instances%) do (
         if !errorlevel! equ 0 (
             echo Service !SERVICE_NAME! started successfully.
         ) else (
-            echo Failed to start service !SERVICE_NAME!.
+            echo Failed to start service !SERVICE_NAME!..
         )
     ) else (
         echo Service !SERVICE_NAME! does not exist. Skipping.
