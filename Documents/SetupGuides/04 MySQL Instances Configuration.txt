@@ -142,7 +142,7 @@ The above activates are partly automated , so follow the instructions below
 		
 		RESULT : The root password can be found in the err file or in the root_password.txt file
 
-8.	Create Services
+8.	Create Services (Note this script needs Admin preveliges for command prompt so please note this )
 
 		a.  MANUALLY to create a service run the command  mysqld --install COMPANY0_instance1 --defaults-file=C:\SAS Opera\Companies\Company_1\system\db_instances\instance1\my.ini
 			OR
@@ -199,7 +199,7 @@ Optionally
 		
 		RESULT : Open the services window and see if  COMPANY0_instance1  successfully stopped 
 
-14. REMOVE services:
+14. REMOVE services: ( Need Admini previlages to run this script)
 
 		a.  MANUALLY to remove the service, use the following command:mysqld --remove COMPANY0_instance1
 			OR

@@ -1,4 +1,13 @@
 @echo off
+:: Check if the script is running as Administrator
+NET SESSION >nul 2>&1
+if %errorlevel% NEQ 0 (
+    echo This script requires Administrator privileges. Restarting as Administrator...
+    :: Request administrator privileges
+    powershell -Command "Start-Process '%~f0' -Verb runAs"
+    exit /b
+)
+
 REM This batch script creates a MySQL service for each instance.
 REM It reads the company name, gcname, and the number of instances from the 00_config.ini file.
 
@@ -21,7 +30,7 @@ if not exist "%ROOT_DIR%" (
     echo Directory %ROOT_DIR% already exists.
 )
 
-EM Define the cnf directory (which is in the same directory as the batch file)
+REM Define the cnf directory (which is in the same directory as the batch file)
 set CNF_DIR=%BATCH_DIR%cnf
 
 REM Define the global_variables.ini file path
@@ -81,7 +90,7 @@ echo You entered a valid number of instances: %instances%
 
 REM Loop through the instances and create the service for each instance
 for /L %%i in (0,1,%instances%) do (
-	set "INSTANCE_DIR=%ROOT_DIR%\instance%%i"
+    set "INSTANCE_DIR=%ROOT_DIR%\instance%%i"
 
     REM Check if it's instance0, use gcname for the service name, else use company for other instances
     if %%i==0 (
@@ -98,6 +107,16 @@ for /L %%i in (0,1,%instances%) do (
 
     REM Check if the instance directory exists
     if exist "!INSTANCE_DIR!" (
+        
+        REM Check if the service is already running (service specific check)
+        sc query "!SERVICE_NAME!" | findstr /i "RUNNING" >nul
+        if !errorlevel! equ 0 (
+            echo Service !SERVICE_NAME! is already running. Stopping it first...
+            REM Stop the running MySQL service for the specific instance
+            net stop "!SERVICE_NAME!"
+            timeout /t 5 /nobreak
+        )
+
         REM Create the MySQL service for the instance
         echo Creating service !SERVICE_NAME!... 
 
@@ -105,7 +124,7 @@ for /L %%i in (0,1,%instances%) do (
         "%MYSQL_BIN%\mysqld.exe" --install !SERVICE_NAME! --defaults-file="!MY_CNF!" > "!INSTANCE_DIR!\services_log.txt" 2>&1
 
         REM Check the log file for errors by searching for the word 'error'
-        findstr /i "error" "!INSTANCE_DIR!\services_log.txt" >nul
+        findstr /i "error denied" "!INSTANCE_DIR!\services_log.txt" >nul
 
         REM If error found, the service creation has failed, otherwise it's successful
         if !errorlevel! equ 0 (
