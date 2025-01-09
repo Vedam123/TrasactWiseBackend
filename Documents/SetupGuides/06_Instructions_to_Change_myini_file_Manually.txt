@@ -32,7 +32,6 @@ port=3309    # This should be changed to unique port
 mysqlx_port=33090 # This should as well be unique , we can use 0 as suffix to port number and assign here 
 datadir=C:/SAS Opera/Companies/Company_0/system/db_instances/instance0\data   #This is the directory path of data directory , ensure this is created and initialized
 secure-file-priv="C:/SAS Opera/Companies/Company_0/system/db_instances/instance0/uploads" # Also create this folder and assign 
-
 general_log_file="C:\SAS Opera\Companies\Company_0\system\data\instance0\logs\DELPHI-K.log"
 
 

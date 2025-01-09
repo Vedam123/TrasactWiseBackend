@@ -163,11 +163,11 @@ if not exist %APP_PY_PATH% (
 REM Step 6: Update host and port in config.py
 echo Updating host and port values in config.py...   >> "%LOG_FILE%"
 
+REM powershell -Command "$filePath = '%APP_PY_PATH%'; $content = Get-Content $filePath; $content = $content -replace 'BACKEND_ENVIRONMENT = .*', 'BACKEND_ENVIRONMENT = ''$APP_BACKEND_ENV_TYPE'''; $content = $content -replace 'DB_INSTANCES_BASE_PATH = .*', 'DB_INSTANCES_BASE_PATH = ''$BASE_PATH'''; $content = $content -replace 'APP_SERVER_HOST = .*', 'APP_SERVER_HOST = ''$APP_SERVER_HOST'''; $content = $content -replace 'APP_SERVER_PORT = .*', 'APP_SERVER_PORT = ''$APP_SERVER_PORT'''; Set-Content $filePath $content"
+
 echo Updating host and port values in config.py...   >> "%LOG_FILE%"
 
-powershell -Command "$filePath = '%APP_PY_PATH%'; $content = Get-Content $filePath; $content = $content -replace 'BACKEND_ENVIRONMENT = .*', 'BACKEND_ENVIRONMENT = ''%APP_BACKEND_ENV_TYPE%'''; $content = $content -replace 'DB_INSTANCES_BASE_PATH = .*', 'DB_INSTANCES_BASE_PATH = ''%BASE_PATH%'''; Set-Content $filePath $content;"
-powershell -Command "$filePath = '%APP_PY_PATH%'; $content = Get-Content $filePath; $content = $content -replace 'APP_SERVER_HOST = .*', 'APP_SERVER_HOST = ''%APP_SERVER_HOST%'''; $content = $content -replace 'APP_SERVER_PROTOCOL = .*', 'APP_SERVER_PROTOCOL = ''%APP_SERVER_PROTOCOL%'''; Set-Content $filePath $content;"
-powershell -Command "$filePath = '%APP_PY_PATH%'; $content = Get-Content $filePath; $content = $content -replace 'APP_SERVER_PORT = .*', 'APP_SERVER_PORT = ''%APP_SERVER_PORT%'''; Set-Content $filePath $content;"
+powershell -Command "$filePath = '%APP_PY_PATH%'; $content = Get-Content $filePath; $content = $content -replace 'BACKEND_ENVIRONMENT = .*', 'BACKEND_ENVIRONMENT = ''%APP_BACKEND_ENV_TYPE%'''; $content = $content -replace 'DB_INSTANCES_BASE_PATH = .*', 'DB_INSTANCES_BASE_PATH = ''%BASE_PATH%'''; $content = $content -replace 'APP_SERVER_HOST = .*', 'APP_SERVER_HOST = ''%APP_SERVER_HOST%'''; $content = $content -replace 'APP_SERVER_PROTOCOL = .*', 'APP_SERVER_PROTOCOL = ''%APP_SERVER_PROTOCOL%'''; $content = $content -replace 'APP_SERVER_PORT = .*', 'APP_SERVER_PORT = ''%APP_SERVER_PORT%'''; Set-Content $filePath $content"
 
 
 REM Step 7: Define the path to the .env file
@@ -182,10 +182,8 @@ if not exist %WEB_CLIENT_ENV_PATH% (
 REM Step 8: Update .env file with variables from config.ini
 echo Updating values in .env file...    >> "%LOG_FILE%"
 
-powershell -Command "$filePath = '%WEB_CLIENT_ENV_PATH%'; $content = Get-Content $filePath; $content = $content -replace 'REACT_APP_APPLICATION_NAME=.*', 'REACT_APP_APPLICATION_NAME=''%WEB_CLIENT_APPLICATION_NAME%'''; $content = $content -replace 'REACT_APP_APPLICATION_LEVEL=.*', 'REACT_APP_APPLICATION_LEVEL=''%WEB_CLIENT_APPLICATION_LEVEL%'''; Set-Content $filePath $content;"
-powershell -Command "$filePath = '%WEB_CLIENT_ENV_PATH%'; $content = Get-Content $filePath; $content = $content -replace 'REACT_APP_WEB_CLIENT_HOST=.*', 'REACT_APP_WEB_CLIENT_HOST=''%WEB_CLIENT_HOST%'''; $content = $content -replace 'REACT_APP_WEB_CLIENT_PORT=.*', 'REACT_APP_WEB_CLIENT_PORT=''%WEB_CLIENT_PORT%'''; $content = $content -replace 'REACT_APP_WEB_CLIENT_PROTOCOL=.*', 'REACT_APP_WEB_CLIENT_PROTOCOL=''%WEB_CLIENT_PROTOCOL%'''; Set-Content $filePath $content;"
-powershell -Command "$filePath = '%WEB_CLIENT_ENV_PATH%'; $content = Get-Content $filePath; $content = $content -replace 'REACT_APP_SMTP_HOST=.*', 'REACT_APP_SMTP_HOST=''%SMTP_HOST%'''; $content = $content -replace 'REACT_APP_SMTP_PORT=.*', 'REACT_APP_SMTP_PORT=''%SMTP_PORT%'''; $content = $content -replace 'REACT_APP_SMTP_EMAIL=.*', 'REACT_APP_SMTP_EMAIL=''%SMTP_EMAIL%'''; Set-Content $filePath $content;"
-powershell -Command "$filePath = '%WEB_CLIENT_ENV_PATH%'; $content = Get-Content $filePath; $content = $content -replace 'REACT_APP_BACKEND_SERVER_HOST=.*', 'REACT_APP_BACKEND_SERVER_HOST=''%APP_SERVER_HOST%'''; $content = $content -replace 'REACT_APP_BACKEND_SERVER_PORT=.*', 'REACT_APP_BACKEND_SERVER_PORT=''%APP_SERVER_PORT%'''; $content = $content -replace 'REACT_APP_BACKEND_SERVER_PROTOCOL=.*', 'REACT_APP_BACKEND_SERVER_PROTOCOL=''%APP_SERVER_PROTOCOL%'''; Set-Content $filePath $content;"
+powershell -Command "$filePath = '%WEB_CLIENT_ENV_PATH%'; $content = Get-Content $filePath; $content = $content -replace 'REACT_APP_APPLICATION_NAME=.*', 'REACT_APP_APPLICATION_NAME=''%WEB_CLIENT_APPLICATION_NAME%'''; $content = $content -replace 'REACT_APP_APPLICATION_LEVEL=.*', 'REACT_APP_APPLICATION_LEVEL=''%WEB_CLIENT_APPLICATION_LEVEL%'''; $content = $content -replace 'REACT_APP_WEB_CLIENT_HOST=.*', 'REACT_APP_WEB_CLIENT_HOST=''%WEB_CLIENT_HOST%'''; $content = $content -replace 'REACT_APP_WEB_CLIENT_PORT=.*', 'REACT_APP_WEB_CLIENT_PORT=''%WEB_CLIENT_PORT%'''; $content = $content -replace 'REACT_APP_WEB_CLIENT_PROTOCOL=.*', 'REACT_APP_WEB_CLIENT_PROTOCOL=''%WEB_CLIENT_PROTOCOL%'''; $content = $content -replace 'REACT_APP_SMTP_HOST=.*', 'REACT_APP_SMTP_HOST=''%SMTP_HOST%'''; $content = $content -replace 'REACT_APP_SMTP_PORT=.*', 'REACT_APP_SMTP_PORT=''%SMTP_PORT%'''; $content = $content -replace 'REACT_APP_SMTP_EMAIL=.*', 'REACT_APP_SMTP_EMAIL=''%SMTP_EMAIL%'''; $content = $content -replace 'REACT_APP_APP_SERVER_HOST=.*', 'REACT_APP_APP_SERVER_HOST=''%APP_SERVER_HOST%'''; $content = $content -replace 'REACT_APP_APP_SERVER_PORT=.*', 'REACT_APP_APP_SERVER_PORT=''%APP_SERVER_PORT%'''; $content = $content -replace 'REACT_APP_APP_SERVER_PROTOCOL=.*', 'REACT_APP_APP_SERVER_PROTOCOL=''%APP_SERVER_PROTOCOL%'''; Set-Content $filePath $content"
+
 powershell -Command "$filePath = '%WEB_CLIENT_ENV_PATH%'; $content = Get-Content $filePath; $content = $content -replace 'PROTOCOL=.*', 'PROTOCOL=''%WEB_CLIENT_PROTOCOL%'''; $content = $content -replace 'HOST=.*', 'HOST=''%WEB_CLIENT_HOST%'''; $content = $content -replace 'PORT=.*', 'PORT=''%WEB_CLIENT_PORT%'''; Set-Content $filePath $content"
 
 REM Step 14: Copy config and configfiles directories
@@ -225,9 +223,8 @@ if exist "%config_file%" (
 
     REM Open and edit the 00_config.ini file using PowerShel
 
-	powershell -Command "$filePath = '%config_file%'; $content = Get-Content $filePath; $content = $content -replace 'Company=.*', 'Company=%company_folder%'; $content = $content -replace 'name=.*', 'name=%company_folder%'; Set-Content $filePath $content;"
-	powershell -Command "$filePath = '%config_file%'; $content = Get-Content $filePath; $content = $content -replace 'gcname=.*', 'gcname=G%company_folder%'; $content = $content -replace 'instances=.*', 'instances=%instances%'; Set-Content $filePath $content;"
-	
+	powershell -Command "$filePath = '%config_file%'; $content = Get-Content $filePath; $content = $content -replace 'Company=.*', 'Company=%company_folder%'; $content = $content -replace 'name=.*', 'name=%company_folder%'; $content = $content -replace 'gcname=.*', 'gcname=G%company_folder%'; $content = $content -replace 'instances=.*', 'instances=%instances%'; Set-Content $filePath $content"
+	REM powershell -Command "$filePath = '%config_file%'; $content = Get-Content $filePath; $ports = '%ports%'.Split(','); for ($i = 0; $i -lt $ports.Length; $i++) { $portPattern = \"^port$i=.*\"; $match = Select-String -Pattern $portPattern $filePath; if ($match) { $content = $content -replace \"port$i=.*\", \"port$i=$($ports[$i])\" } else { $content += \"`nport$i=$($ports[$i])\" } }; Set-Content $filePath $content"
 	powershell -Command "$filePath = '%config_file%'; $content = Get-Content $filePath; $ports = '%ports%'.Split(','); for ($i = 0; $i -lt $ports.Length; $i++) { $portPattern = \"^port$i=.*\"; $match = Select-String -Pattern $portPattern $filePath; if ($match) { $content = $content -replace \"port$i=.*\", \"port$i=$($ports[$i])\" } else { $content += \"port$i=$($ports[$i])\" } }; Set-Content $filePath $content"
 
     echo 00_config.ini file modified successfully.   >> "%LOG_FILE%"
@@ -242,13 +239,7 @@ if exist "%global_var_file%" (
     echo File global_variables.ini found. Modifying the file...   >> "%LOG_FILE%"
 
     REM Open and edit the global_variables.ini file using PowerShell
-	powershell -Command "$filePath = '%global_var_file%'; $content = Get-Content $filePath; $content = $content -replace 'COMPANY=.*', 'COMPANY=%company_folder%'; $content = $content -replace 'SOURCE_FILE=.*', 'SOURCE_FILE=%SOURCE_FILE%'; Set-Content $filePath $content;"
-	powershell -Command "$filePath = '%global_var_file%'; $content = Get-Content $filePath; $content = $content -replace 'SOURCE_MYINI_FILE=.*', 'SOURCE_MYINI_FILE=%SOURCE_MYINI_FILE%'; Set-Content $filePath $content;"
-	powershell -Command "$filePath = '%global_var_file%'; $content = Get-Content $filePath; $content = $content -replace 'MYSQL_BIN=.*', 'MYSQL_BIN=%MYSQL_BIN%'; $content = $content -replace 'BASE_PATH=.*', 'BASE_PATH=%BASE_PATH%'; Set-Content $filePath $content;"
-
-
-	
-
+    powershell -Command "$filePath = '%global_var_file%'; $content = Get-Content $filePath; $content = $content -replace 'COMPANY=.*', 'COMPANY=%company_folder%'; $content = $content -replace 'SOURCE_FILE=.*', 'SOURCE_FILE=%SOURCE_FILE%'; $content = $content -replace 'MYSQL_BIN=.*', 'MYSQL_BIN=%MYSQL_BIN%'; $content = $content -replace 'BASE_PATH=.*', 'BASE_PATH=%BASE_PATH%'; Set-Content $filePath $content"
 
     echo global_variables.ini file modified successfully.    >> "%LOG_FILE%"
 ) else (
