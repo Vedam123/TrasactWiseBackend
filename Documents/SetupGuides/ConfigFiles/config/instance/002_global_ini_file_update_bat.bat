@@ -12,16 +12,15 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-REM If Python is installed, run the update script
-echo Python is installed. Running the update script...
-python "%~dp002_copy_update_instance_myini_file.py"
+REM If Python is installed, run the create.py script
+echo Python is installed. Running create_scehmas_py script...
+python "%~dp0002_global_ini_file_update.py"
 
 REM Check if the script executed successfully
 if %ERRORLEVEL% NEQ 0 (
-    echo Error: The update_myini.py script encountered an issue during execution.
+    echo Error: create_scehmas_py encountered an issue during execution.
     pause
     exit /b 1
 )
 
 echo Script completed successfully.
-pause

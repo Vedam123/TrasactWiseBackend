@@ -86,11 +86,12 @@ config.read(config_file)
 ports = [config['MySQL'].get(f'port{i}') for i in range(INST_DIR_COUNT)]
 
 # 11. Update my.ini in each subdirectory of DB_INST_DIR
+# Update the my.ini file for each instance
 for i in range(INST_DIR_COUNT):
     instance_dir = os.path.join(DB_INST_DIR, f'instance{i}')
     my_ini_file = os.path.join(instance_dir, 'my.ini')
+    
     if os.path.isfile(my_ini_file):
-        # Update the my.ini file for each instance
         with open(my_ini_file, 'r') as file:
             lines = file.readlines()
 
@@ -101,23 +102,23 @@ for i in range(INST_DIR_COUNT):
         # Update port, mysqlx_port, datadir, secure-file-priv, general_log_file, log-error
         new_lines = []
         for line in lines:
-            # Update port
-            if 'port=' in line:
+            # Update port (only update 'port' line)
+            if line.strip().startswith('port='):
                 new_lines.append(f"port={ports[i]}\n")
-            # Update mysqlx_port
-            elif 'mysqlx_port=' in line:
-                new_lines.append(f"mysqlx_port={int(ports[i])}0\n")  # Append 0 to the port value
+            # Update mysqlx_port (ensure it gets a separate treatment)
+            elif line.strip().startswith('mysqlx_port='):
+                new_lines.append(f"mysqlx_port={int(ports[i])}0\n")  # Append '0' to the port value for mysqlx_port
             # Update datadir
-            elif 'datadir=' in line:
+            elif line.strip().startswith('datadir='):
                 new_lines.append(f"datadir={BASE_PATH}/{GREAT_GRAND_PAR_DIR_NAME}/{GRAND_PAR_DIR_NAME}/{DB_INST_DIR_NAME}/{CURR_INST_DIR_NAME}/data\n")
             # Update secure-file-priv
-            elif 'secure-file-priv=' in line:
+            elif line.strip().startswith('secure-file-priv='):
                 new_lines.append(f"secure-file-priv={BASE_PATH}/{GREAT_GRAND_PAR_DIR_NAME}/{GRAND_PAR_DIR_NAME}/{DB_INST_DIR_NAME}/{CURR_INST_DIR_NAME}/Uploads\n")
             # Update general_log_file
-            elif 'general_log_file=' in line:
+            elif line.strip().startswith('general_log_file='):
                 new_lines.append(f"general_log_file={CURR_INST_DIR_NAME}.log\n")
             # Update log-error
-            elif 'log-error=' in line:
+            elif line.strip().startswith('log-error='):
                 new_lines.append(f"log-error={CURR_INST_DIR_NAME}.err\n")
             else:
                 new_lines.append(line)
@@ -132,3 +133,4 @@ for i in range(INST_DIR_COUNT):
         print(f"Updated my.ini in {instance_dir}")
     else:
         print(f"my.ini not found in {instance_dir}")
+

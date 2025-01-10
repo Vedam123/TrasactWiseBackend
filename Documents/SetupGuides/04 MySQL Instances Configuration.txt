@@ -54,37 +54,13 @@ Update my.ini file
 	
 The above activates are partly automated , so follow the instructions below 
 
-1.	Create the instance directories (for the number of instances you need):
-		a. MANUALLY create instance directories 
-			OR
-		b. (ALTERNATIVELY ) RUNTHE BATCH FILE :01create_instance_folders.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance
-			
-		RESULT : If you execute a OR b steps the end results would be 
-			C:\SAS Opera\Companies\Company_1\system\db_instances\instance0
-			C:\SAS Opera\Companies\Company_1\system\db_instances\instance1
-			C:\SAS Opera\Companies\Company_1\system\db_instances\instance2
-			C:\SAS Opera\Companies\Company_1\system\db_instances\instance3
-			Additionally, it will create the following subdirectories within each instance:
-			data,logs,uploads
-			
-2. Create / Update global_variables.ini file 
-	Note : Before executing this , please check if this file is already created and updated with latest info
-	a.	MANUALLY CREATE : The file need to be created or updated in the folder
-			C:\SAS Opera\Companies\Company_0\system\config\instance\cnf	
-		
-		RESULT : The file global_variables.ini contains the details as below  	
-			[Global]
-			COMPANY=Company_0
-			SOURCE_FILE=C:\ProgramData\MySQL\MySQL Server 8.0\my.ini
-			MYSQL_BIN=C:\Program Files\MySQL\MySQL Server 8.0\bin
-			BASE_PATH=C:\SAS Opera\Companies
-			
-			Make sure to update the BASE_PATH and other values according to your environment.
-		
-3. Create / Update 00_config.ini file
+
+1. Create / Update 00_config.ini file
 	Note : Before executing this , please check if this file is already created and updated with latest info
 	a.	MANUALLY CREATE : The file need to be created or updated in the folder
 			C:\SAS Opera\Companies\Company_0\system\config\instance\cnf
+	b. (ALTERNATIVELY ) RUNTHE BATCH FILE :001_00config_ini_file_update.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance
+		which will run 001_00config_ini_file_update.py file to update 00_config.ini file from config.ini file.	
 		
 		RESULT : The file 00_config.ini contains the details as below in case of Company_0	
 			[MySQL]
@@ -100,65 +76,113 @@ The above activates are partly automated , so follow the instructions below
 			port3=33130
 
 		Note that port0 represents the port for instance0, port1 for instance1, and so on. These ports are associated 
-		with the corresponding my.ini files			
+		with the corresponding my.ini files also it would create instancesFolder section with list of instances.
+
+2. Create / Update global_variables.ini file 
+	Note : Before executing this , please check if this file is already created and updated with latest info
+	a.	MANUALLY CREATE : The file need to be created or updated in the folder
+			C:\SAS Opera\Companies\Company_0\system\config\instance\cnf
+	b. (ALTERNATIVELY ) RUNTHE BATCH FILE :002_global_ini_file_update_bat.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance
+		which will run 002_global_ini_file_update.py file to update global_variables.ini file from config.ini file.	
+		
+		RESULT : The file global_variables.ini contains the details as below  	
+			[Global]
+			COMPANY=Company_0
+			SOURCE_FILE=C:\ProgramData\MySQL\MySQL Server 8.0\my.ini
+			MYSQL_BIN=C:\Program Files\MySQL\MySQL Server 8.0\bin
+			BASE_PATH=C:\SAS Opera\Companies
 			
-4. Copy my.ini file to the instances
+			Make sure to update the BASE_PATH and other values according to your environment.
+
+3.	Create the instance directories (for the number of instances you need):
+		a. MANUALLY create instance directories 
+			OR
+		b. (ALTERNATIVELY ) RUNTHE BATCH FILE :003_create_instance_folders.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance
+			
+		RESULT : If you execute a OR b steps the end results would be 
+			C:\SAS Opera\Companies\Company_1\system\db_instances\instance0
+			C:\SAS Opera\Companies\Company_1\system\db_instances\instance1
+			C:\SAS Opera\Companies\Company_1\system\db_instances\instance2
+			C:\SAS Opera\Companies\Company_1\system\db_instances\instance3
+			Additionally, it will create the following subdirectories within each instance:
+			data,logs,uploads	
+			
+4. Copy & update my.ini file to the instances
 		a.  MANUALLY  copy the my.ini file from the MySQL installation directory:
 				From : C:\ProgramData\MySQL\MySQL Server 8.0
 				To : C:\SAS Opera\Companies\Company_1\system\db_instances\instance1
 			OR
-		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :02_copy_myini_file from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
+		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :004_copy_update_instance_myini_file_bat  from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
+			which will inturn call the python file 004_copy_update_instance_myini_file to copy and update file 
 		
 		RESULT : If you execute a OR b steps the end results would be 
-			There wilbe my.ini file in the folder C:\SAS Opera\Companies\Company_1\system\db_instances\instance1			
-
-5. Modify the my.ini file 
-		The my.ini file is located in the directory C:\SAS Opera\Companies\Company_1\system\db_instances\instance1
+			There wilbe my.ini file in the folder C:\SAS Opera\Companies\Company_1\system\db_instances\instance1
 		
-		a.  MANUALLY  Update my.ini file, with the latest port number and data directory related to that particular instance
-			OR
-		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :03_change_myini_manually.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
-			Note : this batch script is not fully working , in future this need to be fixed , check manually and make changes.
+		Note : you have the instructions how to update manually the my.ini file in the file 06_Instructions_to_Change_myini_file_Manually in the directory path 
+			C:\SAS Opera\Companies\Company_0\system\application\AppService\Documents\SetupGuides (for example)
 		
-		RESULT : The my.ini file in the location C:\SAS Opera\Companies\Company_1\system\db_instances\instance1 has updated information 		
-		
-6. Initialize data folder for an instance 
+5. Initialize data folder for an instance 
 		
 		a.  MANUALLY  run the command in command prompt mysqld --initialize --datadir=C:\SAS Opera\Companies\Company_1\system\db_instances\instance1
 			OR
-		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :04_initialize_data_folder.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
+		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :005_initialize_data_folder.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
 		
 		RESULT : A data folder will be created or updated within the corresponding instance folder, located at:C:\SAS Opera\Companies\Company_0\system\db_instances\instance0
 		Note: The root password can be found in the err file located in the data directory:C:\SAS Opera\Companies\Company_0\system\db_instances\instance0\data
 		
-7. Get Root password of an instance 
+6. Get Root password of an instance 
 
 		a. MANUALLY Open the data folder and find err file of an instance for example C:\SAS Opera\Companies\Company_0\system\db_instances\instance0\data
 				there is a an error file with the hostname.err file (DELPHI-K.err) 
 				find text similar to this and find the root password A temporary password is generated for root@localhost: :bfXda>*=9jk
 			OR
-		b. (ALTERNATIVELY ) RUNTHE BATCH FILE :05_get_mysql_root_pwd.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance , which will run	
-			python file 05_get_mysql_root_pwd.py . Once after successfully executed it will create a file root_password.txt in the folder C:\SAS Opera\Companies\Company_0\system\db_instances\instance0 
+		b. (ALTERNATIVELY ) RUNTHE BATCH FILE :006_get_mysql_root_pwd.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance , which will run	
+			python file 006_get_mysql_root_pwd.py . Once after successfully executed it will create a file root_password.txt in the folder C:\SAS Opera\Companies\Company_0\system\db_instances\instance0 
 		
 		RESULT : The root password can be found in the err file or in the root_password.txt file
 
-8.	Create Services (Note this script needs Admin preveliges for command prompt so please note this )
+7.	Create Services (Note this script needs Admin preveliges for command prompt so please note this )
 
 		a.  MANUALLY to create a service run the command  mysqld --install COMPANY0_instance1 --defaults-file=C:\SAS Opera\Companies\Company_1\system\db_instances\instance1\my.ini
 			OR
-		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :06_create_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
+		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :007_create_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
 		
 		RESULT : In windows services you can find there will be a service COMPANY0_instance1  successfully created 
 
-9. 	START Service 
+8. 	START Service 
 
 		a.  MANUALLY to start the service run the command net start COMPANY0_instance1
 			OR
-		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :07_start_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
+		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :008_start_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
 		
-		RESULT : Open the services window and see if  COMPANY0_instance1  successfully running 
+		RESULT : Open the services window and see if  COMPANY0_instance1  successfully running
+		
+9. Update ConstDecl.js file in WebClient Project
 
-10. Create new user and change root password
+		a. MANUALLY update the ENV_INSTANCES const in the ConstDecl.js file which is located in the directory path application\WebClient\src\modules\admin\setups
+			OR
+		b. (ALTERNATIVELY ) RUNTHE BATCH FILE :009_update_const_decl_js_file.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance , which will run	
+			python file 009_update_const_decl_js_file.py to update hte ENV_INSTANCES  
+			
+		RESULT : The ENV_INSTANCES constant is updated to ConstDecl.js
+		
+10. Update configpy file in AppService 
+
+		a. MANUALLY update config.py file which is in the directory path C:\SAS Opera\Companies\Company_0\system\application\AppService
+		b. (ALTERNATIVELY ) RUNTHE BATCH FILE :010_configpy_file_update.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance , which will run	
+			python file 010_configpy_file_update.py the configpy file 
+			
+		RESULT : The config.py file will get updated with the following details like APP_SERVER_HOST, APP_SERVER_PORT, APP_SERVER_PROTOCOL etc values from config.ini file
+
+11. Update .env file  file in WebClient  
+
+		a. MANUALLY update .env file which is in the directory path C:\SAS Opera\Companies\Company_0\system\application\WebClient
+		b. (ALTERNATIVELY ) RUNTHE BATCH FILE :010_configpy_file_update.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance , which will run	
+			python file 010_configpy_file_update.py the configpy file 
+			
+		RESULT : The .env file will get updated with the following details like HOST, PORT, PROTOCOL etc values from config.ini file
+		
+12. Create new user and change root password
 		a. Now, connect to MySQL using the root password that you got in Step 4 
 			For instance1, run the following command:mysql -u root -p -P 3312
 				ALTER USER 'root'@'localhost' IDENTIFIED BY 'welcome';
@@ -168,7 +192,7 @@ The above activates are partly automated , so follow the instructions below
 				ALTER USER 'root'@'localhost' IDENTIFIED BY 'welcome';
 				CREATE USER 'vedamc1in1'@'localhost' IDENTIFIED BY 'welcome';
 				GRANT ALL PRIVILEGES ON *.* TO 'vedamc1in1'@'localhost' WITH GRANT OPTION;
-11. Create / update .instance.cnf file 
+13. Create / update .instance.cnf file 
 	a.	Create the .instance.cnf file in the corresponding folder. For example, for instance1, the path will be:
 		C:\SAS Opera\Companies\Company_0\system\db_instances\instance1
 		The file should contain the following details:
@@ -176,38 +200,25 @@ The above activates are partly automated , so follow the instructions below
 		user=vedamc0in1
 		password=welcome
 		host=localhost
-		port=3312
-		
-12. Update ConstDecl.js file in WebClient Project
-
-		a. MANUALLY update the ENV_INSTANCES const in the ConstDecl.js file which is located in the directory path application\WebClient\src\modules\admin\setups
-			OR
-		b. (ALTERNATIVELY ) RUNTHE BATCH FILE :10_update_const_decl_js_file.bat in  cd C:\SAS Opera\Companies\Company_0\system\config\instance , which will run	
-			python file 10_update_const_decl_js_file.py to update hte ENV_INSTANCES  
-			
-		RESULT : The ENV_INSTANCES constant is updated to ConstDecl.js
-		
-
-
-		
+		port=3312		
 Optionally 
-13. STOP services:
+14. STOP services:
 
 		a.  MANUALLY to stop a running service, use the following command: net stop COMPANY0_instance1
 			OR
-		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :08_stop_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
+		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :014_stop_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
 		
 		RESULT : Open the services window and see if  COMPANY0_instance1  successfully stopped 
 
-14. REMOVE services: ( Need Admini previlages to run this script)
+15. REMOVE services: ( Need Admini previlages to run this script)
 
 		a.  MANUALLY to remove the service, use the following command:mysqld --remove COMPANY0_instance1
 			OR
-		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :09_Remove_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
+		b.	(ALTERNATIVELY ) RUNTHE BATCH FILE :015_Remove_services.bat from the folder C:\SAS Opera\Companies\Company_0\system\config\instance
 		
 		RESULT : Open the services window and see if  COMPANY0_instance1  successfully removed 
 		
-15. FINALLY : Create a shortcut to the file 00_application_start.bat:
+15. FINALLY : Create a shortcut to the file 999_application_start.bat:
 	a.	The file is located in the following path:
 		C:\SAS Opera\Companies\Company_0\system\config\instance
 		Keep the short_cut file name Company_0_application_start.bat

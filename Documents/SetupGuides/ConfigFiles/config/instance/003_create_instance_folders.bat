@@ -1,4 +1,4 @@
-@echo off
+@echo off 
 REM This batch script creates the necessary instance folders under the dynamic root directory.
 REM It grants full permissions to all users and assumes that the batch file is placed in the correct location.
 
@@ -10,7 +10,7 @@ set BATCH_DIR=%~dp0
 echo Batch Directory : %BATCH_DIR%
 
 REM Set the root directory where instances will be created based on the batch file location
-set GRANDPARENT_DIR=%BATCH_DIR%..\..\
+set GRANDPARENT_DIR=%BATCH_DIR%..\..
 echo Grand Parent Directory : %GRANDPARENT_DIR%
 
 set ROOT_DIR=%BATCH_DIR%..\..\db_instances
@@ -18,7 +18,7 @@ echo Root Directory : %ROOT_DIR%
 
 REM Define the INI configuration file path based on the batch file location
 set INI_FILE=%BATCH_DIR%cnf\00_config.ini
-echo Ini file  Directory : %INI_FILE%
+echo Ini file Directory : %INI_FILE%
 
 REM Check if the instances directory exists. If not, create it.
 if not exist "%ROOT_DIR%" (
@@ -32,8 +32,9 @@ if not exist "%ROOT_DIR%" (
 REM Read the instances value from the INI file
 for /f "tokens=1,2 delims==" %%A in ('findstr /i "instances" "%INI_FILE%"') do set "instances=%%B"
 
-REM Remove any spaces or quotes from the input
+REM Remove any spaces or quotes from the input (robust cleaning)
 set instances=%instances:"=%
+set instances=%instances: =%
 
 REM Debug: Print the values of instances
 echo Debug: instances=%instances%
@@ -46,26 +47,19 @@ if !errorlevel! neq 0 (
     exit /b
 )
 
-REM Create two empty lines before appending the [InstanceFolders] section
-echo. >> "%INI_FILE%"
-
-REM Check if the [InstanceFolders] section exists. If not, append it.
-findstr /i "InstanceFolders" "%INI_FILE%" >nul
-if %errorlevel% neq 0 (
-    echo [InstanceFolders] >> "%INI_FILE%"
-    echo Added [InstanceFolders] section to the INI file.
-)
-
 REM Loop through the instances and create the required subfolders
 for /L %%i in (0,1,%instances%) do (
     REM Check if the instance folder already exists in the INI file
     findstr /i "INSTANCE%%i=" "%INI_FILE%" >nul
-    if %errorlevel% neq 0 (
+    echo Inside the for loop
+    if %errorlevel%==0 (
         REM Define folder structure for each instance
         set INSTANCE_DIR=%ROOT_DIR%\instance%%i
         set DATA_DIR=!INSTANCE_DIR!\data
         set LOGS_DIR=!INSTANCE_DIR!\logs
         set UPLOADS_DIR=!INSTANCE_DIR!\uploads
+        
+        echo Instance directory %INSTANCE_DIR%
 
         REM Create the instance folder and subfolders
         echo Creating folder structure for instance %%i...
@@ -79,8 +73,6 @@ for /L %%i in (0,1,%instances%) do (
         REM Check if the folders are created successfully
         if exist "!INSTANCE_DIR!" (
             echo Instance folder created: !INSTANCE_DIR!
-            REM Append the instance name to the INI file in the format INSTANCEi=instancei
-            echo INSTANCE%%i=instance%%i >> "%INI_FILE%"
         ) else (
             echo Failed to create instance folder: !INSTANCE_DIR!
         )
