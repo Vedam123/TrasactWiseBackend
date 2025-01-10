@@ -40,7 +40,7 @@ def update_config_file():
     config.read(CONFIG_INI_DIR)
 
     # Step 3: Extract necessary values from config.ini
-    company_folder = config.get('Global', 'Company_folder')
+    company_folder = config.get('Global', 'company_folder')
     instances = int(config.get('database', 'instances'))
     ports = config.get('database', 'ports').split(',')
 

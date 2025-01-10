@@ -38,7 +38,7 @@ def update_global_variables_file():
     config.read(CONFIG_INI_DIR)
 
     # Step 5: Extract the required values from config.ini
-    company_folder = config.get('Global', 'Company_folder')
+    company_folder = config.get('Global', 'company_folder')
     source_file = config.get('Global', 'SOURCE_FILE')
     source_myini_file = config.get('Global', 'SOURCE_MYINI_FILE')
     mysql_bin = config.get('Global', 'MYSQL_BIN')
