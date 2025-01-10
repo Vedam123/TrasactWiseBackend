@@ -116,4 +116,3 @@ for /L %%i in (0,1,%instances%) do (
 
 echo.
 echo All operations have been processed.
-pause

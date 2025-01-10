@@ -115,4 +115,3 @@ for /L %%i in (0,1,%instances%) do (
 
 echo.
 echo All folders and permissions have been successfully created for %instances% instances.
-pause

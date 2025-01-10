@@ -24,4 +24,3 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo Script completed successfully.
-pause

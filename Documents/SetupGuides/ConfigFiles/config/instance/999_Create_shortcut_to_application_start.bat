@@ -34,4 +34,3 @@ cscript //nologo "%TEMP%\create_shortcut.vbs"
 del "%TEMP%\create_shortcut.vbs"
 
 echo Shortcut created successfully on the Desktop.
-pause
