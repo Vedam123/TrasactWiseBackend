@@ -13,12 +13,12 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 REM If Python is installed, run the create.py script
-echo Python is installed. Running create_scehmas_py script...
+echo Python is installed. Running 001_00config_ini_file_update script...
 python "%~dp0001_00config_ini_file_update.py"
 
 REM Check if the script executed successfully
 if %ERRORLEVEL% NEQ 0 (
-    echo Error: create_scehmas_py encountered an issue during execution.
+    echo Error: 001_00config_ini_file_update encountered an issue during execution.
     pause
     exit /b 1
 )

@@ -42,6 +42,8 @@ def update_config_file():
     # Step 3: Extract necessary values from config.ini
     company_folder = config.get('Global', 'company_folder')
     instances = int(config.get('database', 'instances'))
+    DB_SERVER_HOST = config.get('database', 'DB_SERVER_HOST')
+    DB_SERVER_HOST_IP = config.get('database', 'DB_SERVER_HOST_IP')
     ports = config.get('database', 'ports').split(',')
 
     # Ensure the number of ports matches the number of instances + 1
@@ -57,8 +59,11 @@ def update_config_file():
     target_content.append(f"Company={company_folder}")
     target_content.append(f"gcname=G{company_folder}")
     target_content.append(f"name={company_folder}")
+    target_content.append(f"DB_SERVER_HOST={DB_SERVER_HOST}")
+    target_content.append(f"DB_SERVER_HOST_IP={DB_SERVER_HOST_IP}")
     target_content.append(f"instances={instances}")
     target_content.append("base_port=3306")  # Static value for base_port
+
 
     # Add a line space after the MySQL section
     target_content.append("")
