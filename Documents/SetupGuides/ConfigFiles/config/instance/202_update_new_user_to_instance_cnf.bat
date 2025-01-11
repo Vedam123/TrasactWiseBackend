@@ -39,7 +39,7 @@ set VENV_DIR=%VIRENV%
 echo VENV_DIR: %VENV_DIR%
 
 :: Set the Python script file name
-SET PYTHON_FILE=016_update_new_user_to_instance_cnf.py
+SET PYTHON_FILE=202_update_new_user_to_instance_cnf.py
 
 :: Check if the Python file exists in the current directory
 IF EXIST "%PYTHON_FILE%" (
