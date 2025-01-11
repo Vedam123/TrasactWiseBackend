@@ -61,13 +61,17 @@ for instance_folder in os.listdir(DB_INST_DIR):
 
             # 9. Read the root password from the root_password.ini file (without section)
             with open(ROOT_PWD_FILE_NAME, 'r') as f:
-                R_PWD = f.readline().strip()  # Read the password line and remove any leading/trailing spaces
+                for line in f:
+                    # Strip leading/trailing spaces and check if line starts with 'password='
+                    if line.startswith('password='):
+                        R_PWD = line.split('=')[1].strip()  # Extract password after '=' and strip spaces
 
-            print("Root password from the .ini file ", R_PWD)
+            print("Root password from the .ini file: ", R_PWD)
+
             
             # Set root user and user password
             R_USER = 'root'
-            N_ROOT_PWD = 'trdwelcome'  # New root password
+
             USER_PWD = f"inst{instance_folder[-1]}welcome"  # Generate the user password (inst0welcome for instance0)
 
             connection = None
@@ -90,85 +94,27 @@ for instance_folder in os.listdir(DB_INST_DIR):
                     cursor = connection.cursor()
 
                     # Create SQL queries
-                    alter_root_user_query = f"ALTER USER 'root'@'{N_HOST}' IDENTIFIED BY '{N_ROOT_PWD}';"
                     create_user_query = f"CREATE USER '{N_USER}'@'{N_HOST}' IDENTIFIED BY '{USER_PWD}';"
                     grant_privileges_query = f"GRANT ALL PRIVILEGES ON *.* TO '{N_USER}'@'{N_HOST}' WITH GRANT OPTION;"
 
-                    # Execute the queries
-                    cursor.execute(alter_root_user_query)
+                    cursor.execute(create_user_query)
+                    cursor.execute(grant_privileges_query)
                     connection.commit()
-                    print(f"Root password updated successfully.")
-
-                    # 10. Reconnect to MySQL with the new root password
-                    connection.close()  # Close the previous connection
-
-                    # Reconnect with the updated root password
-                    connection = mysql.connector.connect(
-                        host=N_HOST,
-                        user=R_USER,
-                        password=N_ROOT_PWD,
-                        port=N_PORT
-                    )
-
-                    if connection.is_connected():
-                        cursor = connection.cursor()
-
-                        # Execute the queries again to create the new user and grant privileges
-                        cursor.execute(create_user_query)
-                        cursor.execute(grant_privileges_query)
-                        connection.commit()
-
-                        print(f"User '{N_USER}' created and privileges granted successfully.")
-
             except mysql.connector.Error as e:
-                # Check if the error is for expired password
-                if e.errno == 1862:  # Error code for expired password
-                    print("Password expired, attempting to reset it.")
-                    try:
-                        # Reconnect to MySQL server using the expired password to change it
-                        connection = mysql.connector.connect(
-                            host=N_HOST,
-                            user=R_USER,
-                            password=R_PWD,
-                            port=N_PORT
-                        )
-                        cursor = connection.cursor()
-
-                        # Attempt to alter the root password to a new password
-                        alter_query = f"ALTER USER 'root'@'localhost' IDENTIFIED BY '{N_ROOT_PWD}';"
-                        cursor.execute(alter_query)
-                        connection.commit()
-                        print(f"Root password updated successfully.")
-
-                        # Now proceed with the rest of the operations (creating the new user, etc.)
-                        cursor.execute(create_user_query)
-                        cursor.execute(grant_privileges_query)
-                        connection.commit()
-
-                        print(f"User '{N_USER}' created and privileges granted successfully.")
-
-                    except mysql.connector.Error as alter_error:
-                        print(f"Failed to update root password: {alter_error}")
-                else:
-                    print(f"Error: {e}")
+                   print(f"My SQL connection error : {e}")
             finally:
                 if connection and connection.is_connected():
                     cursor.close()
                     connection.close()
 
-           # 11. Update the .instance.cnf file with the new password
+            # 11. Update the .instance.cnf file with the new password
             config.set('client', 'password', USER_PWD)
-
-            # Manually write the configuration back to the file without spaces around the equal sign
-            with open(INST_CONFIG_FILE_NAME, 'w') as configfile:
-                for section in config.sections():
-                    configfile.write(f"[{section}]\n")
-                    for option in config.options(section):
-                        # Write the option and value without space around '='
-                        configfile.write(f"{option}={config.get(section, option)}\n")
-
             print(f"Updated password for user '{N_USER}' in {INST_CONFIG_FILE_NAME}.")
 
+            # Save the updated configuration back to the file
+            with open(INST_CONFIG_FILE_NAME, 'w') as configfile:
+                config.write(configfile)
+                print(f"Changes saved to {INST_CONFIG_FILE_NAME}.")
 
         else:
             print(f"Required files not found for {instance_folder}. Skipping...")
