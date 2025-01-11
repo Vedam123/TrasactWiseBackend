@@ -21,5 +21,3 @@ REM Run the Python script
 echo Running the Python script...
 python "%CURR_DIR%013_instance_file_to_instances.py"
 
-REM Pause to view the result
-pause

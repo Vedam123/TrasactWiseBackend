@@ -21,5 +21,3 @@ if %errorlevel% neq 0 (
     echo The Python script executed successfully.
 )
 
-REM Pause the command prompt to see any output
-pause
