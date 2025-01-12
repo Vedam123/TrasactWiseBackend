@@ -29,7 +29,8 @@ def create_employee_data():
         else:
             data = request.form
         
-        required_fields = ['name', 'manager_id', 'supervisor_id', 'designation_id', 'dob', 'doj']
+        #required_fields = ['name', 'manager_id', 'supervisor_id', 'designation_id', 'dob', 'doj']
+        required_fields = ['name',  'designation_id', 'dob', 'doj']
         if not all(field in data for field in required_fields):
             return jsonify({'error': 'Missing required fields'}), 400
 
@@ -44,14 +45,32 @@ def create_employee_data():
         print("Data reached to backend", data)
 
         name = data['name']
-        manager_id = data['manager_id']
-        supervisor_id = data['supervisor_id']
+        # Extract fields from request data
+        manager_id = data.get('manager_id', None)
+
+        # If manager_id is an empty string, set it to None
+        if manager_id == '':
+            manager_id = None
+
+        supervisor_id = data.get('supervisor_id', None)
+        if supervisor_id == '':
+            supervisor_id = None
         pic = request.files['pic'] if 'pic' in request.files else None
         pic_data = pic.read() if pic else None
-        salary = data.get('salary', 0)  # Default salary to 0 if empty
         designation_id = data['designation_id']
         dob = data['dob']
         doj = data['doj']
+
+        salary = data.get('salary', None)
+
+        # If salary is an empty string or invalid, set it to 0.0 (or None if your DB allows NULL)
+        if salary == '' or salary is None:
+            salary = 0.0
+        else:
+            try:
+                salary = float(salary)  # Convert salary to a float
+            except ValueError:
+                salary = 0.0  # Default to 0.0 if salary cannot be converted to float
 
         # Log parsed data
         logger.debug(f"{appuser} --> {__name__}: Parsed Employee name: {name}")
