@@ -95,5 +95,10 @@ def get_user_and_db_details(authorization_header):
         except Exception as e:
             logger.error(f"{appuser} --> {__name__}: Error fetching employee details for empid={empid}: {str(e)}")
             return company, instance, dbuser, mydb, appuser, appuserid, f"Error fetching employee details: {str(e)}"
-
+        
+    logger.debug(
+        f"{appuser} --> {__name__}: Error fetching employee details for empid={empid}. "
+        f"company={company}, instance={instance}, dbuser={dbuser}, mydb={mydb}, "
+        f"appuser={appuser}, appuserid={appuserid}, user_info={user_info}, employee_info={employee_info}. "
+    )
     return company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info
