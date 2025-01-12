@@ -1,0 +1,185 @@
+Master Data
+
+	Employee Creation 
+		Nav : Modules > Admin & Setup > Employee
+
+		1. Create Designations
+		2. Create Employee
+
+	User Creation and Grant access
+		Nav : Modules > User & Access 
+
+		1. Create New user
+		2. Grant Module access to user
+
+	Create UOMs
+		Nav : Modules > Common
+		
+		1. Create UOM ( Each, Dozen.. )
+		2. View UOMs
+
+	Create Currencies
+		Nav : Modules > Common
+		
+		1. Create Currencies
+		2. View Currencies
+		
+	Create Tax codes
+		Nav : Modules > Common
+		
+		1. Create Tax code 
+			(with some tax % Effective date, applicability)
+		2. View Tax codes
+		
+		For sales , purchase kind of taxes
+		
+	Create Default Tax Codes 
+		
+		Nav : Modules > Common
+		
+		1. Create Default Tax codes  & Link tax code
+		2. View Default Tax codes
+		
+		( Can be used later while setting up Companies)
+		
+	Create Exchange rates
+		Nav : Modules > Common
+		In general these rates are imported automatically
+		
+		1. Create Exchange Rates
+	
+	
+Create Business Partners
+
+	Create Suppliers and Customers	
+		Nav : Modules > Common
+		
+		1. Create Business partner
+			One supplier, One customer
+		2. List Business Partners
+		
+		
+Product category & Products 
+
+	Create Business Partners
+		Nav : Modules > Products
+		
+		1. Create Couple of Product Category 
+			f.ex , Wheels , Car Body, Car Interior
+			Fill some Tax Information as 10 (this needs to be removed later )
+		2. List Product categories
+		3. Create Products 
+			f. ex MRF tyres under Wheels category
+				CEAT tyres under Wheels category
+		4. List Products
+		
+Create BOM & Explode
+	Create Bill of Materials
+		Nav : Modules > Common
+		
+		1. Create a Bill Of Materials
+		2. View Bill Of Materials
+		3. Explode Bill of Materials
+
+		
+Legal Entity and Companies
+
+	Create Legal entity , group company and company
+
+		Nav : Modules > Common
+		
+		1. Create Legal entity
+		2. View Legal entity 
+		3. Create a Group Company
+		4. View Group companies
+		5. Create Company
+		6. View Group Companies
+		
+Accounts & Default Accounts
+
+	Create Accounts
+
+		Nav : Modules > Finanace
+		
+		1. Create Accounts (f.ex : sales, purchase )
+			Create couple of default accounts to use in next step
+		2. Create Default Accounts
+			Create default account header
+			Create default account lines 
+			
+Create Departments
+
+	Create Purchase and Sales Departments
+	
+		Nav : Modules > Common
+		
+		1. Create Department
+		2. View Departments
+		
+Inventory Master Data
+
+	Create Storage units
+		Nav : Modules > Inventory
+		1. Create Warehouses
+		2. Create Locations
+		3. Create Zones
+		4. Create Aisles
+		5. Create Rows
+		6. Create Racks
+		7. Create Bins
+		8. List Bins
+		
+Purchase Order Transactions
+
+	Create Purchase Order
+	
+		Nav : Modules > Purchase
+		
+		1. Create a Purchase Order (Keep PO in Draft status)
+			Create Purchase Order lines and save it.
+		2. View Purchase Order (Note the number )
+		3. Modify the Purchase Order and Approve it
+		4. View the Purchase Orders	 
+
+		
+Purchase Order Receipts & Put Away
+	
+		Nav : Modules > Inventory
+	
+		1. Create a Purchase Receipt
+			to receive the mateiral to a location
+		2. View Receipts
+		3. Put Away 
+			put away the material to an inventory storage
+		4. Search Inventory / View Inventory
+			To check where the material is stored
+			
+Purchase Order Receipts , Inspect & Put Away
+
+		Nav : Modules > Inventory
+
+
+		
+	
+		
+		
+		
+		
+	
+	
+		
+
+		
+			
+	
+	
+
+	
+	
+	
+
+
+		
+		
+	
+		
