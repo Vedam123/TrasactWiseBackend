@@ -3,8 +3,14 @@ erpenv/
 
 # Exclude log files
 *.log
-.git/
+
+# Exclude IDE configurations
 .vscode/
 .VSCodeCounter/
+
+# Exclude Python bytecode and cache files
 __pycache__/
 *.pyc
+
+# Exclude sensitive or environment-specific files
+config.py
