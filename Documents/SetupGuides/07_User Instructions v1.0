@@ -146,7 +146,7 @@ Purchase Order Receipts & Put Away
 	
 		Nav : Modules > Inventory
 	
-		1. Create a Purchase Receipt
+		1. Create a Purchase Receipt  ( Select Received Status)
 			to receive the mateiral to a location
 		2. View Receipts
 		3. Put Away 
@@ -156,7 +156,45 @@ Purchase Order Receipts & Put Away
 			
 Purchase Order Receipts , Inspect & Put Away
 
-		Nav : Modules > Inventory
+		Nav : Modules > Purchase, Modules>Inventory
+		
+		1. Create a Purchase Order 
+		2. Create a Purchase Receipt and select Inspection Status
+			to receive the mateiral to a location
+		3. View Receipts and see the Material is To Inspect status
+		4. Perform Inspection and accept some qty and reject some
+			Change the status to Inspected
+		5. View Inventory and you will not see the inspected material
+		6. View Inspections , now you can see how much accepted and rejected
+		7. Put Away (Select the Inspected Receipt )
+			Select an Inventory storage 
+		8. Search Inventory / View Inventory
+			To check where the material is stored
+			
+
+Purchase Invoice
+
+		Nav : Modules > Finanace
+		
+		1. Create Purchase Invoice
+			Purchase Invoice lines, Distribute accounts
+		2. View Purchase invoices
+		3. Approve the Purchase invoice (Update menu item )
+			Change the status to Approved
+
+Journal Creation
+
+		Nav : Modules > Finanace
+		1. Create Journal & Journal Lines (select New status)
+			Enter debit & Credit Accounts
+		2. View Journals (Get Journals)
+		3. Update the Journal status to approved
+		
+
+		
+			
+		
+		
 
 
 		

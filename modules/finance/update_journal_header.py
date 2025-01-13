@@ -42,6 +42,6 @@ def update_journal_header():
 
     logger.debug(f"{appuser} --> {__name__}: Received data: {data}")
 
-    response, status_code = update_journal_header_logic(data, context)
+    response, status_code = update_journal_header_logic(data, mydb, __name__, appuser, appuserid)
     
     return jsonify(response), status_code
