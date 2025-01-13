@@ -15,7 +15,7 @@ for %%i in ("%CURR_DIR%") do set "CURR_DIR_NAME=%%~nxi"
 
 :: Go up three levels to get the grandparent directory
 for %%i in ("%CURR_DIR%") do set "grandparent=%%~dpi"
-set "grandparent=%grandparent:~0,-1%"  :: Remove the trailing backslash
+set "grandparent=%grandparent:~0,-1%"  :: Remove the trailing m
 
 :: Go up one more level to reach the grandparent
 for %%i in ("%grandparent%") do set "grandparent=%%~dpi"
@@ -126,40 +126,115 @@ if not exist "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%projec
 )
 
 REM Step 11: Clone Git repositories using credentials from start.ini------------------------------------------------------
-echo Cloning Git repositories using credentials...  >> "%LOG_FILE%"
 
-set git_url_frontend=https://github.com/Vedam123/TransactWiseFrontend
-set git_url_backend=https://github.com/Vedam123/TrasactWiseBackend
+set "web_root_dir=%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%web_root%"
+set "app_root_dir=%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%app_root%"
 
-REM Step 12:  Using git user and password to clone repos
-echo Cloning the frontend repository into "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%web_root%"...   >> "%LOG_FILE%"
-if exist "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%web_root%\*" (
-    git clone https://vedamk%40gmail.com:Granada%40%2312345@github.com/Vedam123/TransactWiseFrontend "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%web_root%"
+echo Current Environment Type: !git_clone_type!
+
+if /i "!git_clone_type!"=="Environment" (
+    REM For Environment setup, clone and set remote URL to read-only for both frontend and backend repos
+    echo CLONE TYPE SYNC ONLY The cloning  with Login and Password  >> "%LOG_FILE%"
+
+	REM URL encode the Git username and password
+	set "encoded_git_user=!git_user!"
+	set "encoded_git_password=!git_password!"
+	set "encoded_git_user=!encoded_git_user:@=%40!"
+	set "encoded_git_password=!encoded_git_password:#=%23!"
+	set "encoded_git_password=!encoded_git_password:@=%40!"
+
+	REM Debugging output to verify encoding
+	echo Git user: !encoded_git_user!
+	echo Git password: !encoded_git_password!
+	
+	REM Extract the repository path from frontend_rep (e.g., "Vedam123/TransactWiseFrontend")
+	for /f "tokens=3* delims=/" %%a in ("%frontend_rep%") do set "frontend_repo_path=%%a/%%b"
+	
+	echo Front end repo path !frontend_repo_path!
+   
+    if exist "!web_root_dir!\*" (
+        echo Cloning the frontend repository into "!web_root_dir!"...   >> "%LOG_FILE%"
+        echo Frontend repository: https://github.com/!frontend_rep!  >> "%LOG_FILE%"
+		echo Entered in Web root directory if statement 
+		echo Git user git_user %git_user%
+		echo Git password git_user %git_password%
+		git clone https://"!encoded_git_user!":"!encoded_git_password!"@github.com/!frontend_repo_path! "!web_root_dir!"
+		REM Prevent pushing changes back to GitHub by setting the remote URL to read-only
+        echo Setting the frontend repository remote URL to read-only...   >> "%LOG_FILE%"
+        pushd "!web_root_dir!"
+        git remote set-url origin https://github.com/%frontend_repo_path%.git
+        popd
+        echo Frontend repository remote URL set to read-only.   >> "%LOG_FILE%"	
+		
+    ) else (
+        echo Web root directory not exists. Skipping frontend clone.  >> "%LOG_FILE%"
+    )
+
+    REM Clone the backend repo
+    echo Cloning the backend repository into "%app_root_dir%"...   >> "%LOG_FILE%"
+
+    REM Extract the repository path from backend_rep (e.g., "Vedam123/TrasactWiseBackend")
+    for /f "tokens=3* delims=/" %%a in ("%backend_rep%") do set "backend_repo_path=%%a/%%b"
+    echo Extracted backend repository path: !backend_repo_path!
+
+    if exist "%app_root_dir%\*" (
+        echo Cloning the backend repository into "%app_root_dir%"...   >> "%LOG_FILE%"
+        echo Backend repository: https://github.com/%backend_repo_path%  >> "%LOG_FILE%"
+
+		git clone https://"!encoded_git_user!":"!encoded_git_password!"@github.com/!backend_repo_path! "!app_root_dir!"
+        
+        REM Prevent pushing changes back to GitHub by setting the remote URL to read-only
+        echo Setting the backend repository remote URL to read-only...   >> "%LOG_FILE%"
+        pushd "%app_root_dir%"
+        git remote set-url origin https://github.com/%backend_repo_path%.git
+        popd
+        echo Backend repository remote URL set to read-only.   >> "%LOG_FILE%"
+    ) else (
+        echo App root directory not exists. Skipping backend clone.  >> "%LOG_FILE%"
+    )
 ) else (
-    echo There is no directory to clone web application from git. Skipping clone.   >> "%LOG_FILE%"
+    REM Default to Development clone logic (as in the original script)
+	echo CLONE TYPE PUSH AND SYNC  The cloning NON ENVIRONMENT is with without credentials >> "%LOG_FILE%"
+    echo Cloning repositories using default logic for Development...  >> "%LOG_FILE%"
+
+    REM Frontend clone (use frontend_rep variable)
+    echo Cloning the frontend repository into "%web_root_dir%"...   >> "%LOG_FILE%"
+    if exist "%web_root_dir%\*" (
+        echo Frontend repository: %frontend_rep% >> "%LOG_FILE%"
+	    git clone %frontend_rep% "%web_root_dir%"
+    ) else (
+        echo Web root directory does not exist. Skipping frontend clone. >> "%LOG_FILE%"
+    )
+
+    REM Backend clone (use backend_rep variable)
+    echo Cloning the backend repository into "%app_root_dir%"...   >> "%LOG_FILE%"
+    if exist "%app_root_dir%\*" (
+        echo Backend repository: %backend_rep%  >> "%LOG_FILE%"
+        git clone %backend_rep% "%app_root_dir%"
+    ) else (
+        echo App root directory does not exist. Skipping backend clone. >> "%LOG_FILE%"
+    )
 )
 
-echo Cloning the backend repository into "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%app_root%"...   >> "%LOG_FILE%"
-if exist "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%app_root%\*" (
-    git clone https://vedamk%40gmail.com:Granada%40%2312345@github.com/Vedam123/TrasactWiseBackend "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%app_root%"
-) else (
-    echo There is no directory to clone Backend application from git. Skipping clone.  >> "%LOG_FILE%"
-)
-
-REM Step 13: Ensure cloning is successful by checking the directories--------------------------------------
-if exist "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%web_root%\src" (
+if exist "%web_root_dir%\src" (
     echo Web root cloned successfully with the 'src' folder.   >> "%LOG_FILE%"
 ) else (
     echo Error: Web root or 'src' folder is missing.  >> "%LOG_FILE%"
     exit /b 1
 )
 
-if exist "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%app_root%\modules" (
+if exist "%app_root_dir%\modules" (
     echo App root cloned successfully.  >> "%LOG_FILE%"
 ) else (
     echo Error App root or 'modules' folder is missing.  >> "%LOG_FILE%"
     exit /b 1
 )
+
+
+REM Step 11: End of step 11 cloning repositorries------------------------------------------------------
+
+REM Continue with the rest of your script...
+
 
 REM ################################################################## block1 removed #####################################
 REM Step 14: Copy config and configfiles directories
