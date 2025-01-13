@@ -134,7 +134,7 @@ echo Current Environment Type: !git_clone_type!
 
 if /i "!git_clone_type!"=="Environment" (
     REM For Environment setup, clone and set remote URL to read-only for both frontend and backend repos
-    echo CLONE TYPE SYNC ONLY The cloning  with Login and Password  >> "%LOG_FILE%"
+    echo CLONE TYPE SYNC ONLY The cloning env  with Login and Password  >> "%LOG_FILE%"
 
 	REM URL encode the Git username and password
 	set "encoded_git_user=!git_user!"
