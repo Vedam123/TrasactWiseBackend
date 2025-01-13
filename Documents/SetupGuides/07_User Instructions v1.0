@@ -182,42 +182,23 @@ Purchase Invoice
 		3. Approve the Purchase invoice (Update menu item )
 			Change the status to Approved
 
-Journal Creation
+Journal Creation (Manual)
 
 		Nav : Modules > Finanace
 		1. Create Journal & Journal Lines (select New status)
 			Enter debit & Credit Accounts
 		2. View Journals (Get Journals)
 		3. Update the Journal status to approved
+		4. View Journals (Get Journals ) see if the Journal is approved
+		
+Journal Creation (Auto create PI Journal)
+
+		Nav : Modules > Finanace
+		1. Run Auto Create Journal 
+			Category (Purchase), Enter Purchase Invoice No
+		2. View Journal newly created (Get Journals)
 		
 
-		
-			
-		
-		
-
-
-		
-	
-		
-		
-		
-		
-	
-	
-		
-
-		
-			
-	
-	
-
-	
-	
-	
-
-
-		
 		
 	
 		

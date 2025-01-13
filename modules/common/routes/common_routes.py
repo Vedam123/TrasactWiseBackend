@@ -14,6 +14,8 @@ from modules.common.get_group_companies import get_group_companies
 from modules.common.create_group_company import create_group_company
 from modules.common.get_companies import get_companies
 from modules.common.create_company import create_company
+from modules.common.update_company import update_company
+from modules.common.update_department import update_department
 
 from modules.common.get_departments import get_departments
 from modules.common.create_department import create_department
@@ -225,6 +227,24 @@ def update_bom_all():
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}:  Create BOM update_bom")
     return update_bom()
+
+
+@put_common_module.route('/update_company', methods=['PUT'])
+def updated_company_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}:  update_company ")
+    return update_company()
+
+
+@put_common_module.route('/update_department', methods=['PUT'])
+def update_department_all():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}:  update_department ")
+    return update_department()
+
+
 # DELETE Methods ---------------------------------------------------------
 
 def register_common_module_routes(app):
