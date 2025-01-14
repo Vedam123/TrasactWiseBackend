@@ -44,7 +44,8 @@ def get_departments():
                    d.created_at, d.updated_at, d.created_by, d.updated_by,
                    c.name AS company_name, c.description AS company_description,
                    e.name AS manager_name,
-                   dah.header_name AS default_account_header_name
+                   dah.header_name AS default_account_header_name,
+                   d.default_account_header_id
             FROM com.department d
             JOIN com.company c ON d.company_id = c.id
             LEFT JOIN com.employee e ON d.manager_id = e.empid

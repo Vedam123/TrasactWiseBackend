@@ -98,7 +98,7 @@ def get_user_and_db_details(authorization_header):
         
     logger.debug(
         f"{appuser} --> {__name__}: Error fetching employee details for empid={empid}. "
-        f"company={company}, instance={instance}, dbuser={dbuser}, mydb={mydb}, "
-        f"appuser={appuser}, appuserid={appuserid}, user_info={user_info}, employee_info={employee_info}. "
+        f"company={company}, instance={instance}, dbuser={dbuser},"
+        f"appuser={appuser}, appuserid={appuserid}"
     )
     return company, instance, dbuser, mydb, appuser, appuserid, user_info, employee_info

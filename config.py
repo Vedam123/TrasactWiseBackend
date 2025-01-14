@@ -15,7 +15,7 @@ APPLICATION_CREDENTIALS = [
    #{"userid":"100-MAX value","username": "admin", "name":"SUPER USER1" ,"password": "$2b$12$gnuMPXgfBzU4HqpUwFEVBu71oTAPPZfgnW0GCi50R0rsxeleIN042"}   
     # Add more username-password pairs as needed the userids must be below 100. This count should match with the SUPER_USERS_COUNT in application
 ]
-BACKEND_ENVIRONMENT = "Production"  ## you can replace this with Test, Production based on the environment type
+BACKEND_ENVIRONMENT = "Development"  ## you can replace this with Test, Production based on the environment type
 ENABLE_DETAILED_LOGS = True
 # Specify the log file path
 LOG_FILE_PATH = "modules/utilities/logs/"
