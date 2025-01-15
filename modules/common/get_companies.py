@@ -56,7 +56,9 @@ def get_companies():
                 c.created_at,
                 c.updated_at,
                 c.created_by,
-                c.updated_by
+                c.updated_by,
+                c.default_tax_code_id,
+                c.default_account_header_id
             FROM com.company c
             JOIN com.group_company g ON c.group_company_id = g.id
             LEFT JOIN com.currency cu_local ON c.local_cur_id = cu_local.currency_id
