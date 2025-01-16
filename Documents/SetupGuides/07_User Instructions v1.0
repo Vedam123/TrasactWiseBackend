@@ -172,7 +172,8 @@ Purchase Order Receipts , Inspect & Put Away
 			To check where the material is stored
 			
 
-Purchase Invoice
+Purchase Invoice (Manual)
+		This can be used to create cost invoices for example
 
 		Nav : Modules > Finanace
 		
@@ -198,6 +199,186 @@ Journal Creation (Auto create PI Journal)
 			Category (Purchase), Enter Purchase Invoice No
 		2. View Journal newly created (Get Journals)
 		
+
+Purchase Invoice (PO)
+	This can be used to create invoice for Purchase Order
+	This Invoice will be created automatically based on PO
+	Some setups needs to be checked before creating the Invoice
+	
+	1. Ensure Default account headers are set in the Company
+		Nav :  Modules > Common > View Companies
+	2. Verify the Account types which are in default account headers matches to the CompanyConfig.js JSON for a company
+		WebClient Application Level Navigation (Nav : modules > finance > config > CompanyConfig.js)  
+			Improvement : In future a form will be created for this
+	
+	for example :
+		A. The PO : 200638898 96euros in the Company 3001 with VAT 6% for the item MRF(ITEM1001)
+		
+		Account Type				Debit (EUR)	Credit (EUR)	Account Category
+		Inventory/Purchases			90.57						Asset
+		Input VAT					5.43						Asset
+		Accounts Payable (Supplier 1)			48				Liability
+		Trade Creditors (Supplier 2)			48				Liability
+		Total						96			96
+		
+		If this is the way accounts should be posted for example , presuming 50% for two credit accounts 
+		
+		Create the following accounts in Module > Finance > Create Accounts
+		
+			Account					Account Type				Account Category		Default Account
+			INVPUR-15012539574 		Inventory					Asset					Yes
+			INVTAX-15012502362		Inventory Tax				Asset					Yes
+			accp-15012535190		Accounts Payable			Liability				Yes
+			ACPI-15012565830		Accounts Payable Internal	Liability				Yes
+			
+			Note : The Account Type must be unique while selecting default accounts as Yes
+			that means you can create two accounts as defult accounts with the same Account type
+			
+			Account					Account Type				Account Category		Default Account
+			INVPUR-15012539574 		Inventory					Asset					Yes
+			INVBUY-15012539574 		Inventory					Asset					Yes
+			
+			There should not be two accounts with the same account type with default flag as Yes under the same currency.
+			
+		B. Now the account setups are done as above Now go to create default account header and add all the above 4 accounts there
+			
+			Accounts for DEFALT HEADER : PURDEF
+
+			Invoice Number: PURDEF
+			Currency:
+			Account ID	Account Name	Account Number			Type						Balance
+			8015	accp-15012535190	3001-40002-15012535190	Accounts Payable			0.00
+			8020	ACPI-15012565830	3001-40002-15012565830	Accounts Payable Internal	0.00
+			8010	INVPUR-15012539574	3001-40002-15012539574	Inventory					0.00
+			8021	INVTAX-15012502362	3001-40002-15012502362	Inventory Tax				0.00
+			
+			While creating you would select the Company , so it is automatically add to the Company setups 
+				Nav : Common > Companies > View Companies
+				
+		C. Now update the CompanyConfig.js file with the account types you setup like in the A, B steps above 
+					
+			AUTO_PURCHASE_INVOICE_CONFIG: {
+				  invoice_status: "DRAFT",
+				  po_new_status: "INVOICED",
+				  po_order_status_filter: ["APPROVED", "Received"],
+				  payment_terms: "NET 20",
+				  account_types: {
+					Credit: [
+					  {
+						account_type: "Accounts Payable",
+						category: "Normal",
+						distribution_percentage: 50,
+					  },
+					  {
+						account_type: "Accounts Payable Internal",
+						category: "Normal",
+						distribution_percentage: 50,
+					  },
+					],
+					Debit: [
+					  {
+						account_type: "Inventory",
+						category: "Normal",
+						distribution_percentage: 100,
+					  },
+					  {
+						account_type: "Inventory Tax",
+						category: "Tax",
+						tax_type: "VAT",
+						distribution_percentage: 50,
+					  }
+					],
+				  }
+				  
+		D. Check in the PO configuration what are the statues of POs that can be Auto configured 
+			Ensure the PO status can be auto invoiced in this setup : Nav : modules > purchase> config > config.js
+			export const PO_ORDER_STATUS = [
+				  { name: "Draft", short_name: "DRAFT", sequence: 10, toupdated: true },
+				  { name: "Pending Approval", short_name: "PENDING", sequence: 20, toupdated: true },
+				  { name: "Approved", short_name: "APPROVED", sequence: 30, toputaway: true, autoinvoice: true },
+				  { name: "Sent to Vendor", short_name: "SENT", sequence: 40, toinspect: true },
+				  { name: "Partial Receipt", short_name: "PARTIAL", sequence: 50, toputaway: true },
+				  { name: "Received", short_name: "Received", sequence: 60, putaway: true, autoinvoice: true },
+				  { name: "To Inspect", short_name: "TOINSPECT", sequence: 62, putaway: true },
+				  { name: "Inspected", short_name: "INSPECTED", sequence: 65, putaway: true },
+				  { name: "Invoiced", short_name: "INVOICED", sequence: 70, toputaway: true },
+				  { name: "Payment Processing", short_name: "PAYMENT", sequence: 80, putaway: true },
+				  { name: "Paid", short_name: "PAID", sequence: 90, putaway: true },
+				  { name: "Closed", short_name: "CLOSED", sequence: 100 }
+				];
+		D. Now Run Auto create invoice process
+			Nav : Modules > Finance > Purchase > Auto Create Invoice
+				Enter the PO No : 200312641  ( the PO is in Received status )
+				
+			Now the PO invoice for the PO  is created successfully with the below distribution_percentage
+			
+			Invoice Number: 2002
+			Invoice Amount: 96.00 EUR
+			Line No		Is Tax Line		Account					Category		Type						Debit (€)	Credit (€)
+			2001						3001-40002-15012535190	Liability		Accounts Payable			0.00		48.00
+			2002						3001-40002-15012565830	Liability		Accounts Payable Internal	0.00		48.00
+			2003		True			3001-40002-15012502362	Asset			Inventory Tax				5.76		0.00
+			2004						3001-40002-15012539574	Asset			Inventory					90.24		0.00
+
+			You can also check the PO 200638898 status is changed to INVOICED
+			
+Sales Order 
+	
+	Nav : Modules > Sales > Create Sales Order
+		1. Create a Sales Order in Draft status (e.g 200670430) 
+		2. Create Sales Order lines 
+		3. View Sales Order  ( e.g 200670430)
+		4. Open the Sales Order in Modifiy View , add or change quantity in the lines
+		5. Approve the Sales order
+		
+Perform Pick Release
+	Please check the Inventory is present in the storage entities for that item ordered in the sales order
+	Check the Sales order is in Approved status 
+	Nav : Moodules > Inventory > View Inventory 
+	
+	1. Search if the inventory is present in View Inventory or Search Inventory
+		Modules > Inventory > Search Inventory
+	2. Pick Release Inventory 
+		Modules > Inventory > Pick Release Inventory
+		Enter Sales Order No 200670430 and submit
+	If the inventory is availble you will get a message like 
+	Pick release completed with the response: Process completed Sales Order, Lines statuses are updated and available inventory allocated
+	3. Now check the Sales order if the status is changed or not 
+		Modules > Sales > View SOs   ( Status is changed to PICKED)
+		The status in item_inventory table would have been changed to Yes for that Picked inventory , meaning it will not be allocated to any other process further.
+		
+Create Sales Invoice (Manual) & Approve
+	Nav : Modules > Finance > Create New Invoice
+	
+	1. Create a Sales Invoice in Draft Status 
+	2. Create Sales Invoice lines 
+	3. Create Distributions
+	4. View Sales Invoices
+	5. Update the sales invoice (f.ex 1212063) to Approve after making changes if any
+		Nav : Modules > Finance > Modify SI
+		
+Create Journal for the Sales Invoice
+	
+	Nav : Modules > Finance > Auto Create Journal
+	
+	1. Auto create Journal enter the Sales Order number
+		Journal category : sales 
+	2. View Journals and notice it got created in Draft status
+	3. View Sales Invoice staus is changed to Journal Posted 1212063
+	
+Create Sales Invoice (Manual) & Approve
+
+	In this case while Modifying add and extra invoice lines
+	
+
+	
+		
+		
+		
+		
+		
+		
+
 
 		
 	
