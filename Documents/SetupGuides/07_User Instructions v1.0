@@ -366,9 +366,55 @@ Create Journal for the Sales Invoice
 	2. View Journals and notice it got created in Draft status
 	3. View Sales Invoice staus is changed to Journal Posted 1212063
 	
-Create Sales Invoice (Manual) & Approve
+Sales Invoice (SO)
 
-	In this case while Modifying add and extra invoice lines
+	Create a Sales Order 200481203, Approve it 523.00  apply saltax 14% inclusive 
+	
+	The sales invoice distribution is expected to be done like below 
+	
+	Account								Debit (€)	Credit (€)
+	Accounts Receivable (Customer 1)	366.10							70%
+	Accounts Receivable (Customer 2)	156.90							30%
+	Sales Revenue									458.77
+	Sales Tax Payable								64.23
+
+	Setups
+	
+	1. Ensure the following account types are present in the config.js (Nav : modules > finance > config > config.js
+	
+			Accounts Receivable		Asset					
+			Accounts Receivable Internal  Asset
+			Sales			Revenue
+			Sales Tax		Liability
+			
+			Both the account receivables should be posted with 70%, 30% of sales invoice
+	
+	2. Create default Accounts using above account types		 
+		
+		Create the following accounts in  Nav : Module > Finance > Create Accounts
+		
+			Account					Account Type						Account Category		Default Account
+			SALACCREC-16012568625	Accounts Receivable					Asset					Yes
+			SALACCRECIN-16012530633	Accounts Receivable	Internal		Asset					Yes		
+			SALREV-16012557354		Sales								Revenue					Yes
+			SALTAX-16012554877		Sales Tax							Liability				Yes
+			
+			Note : The Account Type must be unique while selecting default accounts as Yes
+			that means you can not create two accounts as defult accounts with the same Account type
+			that is the reason there are two account types created Accounts Receivable, Accounts Receivable	Internal
+			this limitation only for the default accounts creation because they will be linked with default account headers which inturn will be associated to Company
+			
+			Account					Account Type				Account Category		Default Account
+			INVPUR-15012539574 		Inventory					Asset					Yes
+			INVBUY-15012539574 		Inventory					Asset					Yes
+			
+			There should not be two accounts with the same account type with default flag as Yes under the same currency for example as above
+			
+	3. Add the Default accounts to the Default account header
+	3. 
+	
+	
+
 	
 
 	

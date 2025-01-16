@@ -25,7 +25,6 @@ def permission_required(access_type, calling_file_name):
                 logger.error(f"{appuser} --> {__name__}: Unauthorized access attempt with missing appuser --> {__name__}: Username not found in the request")
                 return jsonify({"error": "Unauthorized. Username not found."}), 401  
             
-            print("Entered permissions required function ")
             
             module = find_file_folder(calling_file_name)
             logger.debug(f"{appuser} --> {__name__}: The file {calling_file_name} is in the Module --> {module}")

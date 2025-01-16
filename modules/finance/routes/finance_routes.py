@@ -41,6 +41,9 @@ from modules.finance.update_journal_line import update_journal_line
 from modules.finance.delete_journal_line import delete_journal_line
 from modules.finance.validate_journal import validate_journal
 
+from modules.finance.update_default_accounts import update_default_accounts
+from modules.finance.delete_default_accounts import delete_default_accounts
+
 
 from modules.utilities.logger import logger  # Import the logger module
 
@@ -306,6 +309,12 @@ def update_journal_line_all():
     logger.debug(f"{appuser} --> {__name__}: Request to  update_journal_line")
     return update_journal_line()
 
+@finance_update_routes.route('/update_default_accounts', methods=['PUT'])
+def update_default_accounts_all():
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to  update_default_accounts")
+    return update_default_accounts()
+
 # DELETE Methods ---------------------------------------------------------
 
 @finance_delete_routes.route('/delete_purchase_invoice_lines', methods=['DELETE'])
@@ -343,6 +352,12 @@ def delete_journal_line_all():
     appuser = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{appuser} --> {__name__}: Request to delete_journal_line")
     return delete_journal_line()
+
+@finance_delete_routes.route('/delete_default_accounts', methods=['DELETE'])
+def delete_default_accounts_all():  
+    appuser = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{appuser} --> {__name__}: Request to delete_default_accounts")
+    return delete_default_accounts()
 
 
 

@@ -17,7 +17,6 @@ def get_user_and_db_details(authorization_header):
     """
     # Extract user details from the token
     token_results = {}
-    print("Received auth header",authorization_header)
     if authorization_header:
         token_results = get_user_from_token(authorization_header)
         logger.debug(f"Token extracted for authorization: {token_results}")
@@ -93,11 +92,11 @@ def get_user_and_db_details(authorization_header):
             employee_info = fetch_employee_details(empid, mydb)
             logger.debug(f"{appuser} --> {__name__}: Employee details fetched for empid={empid}")
         except Exception as e:
-            logger.error(f"{appuser} --> {__name__}: Error fetching employee details for empid={empid}: {str(e)}")
+            logger.error(f"{appuser} --> {__name__}: Error IS EMPLOYEE NOT THERE for empid={empid}: {str(e)}")
             return company, instance, dbuser, mydb, appuser, appuserid, f"Error fetching employee details: {str(e)}"
         
     logger.debug(
-        f"{appuser} --> {__name__}: Error fetching employee details for empid={empid}. "
+        f"{appuser} --> {__name__}: fetching employee details for empid={empid}. "
         f"company={company}, instance={instance}, dbuser={dbuser},"
         f"appuser={appuser}, appuserid={appuserid}"
     )

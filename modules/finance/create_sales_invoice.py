@@ -26,7 +26,6 @@ def create_sales_invoice():
         # Log entry point
         logger.debug(f"{appuser} --> {__name__}: Entered the 'create_sales_invoice' function")
 
-
         if request.content_type == 'application/json':
             data = request.get_json()
         else:
