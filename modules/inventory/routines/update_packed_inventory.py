@@ -2,7 +2,7 @@ from modules.utilities.logger import logger
 
 def update_packed_inventory(input_params, result_params, mydb, appuser, MODULE_NAME, created_by, updated_by):
     try:
-        logger.info(f"{appuser} --> {MODULE_NAME}: Entered update_packed_inventory_for_sales_orders function")
+        logger.info(f"{appuser} --> {MODULE_NAME}: Entered update_packed_inventory function")
 
         mycursor = mydb.cursor()
         
@@ -18,7 +18,7 @@ def update_packed_inventory(input_params, result_params, mydb, appuser, MODULE_N
                 update_params = (
                     result_params['target_quantity'],
                     input_params['input_target_uom_id'],
-                    input_params['sales_header_id'],
+                    input_params['input_transaction_id'],
                     updated_by,
                     input_params['input_inventory_id'],
                     input_params['input_transaction_id'],
@@ -28,7 +28,7 @@ def update_packed_inventory(input_params, result_params, mydb, appuser, MODULE_N
                 )
                 mycursor.execute(update_query, update_params)
                 mydb.commit()
-                logger.info(f"{appuser} --> {MODULE_NAME}: Update successful for Sales Order ID {input_params['sales_header_id']}")
+                logger.info(f"{appuser} --> {MODULE_NAME}: Update successful for Transaction ID {input_params['input_transaction_id']}")
             else:
                 logger.debug(f"{appuser} --> {MODULE_NAME}: Remainder quantity > 0")
 
@@ -39,7 +39,7 @@ def update_packed_inventory(input_params, result_params, mydb, appuser, MODULE_N
                 """
                 update_params = (
                     result_params['remainder_quantity'],
-                    input_params['sales_header_id'],
+                    input_params['input_transaction_id'],
                     updated_by,
                     input_params['input_inventory_id'],
                     input_params['input_transaction_id'],
@@ -63,7 +63,7 @@ def update_packed_inventory(input_params, result_params, mydb, appuser, MODULE_N
                 )
                 mycursor.execute(insert_query, insert_params)
                 mydb.commit()
-                logger.info(f"{appuser} --> {MODULE_NAME}: Insert and Update successful for Sales Order ID {input_params['sales_header_id']}")
+                logger.info(f"{appuser} --> {MODULE_NAME}: Insert and Update successful for Transaction id {input_params['input_transaction_id']}")
 
         except Exception as operation_error:
             mydb.rollback()

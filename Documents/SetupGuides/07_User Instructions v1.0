@@ -207,6 +207,7 @@ Purchase Invoice (PO)
 	
 	1. Ensure Default account headers are set in the Company
 		Nav :  Modules > Common > View Companies
+		Important also set the same default account headers at the department level as well modules > common > Department 
 	2. Verify the Account types which are in default account headers matches to the CompanyConfig.js JSON for a company
 		WebClient Application Level Navigation (Nav : modules > finance > config > CompanyConfig.js)  
 			Improvement : In future a form will be created for this
@@ -410,11 +411,178 @@ Sales Invoice (SO)
 			
 			There should not be two accounts with the same account type with default flag as Yes under the same currency for example as above
 			
-	3. Add the Default accounts to the Default account header
-	3. 
+	3. Add the above 4 Default accounts to the Default account header associated to the Department and Company
+			Nav : modules > common > update company
+			Nav : Modules > common > update department
+	4. Now setup the CompanyConfigs.js as below   (Nav : WebClient > src > modules > finance > config > CompanyConfigs.js)
+
+			AUTO_SALES_INVOICE_CONFIG: {
+				  so_order_status_filter: ["PICKED", "PARTPICKED", "APPROVED"],
+				  so_new_status: "INVOICED",
+				  invoice_status: "DRAFT",
+				  account_types: {
+					Debit: [
+					  {
+						account_type: "Accounts Receivable",
+						category: "Normal",
+						distribution_percentage: 70,
+					  },
+					  {
+						account_type: "Accounts Receivable Internal",
+						category: "Normal",
+						distribution_percentage: 30,
+					  },
+					],
+					Credit: [
+					  {
+						account_type: "Sales",
+						category: "Normal",
+						distribution_percentage: 100,
+					  },
+					  {
+						account_type: "Sales Tax",
+						category: "Tax",
+						tax_type: "saltax",							// It should be same tax type that is in the sales order , otherwise tax line will not be created
+						distribution_percentage: 100,
+					  }
+					],
+				  },
+				},	
+				
+			
+		5. Now run the Auto create Invoice proces entere the Approved SO 200481203
+		
+	Now sales invoice successfully created and now check the status of the sales order is changed to INVOICED
 	
+Inventory Operations (UOM Conversion)
+
+		In the inventory ID : 1112 , I have an item ITEM1007 with 20 Each quantity , now I need to convert this to Dozzen
+		
+		First of all ensure Each is an UOM and Dozen is another UOM in UOM setups for Dozen the base unit must be Each 
+		Nav : modules > common > View UOMs
+		UOM ID	Abbreviation	UOM Name	Base Unit	Conversion Factor	Decimal Places	Notes
+			1	Ea				Each		1			1						0				1 Each = 1 * Each
+			2	Dz				Dozen		1			12						0				1 Dozen = 12 * Each
+			3	CA				Carton		1			120						0				1 Carton = 120 * Each
+			4	DP				HDozens		2			100						0				1 HDozens = 100 * Dozen
+			
+		1. Now convert the UOM of the inventory ID 1112 from Each to Dozzen
+			Nav : modules > inventory > UOM conversion
+		2. View the Inventory and observe how the item ITEM1007 how it is splitted
+
+		Item ID	Item Code	Item Name	Quantity	UOM			Transaction Number	Transaction Type		Inventory ID	Bin Name			
+		1000007	ITEM1007	SEATS		8			Each		1002				Receipts				1112			ROW11				
+		1000007	ITEM1007	SEATS		1			Dozen		1002				Receipts				1114			ROW11	
+			
+Inventory Operations (Item Consolidation)
+
+		This will consolidate items into one 1000001 for example 
+
+			1000001	ITEM1001	MRF		9	Each	1001	Receipts	1111	BIN3	RACK1					
+			1000001	ITEM1001	MRF		3	Each	1001	Receipts	1113	BIN3	RACK1	 ALREADY ALLOCATED 						
+			1000001	ITEM1001	MRF		10	Each	31281	Receipts	1115	BIN2						
+			1000001	ITEM1001	MRF		12	Each	22884	Receipts	1116		RACK4					
+			1000001	ITEM1001	MRF		18	Dozen	975		Receipts	1117				AISLE10			
+			1000001	ITEM1001	MRF		14	Dozen	61458	Receipts	1118	BIN1			
+
+		1. Consolidate the Item Inventory for the Item ITEM1001
+			Nav : Modules > Inventory > Item Consolidation
+					Transaction Type : Consolidation
+					Source UOM : Each 
+					Target UOM : Dozen
+					Target aisle : RACK3
+					
+					10, 12, 9 should be consolidated to Target aisle of the item ITEM1001
+					Success: Item Inventory Consolidation or UOM conversion transaction No is 8060190
+		2. View Inventory 
+					
+			1000001	ITEM1001	MRF	3	Each	1001	Receipts		1113	BIN3	RACK1				ALREADY ALLOCATED SO NOT CONSOLIDATED							
+			1000001	ITEM1001	MRF	18	Dozen	975		Receipts		1117				AISLE10			
+			1000001	ITEM1001	MRF	14	Dozen	61458	Receipts		1118	BIN1						
+			1000001	ITEM1001	MRF	2	Dozen	8060190	Consolidation	1125		RACK3					
+			1000001	ITEM1001	MRF	7	Each	8060190	Consolidation	1126		RACK3
+
+			Now you can observe the change there all the Each quantities and consolidated , however 7 quantity is left over can't be consolidated to Dozen
+			
+			Note : if the inventory is already allocated meaning if the status is Yes in the item_inventory table it will not be considered for consolidation because it is allocated for shipping
+			
+	
+Inventory Operations (Item UOM Distribution)
+
+		This process is opposite to consolidation above in which for example the Dozen quantties are splitted into Each and store in the inventory
+		
+		for example if we have situation for an inventory item like below 
+		
+			1000001	ITEM1001	MRF	3	Each	1001	Receipts		1113	BIN3	RACK1				ALREADY ALLOCATED 
+			1000001	ITEM1001	MRF	18	Dozen	975		Receipts		1117				AISLE10			
+			1000001	ITEM1001	MRF	14	Dozen	61458	Receipts		1118	BIN1						
+			1000001	ITEM1001	MRF	2	Dozen	8060190	Consolidation	1125		RACK3					
+			1000001	ITEM1001	MRF	7	Each	8060190	Consolidation	1126		RACK3
+			
+		1. Perform Inventory Distribution 
+			Nav : Modules > Inventory > Item Consolidation 
+				Type : Distribution
+				Item : ITEM1001
+				Source UOM : Dozen
+				Target UOM : Each 
+				Target Location : ZONE10
+				
+			Success: Item Inventory Distribution or UOM conversion transaction No is 4423279
+		2. View the Inventory 
+			Nav : Modules > Inventory > View Inventory 
+			
+		
+			1000001	ITEM1001	MRF		3		Each	1001	Receipts	1113	BIN3	RACK1				ALREADY ALLOCATED SO NOT CONSOLIDATED			
+			1000007	ITEM1007	SEATS	1		Dozen	1002	Receipts	1114			ROW11				
+			1000001	ITEM1001	MRF		7		Each	8060190	Consolidation	1126		RACK3					
+			1000001	ITEM1001	MRF		408		Each	4423279	Distribution	1127		ZON10LOC10	
+			
+			There are 18, 14, 2 Dozens , they are distributed as Each into ZONE location as 408
+			
+Inventory Operations ( Move Inventory)
+
+		I can move the material from One Inventory storage to another storage location  
+		You can only move the inventory ids where the status flag is not equal to Yes  ( if it is Yes it is already allocated for shipping)
+		
+		1. Move Inventory 
+			Nav : Modules > Inventory > Move Inventory
+				Item : ITEM1001
+				Transaction Type : Receipts
+				Inventory ID : 1111
+				Inventory Quantity : 3
+				Source Storage location : RACK1
+				Move Quantity : 2
+				Target Storage : RACK 10
+				
+				Success : Inventory moved successfully
+
+			The Inventory is split from 3, and 2 quantity will be moved to RACK10 and 1 will remain in RACK1
+		2. View Inventory 
+			Nav : Modules > Inventory > View Inventory
+
+Inventory Operations ( Create Storage locations)
+
+		In order to receive or ship or store materials there needs storage 
+		The following storage locations can be created 
+		
+		Nav : Modules > Inventory > Storage
+		Create Warehouses
+		Create Locations
+		Create Zones
+		Create Aisles
+		Create Rows
+		Create Racks
+		Create Bins
+		
+		and You can View the Bins 
+		
+
 	
 
+		
+			
+				
+		
 	
 
 	
