@@ -1,0 +1,50 @@
+In order to launch the application with https we need domain and certificates, for testing purpose we can generate self signed certificates as below
+
+OpenSSL does not provide official Windows installers. However, there are trusted third-party distributors who package OpenSSL for Windows
+
+1. Check if OpenSSL is already instlled in the windows 
+	dir C:\ /s /b | findstr openssl.exe
+2. Check if it is not installed then download it from https://slproweb.com/products/Win32OpenSSL.html for your windows 
+3. Install it and locate its path directory and set path to it 
+4. Then Go to Project directory WebClient and create a directory called certs
+5. Come back to Project directory WebClient and run the command 
+	openssl req -newkey rsa:2048 -nodes -keyout certs/server.key -x509 -out certs/server.crt
+	
+	It will ask few questions to generte the key and certificate like below so fill them
+	
+		Country Name (2 letter code) [XX]: US
+		State or Province Name (full name): New York
+		Locality Name (e.g., city) [Default City]: New York
+		Organization Name (e.g., company) [Default Company Ltd]: My Company
+		Organizational Unit Name (e.g., section) []: IT
+		Common Name (e.g., server FQDN or YOUR name) []: localhost
+		Email Address []: admin@example.com
+		
+		You should now have two files in your certs directory:
+			server.key: Your private key.
+			server.crt: Your self-signed certificate.
+
+6. 	Configure React App to Use HTTPS  .env file in the Project directory (WebClient)
+
+	REACT_APP_WEB_CLIENT_PROTOCOL='https'
+	REACT_APP_WEB_CLIENT_HOST='localhost'
+	REACT_APP_WEB_CLIENT_PORT='7103'
+
+	PROTOCOL='https'
+	HOST='localhost'
+	PORT='7103'
+
+	SSL_CRT_FILE=./certs/server.crt
+	SSL_KEY_FILE=./certs/server.key
+	
+7. Insall npm install cross-env --save-dev in the WebClient
+8. Configure package.json file 
+	"scripts": {
+		"start": "cross-env HTTPS=true SSL_CRT_FILE=./certs/server.crt SSL_KEY_FILE=./certs/server.key react-scripts start"
+	}
+9. npm start
+
+Note : Since you are launching the application with self signed certificate you may get security issues in browser , 
+	
+
+	
