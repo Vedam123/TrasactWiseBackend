@@ -52,6 +52,9 @@ def update_env_file():
     app_server_host = config.get('AppService', 'APP_SERVER_HOST')
     app_server_port = config.get('AppService', 'APP_SERVER_PORT')
     app_server_protocol = config.get('AppService', 'APP_SERVER_PROTOCOL')
+    
+    cetificate_file = config.get('CERTIFICATES', 'SSL_CRT_FILE')
+    cetificate_key = config.get('CERTIFICATES', 'SSL_KEY_FILE')
 
     # Read the .env file to update the values
     with open(ENV_FILE_DIR, 'r') as env_file:
@@ -88,6 +91,10 @@ def update_env_file():
             updated_env_lines.append(f"HOST='{web_client_host}'\n")
         elif "PORT" in line:
             updated_env_lines.append(f"PORT='{web_client_port}'\n")
+        elif "SSL_CRT_FILE" in line:
+            updated_env_lines.append(f"SSL_CRT_FILE='{cetificate_file}'\n")
+        elif "SSL_KEY_FILE" in line:
+            updated_env_lines.append(f"SSL_KEY_FILE='{cetificate_key}'\n")
         else:
             updated_env_lines.append(line)
 

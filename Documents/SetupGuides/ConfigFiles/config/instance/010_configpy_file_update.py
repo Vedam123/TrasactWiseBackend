@@ -60,7 +60,8 @@ print(f"Sections in config.ini: {config_ini.sections()}")
 try:
     APP_BACKEND_ENV_TYPE = config_ini.get('AppService', 'APP_BACKEND_ENV_TYPE')
     BASE_PATH = config_ini.get('Global', 'BASE_PATH')
-    APP_SERVER_HOST = config_ini.get('AppService', 'APP_SERVER_HOST')
+    #APP_SERVER_HOST = config_ini.get('AppService', 'APP_SERVER_HOST')
+    APP_SERVER_HOST = config_ini.get('AppService', 'APP_SERVER_HTTPS_HOST')   
     APP_SERVER_PROTOCOL = config_ini.get('AppService', 'APP_SERVER_PROTOCOL')
     APP_SERVER_PORT = config_ini.get('AppService', 'APP_SERVER_PORT')
 
