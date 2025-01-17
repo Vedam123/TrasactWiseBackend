@@ -22,6 +22,6 @@ LOG_FILE_PATH = "modules/utilities/logs/"
 #DB_INSTANCES_PATH = "C:\SAS Opera\Companies\Company_0\system\db_instances\instance1"
 # config.py
 DB_INSTANCES_BASE_PATH = "C:/SAS Opera/Companies"
-APP_SERVER_HOST = "localhost"
+APP_SERVER_HOST = "0.0.0.0"
 APP_SERVER_PORT = 8014
-APP_SERVER_PROTOCOL = "http"
+APP_SERVER_PROTOCOL = "https"

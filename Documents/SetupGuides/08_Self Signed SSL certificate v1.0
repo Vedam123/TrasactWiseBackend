@@ -2,6 +2,8 @@ In order to launch the application with https we need domain and certificates, f
 
 OpenSSL does not provide official Windows installers. However, there are trusted third-party distributors who package OpenSSL for Windows
 
+Open SSL Self Certifications: (WebClient)
+
 1. Check if OpenSSL is already instlled in the windows 
 	dir C:\ /s /b | findstr openssl.exe
 2. Check if it is not installed then download it from https://slproweb.com/products/Win32OpenSSL.html for your windows 
@@ -26,23 +28,47 @@ OpenSSL does not provide official Windows installers. However, there are trusted
 
 6. 	Configure React App to Use HTTPS  .env file in the Project directory (WebClient)
 
-	REACT_APP_WEB_CLIENT_PROTOCOL='https'
-	REACT_APP_WEB_CLIENT_HOST='localhost'
-	REACT_APP_WEB_CLIENT_PORT='7103'
+		REACT_APP_WEB_CLIENT_PROTOCOL='https'
+		REACT_APP_WEB_CLIENT_HOST=0.0.0.0
+		REACT_APP_WEB_CLIENT_PORT='7104'
 
-	PROTOCOL='https'
-	HOST='localhost'
-	PORT='7103'
+		PROTOCOL='https'
+		HOST=0.0.0.0
+		PORT='7104'
 
-	SSL_CRT_FILE=./certs/server.crt
-	SSL_KEY_FILE=./certs/server.key
+		SSL_CRT_FILE=./certs/server.crt
+		SSL_KEY_FILE=./certs/server.key
 	
 7. Insall npm install cross-env --save-dev in the WebClient
 8. Configure package.json file 
-	"scripts": {
-		"start": "cross-env HTTPS=true SSL_CRT_FILE=./certs/server.crt SSL_KEY_FILE=./certs/server.key react-scripts start"
-	}
+		"scripts": {
+			"start": "cross-env HTTPS=true SSL_CRT_FILE=./certs/server.crt SSL_KEY_FILE=./certs/server.key react-scripts start"
+		}
 9. npm start
+
+
+Open SSL Self Certifications: (AppServer)
+
+1. Create a folder in AppServer (Project folder ) Folder name : certs
+2. Copy the certificates created as part of WebClient and paste in this certs directory 
+3. The config.py which is in the Project folder (AppServer) to be updated as below 
+		APP_SERVER_HOST = "0.0.0.0"
+		APP_SERVER_PORT = 8014
+		APP_SERVER_PROTOCOL = "https"
+4. Now change app.py file as below 
+		import os 
+		
+		
+		cert_path = os.path.join('certs', 'server.crt')  # Update to your actual certificate path
+		key_path = os.path.join('certs', 'server.key')    # Update to your actual key path
+		
+		app.run(debug=True, host=APP_SERVER_HOST, port=APP_SERVER_PORT, ssl_context=(cert_path, key_path))
+5. Also it is important to update .env file in WebClient (Front end project)
+
+		REACT_APP_BACKEND_SERVER_HOST='192.168.1.182'      --> This IP address you get from the server where it is running as ip4 address when you run ipconfig in command prompt
+		REACT_APP_BACKEND_SERVER_PORT='8014'
+		REACT_APP_BACKEND_SERVER_PROTOCOL='https'
+
 
 Note : Since you are launching the application with self signed certificate you may get security issues in browser , 
 	
