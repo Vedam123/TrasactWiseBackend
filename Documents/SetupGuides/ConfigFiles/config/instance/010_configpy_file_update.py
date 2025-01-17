@@ -64,6 +64,9 @@ try:
     APP_SERVER_HOST = config_ini.get('AppService', 'APP_SERVER_HTTPS_HOST')   
     APP_SERVER_PROTOCOL = config_ini.get('AppService', 'APP_SERVER_PROTOCOL')
     APP_SERVER_PORT = config_ini.get('AppService', 'APP_SERVER_PORT')
+    
+    SSL_CRT_FILE = config_ini.get('CERTIFICATES', 'SSL_CRT_FILE')
+    SSL_KEY_FILE = config_ini.get('CERTIFICATES', 'SSL_KEY_FILE')
 
     # Debug: Print the extracted values
     print(f"APP_BACKEND_ENV_TYPE: {APP_BACKEND_ENV_TYPE}")
@@ -93,6 +96,8 @@ config_py_lines = update_config_py(config_py_lines, 'DB_INSTANCES_BASE_PATH', BA
 config_py_lines = update_config_py(config_py_lines, 'APP_SERVER_HOST', APP_SERVER_HOST)
 config_py_lines = update_config_py(config_py_lines, 'APP_SERVER_PROTOCOL', APP_SERVER_PROTOCOL)
 config_py_lines = update_config_py(config_py_lines, 'APP_SERVER_PORT', APP_SERVER_PORT)
+config_py_lines = update_config_py(config_py_lines, 'SSL_CRT_FILE', SSL_CRT_FILE)
+config_py_lines = update_config_py(config_py_lines, 'SSL_KEY_FILE', SSL_KEY_FILE)
 
 # Write the updated lines back to config.py
 with open(CONFIG_PY_PATH, 'w') as file:

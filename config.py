@@ -25,3 +25,6 @@ DB_INSTANCES_BASE_PATH = "C:/SAS Opera/Companies"
 APP_SERVER_HOST = "0.0.0.0"
 APP_SERVER_PORT = 8014
 APP_SERVER_PROTOCOL = "https"
+
+SSL_CRT_FILE = './certs/server.crt'  
+SSL_KEY_FILE = './certs/server.key'  

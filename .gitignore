@@ -13,4 +13,3 @@ __pycache__/
 *.pyc
 
 # Exclude sensitive or environment-specific files
-config.py

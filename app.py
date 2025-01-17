@@ -2,14 +2,12 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, current_user
 from blueprints import register_blueprints
-from config import JWT_SECRET_KEY, JWT_ACCESS_TOKEN_EXPIRES,APP_SERVER_HOST,APP_SERVER_PORT
+from config import JWT_SECRET_KEY, JWT_ACCESS_TOKEN_EXPIRES, APP_SERVER_HOST, APP_SERVER_PORT, SSL_CRT_FILE, SSL_KEY_FILE
 import os
-#from modules.security.refresh_token import refresh_token
-#from authorization import authorize_user
 
 # Type-cast APP_SERVER_PORT to an integer
 APP_SERVER_PORT = int(APP_SERVER_PORT)
- 
+
 app = Flask(__name__)
 CORS(app)
 
@@ -23,8 +21,8 @@ if __name__ == '__main__':
     register_blueprints(app)
     app.config['DEBUG'] = True
 
-      # Path to your certificate and key files
-    cert_path = os.path.join('certs', 'server.crt')  # Update to your actual certificate path
-    key_path = os.path.join('certs', 'server.key')    # Update to your actual key path
+    # Use the imported SSL certificate and key paths from the config
+    cert_path = os.path.abspath(SSL_CRT_FILE)  # Absolute path to the certificate
+    key_path = os.path.abspath(SSL_KEY_FILE)   # Absolute path to the key file
 
     app.run(debug=True, host=APP_SERVER_HOST, port=APP_SERVER_PORT, ssl_context=(cert_path, key_path))
