@@ -59,8 +59,11 @@ print(f"Sections in config.ini: {config_ini.sections()}")
 # Extract necessary values from config.ini
 try:
     APP_BACKEND_ENV_TYPE = config_ini.get('AppService', 'APP_BACKEND_ENV_TYPE')
-    BASE_PATH = config_ini.get('Global', 'BASE_PATH')
-    #APP_SERVER_HOST = config_ini.get('AppService', 'APP_SERVER_HOST')
+    #DB_INSTANCES_BASE_PATH = config_ini.get('database', "DB_INSTANCES_BASE_PATH")
+    DB_INSTANCES_BASE_PATH = config_ini.get('database', 'DB_INSTANCES_BASE_PATH')
+    # Directly wrap the DB_INSTANCES_BASE_PATH value in double quotes, no extra quotes added
+    DB_INSTANCES_BASE_PATH = f'"{DB_INSTANCES_BASE_PATH}"'
+
     APP_SERVER_HOST = config_ini.get('AppService', 'APP_SERVER_HTTPS_HOST')   
     APP_SERVER_PROTOCOL = config_ini.get('AppService', 'APP_SERVER_PROTOCOL')
     APP_SERVER_PORT = config_ini.get('AppService', 'APP_SERVER_PORT')
@@ -68,12 +71,15 @@ try:
     SSL_CRT_FILE = config_ini.get('CERTIFICATES', 'SSL_CRT_FILE')
     SSL_KEY_FILE = config_ini.get('CERTIFICATES', 'SSL_KEY_FILE')
 
-    # Debug: Print the extracted values
+    # Debug: Print the extracted valuesyy
     print(f"APP_BACKEND_ENV_TYPE: {APP_BACKEND_ENV_TYPE}")
-    print(f"BASE_PATH: {BASE_PATH}")
+    print(f"DB_INSTANCES_BASE_PATH: {DB_INSTANCES_BASE_PATH}")
     print(f"APP_SERVER_HOST: {APP_SERVER_HOST}")
     print(f"APP_SERVER_PROTOCOL: {APP_SERVER_PROTOCOL}")
     print(f"APP_SERVER_PORT: {APP_SERVER_PORT}")
+    
+    
+    
 
 except configparser.NoOptionError as e:
     print(f"Error: Missing option {e.option} in section {e.section}")
@@ -92,12 +98,18 @@ def update_config_py(lines, key, new_value):
 
 # Update config.py file with new values
 config_py_lines = update_config_py(config_py_lines, 'BACKEND_ENVIRONMENT', APP_BACKEND_ENV_TYPE)
-config_py_lines = update_config_py(config_py_lines, 'DB_INSTANCES_BASE_PATH', BASE_PATH)
 config_py_lines = update_config_py(config_py_lines, 'APP_SERVER_HOST', APP_SERVER_HOST)
 config_py_lines = update_config_py(config_py_lines, 'APP_SERVER_PROTOCOL', APP_SERVER_PROTOCOL)
-config_py_lines = update_config_py(config_py_lines, 'APP_SERVER_PORT', APP_SERVER_PORT)
 config_py_lines = update_config_py(config_py_lines, 'SSL_CRT_FILE', SSL_CRT_FILE)
 config_py_lines = update_config_py(config_py_lines, 'SSL_KEY_FILE', SSL_KEY_FILE)
+
+def update_config_py1(lines, key, new_value):
+    for i, line in enumerate(lines):
+        if line.strip().startswith(key):
+            lines[i] = f"{key} = {new_value}\n"
+    return lines
+config_py_lines = update_config_py1(config_py_lines, 'DB_INSTANCES_BASE_PATH', DB_INSTANCES_BASE_PATH)
+config_py_lines = update_config_py1(config_py_lines, 'APP_SERVER_PORT', APP_SERVER_PORT)
 
 # Write the updated lines back to config.py
 with open(CONFIG_PY_PATH, 'w') as file:

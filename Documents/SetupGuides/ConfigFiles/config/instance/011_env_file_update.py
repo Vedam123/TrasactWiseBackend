@@ -64,33 +64,33 @@ def update_env_file():
     updated_env_lines = []
     for line in env_lines:
         if "REACT_APP_APPLICATION_NAME" in line:
-            updated_env_lines.append(f"REACT_APP_APPLICATION_NAME='{web_client_app_name}'\n")
+            updated_env_lines.append(f"REACT_APP_APPLICATION_NAME={web_client_app_name}\n")
         elif "REACT_APP_APPLICATION_LEVEL" in line:
-            updated_env_lines.append(f"REACT_APP_APPLICATION_LEVEL='{web_client_app_level}'\n")
+            updated_env_lines.append(f"REACT_APP_APPLICATION_LEVEL={web_client_app_level}\n")
         elif "REACT_APP_WEB_CLIENT_HOST" in line:
-            updated_env_lines.append(f"REACT_APP_WEB_CLIENT_HOST='{web_client_host}'\n")
+            updated_env_lines.append(f"REACT_APP_WEB_CLIENT_HOST={web_client_host}\n")
         elif "REACT_APP_WEB_CLIENT_PORT" in line:
-            updated_env_lines.append(f"REACT_APP_WEB_CLIENT_PORT='{web_client_port}'\n")
+            updated_env_lines.append(f"REACT_APP_WEB_CLIENT_PORT={web_client_port}\n")
         elif "REACT_APP_WEB_CLIENT_PROTOCOL" in line:
-            updated_env_lines.append(f"REACT_APP_WEB_CLIENT_PROTOCOL='{web_client_protocol}'\n")
+            updated_env_lines.append(f"REACT_APP_WEB_CLIENT_PROTOCOL={web_client_protocol}\n")
         elif "REACT_APP_SMTP_HOST" in line:
-            updated_env_lines.append(f"REACT_APP_SMTP_HOST='{smtp_host}'\n")
+            updated_env_lines.append(f"REACT_APP_SMTP_HOST={smtp_host}\n")
         elif "REACT_APP_SMTP_PORT" in line:
-            updated_env_lines.append(f"REACT_APP_SMTP_PORT='{smtp_port}'\n")
+            updated_env_lines.append(f"REACT_APP_SMTP_PORT={smtp_port}\n")
         elif "REACT_APP_SMTP_EMAIL" in line:
-            updated_env_lines.append(f"REACT_APP_SMTP_EMAIL='{smtp_email}'\n")
+            updated_env_lines.append(f"REACT_APP_SMTP_EMAIL={smtp_email}\n")
         elif "REACT_APP_BACKEND_SERVER_HOST" in line:
-            updated_env_lines.append(f"REACT_APP_BACKEND_SERVER_HOST='{app_server_host}'\n")
+            updated_env_lines.append(f"REACT_APP_BACKEND_SERVER_HOST={app_server_host}\n")
         elif "REACT_APP_BACKEND_SERVER_PORT" in line:
-            updated_env_lines.append(f"REACT_APP_BACKEND_SERVER_PORT='{app_server_port}'\n")
+            updated_env_lines.append(f"REACT_APP_BACKEND_SERVER_PORT={app_server_port}\n")
         elif "REACT_APP_BACKEND_SERVER_PROTOCOL" in line:
-            updated_env_lines.append(f"REACT_APP_BACKEND_SERVER_PROTOCOL='{app_server_protocol}'\n")
+            updated_env_lines.append(f"REACT_APP_BACKEND_SERVER_PROTOCOL={app_server_protocol}\n")
         elif "PROTOCOL" in line:
-            updated_env_lines.append(f"PROTOCOL='{web_client_protocol}'\n")
+            updated_env_lines.append(f"PROTOCOL={web_client_protocol}\n")
         elif "HOST" in line:
-            updated_env_lines.append(f"HOST='{web_client_host}'\n")
+            updated_env_lines.append(f"HOST={web_client_host}\n")
         elif "PORT" in line:
-            updated_env_lines.append(f"PORT='{web_client_port}'\n")
+            updated_env_lines.append(f"PORT={web_client_port}\n")
         elif "SSL_CRT_FILE" in line:
             updated_env_lines.append(f"SSL_CRT_FILE='{cetificate_file}'\n")
         elif "SSL_KEY_FILE" in line:
