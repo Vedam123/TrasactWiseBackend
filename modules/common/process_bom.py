@@ -1,11 +1,11 @@
 from flask import jsonify, request, Blueprint
-from modules.admin.databases.mydb import get_database_connection
 from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 import requests
 from collections import OrderedDict
 from modules.security.permission_required import permission_required
 from config import READ_ACCESS_TYPE
 from modules.utilities.logger import logger  # Import the logger module
+from modules.common.routines.explode_model_bom import get_exploded_bom_data
 
 process_exploded_bom_api = Blueprint('process_exploded_bom_api', __name__)
 
@@ -131,6 +131,7 @@ def process_exploded_bom():
         logger.debug(f"{appuser} --> {__name__}: Model Item Code: {model_item_code}, Required Quantity: {required_quantity}")
 
         model_item_id = get_item_id_by_code(model_item_code,mydb,__name__)
+        print("Model item id",model_item_id)
 
         if model_item_id is None:
             # Log an error message
@@ -148,21 +149,17 @@ def process_exploded_bom():
             logger.error(f"{appuser} --> {__name__}: The Model item is not present in BOM table. Model Item ID: {model_item_id}")
             return jsonify({'error': 'The Model item is not present in BOM table.'})
 
-        # Construct the URL for explode_bom API
-        explode_bom_url = f'{request.url_root}explode_bom?model_item={model_item_id}&required_quantity={required_quantity}'
 
-        # Log the constructed URL
-        logger.debug(f"{appuser} --> {__name__}: Constructed explode_bom URL: {explode_bom_url}")
+        response = get_exploded_bom_data(model_item_id,required_quantity,mydb, appuser,__name__)
+        
+        logger.error(f"{appuser} --> {__name__}: Responses received from the get_exploded_bom_data function for the Model item: {model_item_id}")
 
-        # Use the requests library to send a GET request
-        response = requests.get(explode_bom_url, headers=request.headers)
+       
+        logger.error(f"{appuser} --> {__name__}: Response formatation : {model_item_id}")
 
-        if response.status_code != 200:
-            # Log an error message
-            logger.error(f"{appuser} --> {__name__}: Failed to get data from explode_bom API. Status Code: {response.status_code}")
-            return jsonify({'error': 'Failed to get data from explode_bom API.'})
+        exploded_bom_data = response.get('exploded_bom', [])
 
-        exploded_bom_data = response.json().get('exploded_bom', [])
+        logger.error(f"{appuser} --> {__name__}: Aftr Response formation  : {exploded_bom_data}")
 
         # Log successful completion
         logger.debug(f"{appuser} --> {__name__}: Successfully retrieved exploded BOM data. Model Item Code: {model_item_code}")
@@ -175,8 +172,7 @@ def process_exploded_bom():
             item_ids.add(item['Item'])
             uom_ids.add(item['UOM'])
 
-        # item_details = get_item_details(item_ids)
-        # uom_details = get_uom_details(uom_ids)
+        logger.error(f"{appuser} --> {__name__}: For Loop1 executed for  : {exploded_bom_data}")
 
         processed_data = []
 
@@ -212,6 +208,8 @@ def process_exploded_bom():
         ]
         ordered_processed_data = [OrderedDict(
             (key, item[key]) for key in desired_order) for item in processed_data]
+        
+        logger.error(f"{appuser} --> {__name__}: AFter For Loop2 executed and Before return : {exploded_bom_data}")
 
         return jsonify({'processed_data': ordered_processed_data})
 
