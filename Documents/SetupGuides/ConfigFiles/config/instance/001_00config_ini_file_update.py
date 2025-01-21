@@ -44,11 +44,18 @@ def update_config_file():
     instances = int(config.get('database', 'instances'))
     DB_SERVER_HOST = config.get('database', 'DB_SERVER_HOST')
     DB_SERVER_HOST_IP = config.get('database', 'DB_SERVER_HOST_IP')
+    ROOT_PASSWORD = config.get('database', 'ROOT_PASSWORD')
     ports = config.get('database', 'ports').split(',')
+    INSTANCE_NAMES = config.get('database', 'INSTANCE_NAMES').split(',')
 
     # Ensure the number of ports matches the number of instances + 1
     if len(ports) != instances + 1:
         print(f"Error: The number of ports ({len(ports)}) does not match the number of instances ({instances}) + 1.")
+        return
+        
+        # Ensure the number of INSTANCE_NAMES matches the number of instances + 1
+    if len(INSTANCE_NAMES) != instances + 1:
+        print(f"Error: The number of INSTANCE_NAMES ({len(INSTANCE_NAMES)}) does not match the number of instances ({instances}) + 1.")
         return
 
     # Step 4: Create content for the target file
@@ -63,6 +70,7 @@ def update_config_file():
     target_content.append(f"DB_SERVER_HOST_IP={DB_SERVER_HOST_IP}")
     target_content.append(f"instances={instances}")
     target_content.append("base_port=3306")  # Static value for base_port
+    target_content.append(f"ROOT_PASSWORD={ROOT_PASSWORD}")
 
 
     # Add a line space after the MySQL section
@@ -77,6 +85,11 @@ def update_config_file():
     target_content.append("[InstanceFolders]")
     for idx in range(instances+1):
         target_content.append(f"INSTANCE{idx}=instance{idx}")
+        
+    target_content.append("")
+    target_content.append("[InstanceNames]")
+    for idx in range(instances + 1):  # Ensure there are enough ports (instances + 1)
+        target_content.append(f"INSTANCE_NAME{idx}={INSTANCE_NAMES[idx]}")
 
     # Step 5: Write the content to the target 00_config.ini file
     with open(CNF_FILE_DIR, 'w') as configfile:

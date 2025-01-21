@@ -1,0 +1,3420 @@
+Current Directory: C:\SAS Opera\Companies\Company_4\system\config\instance 
+Current Directory Name: instance 
+Parent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\.. 
+Parent Directory Name: config 
+Grandparent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\.. 
+Grandparent Directory Name: system 
+DB Instances Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances 
+Instance Directory Count: 4 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\root_password.ini 
+User: nce0usr 
+Password: welcome 
+Host: localhost 
+Port: 5110 
+Captured Root Password: soy89MZt;lel 
+Updated quoted Root Password: "soy89MZt;lel" 
+Resetting root password for localhost:5110... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\root_password.ini 
+User: nce1usr 
+Password: welcome 
+Host: localhost 
+Port: 5111 
+Captured Root Password: EGTwvlG5u9#o 
+Updated quoted Root Password: "EGTwvlG5u9#o" 
+Resetting root password for localhost:5111... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\root_password.ini 
+User: nce2usr 
+Password: welcome 
+Host: localhost 
+Port: 5112 
+Captured Root Password: nDjfFa=+%5)1 
+Updated quoted Root Password: "nDjfFa=+%5)1" 
+Resetting root password for localhost:5112... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\root_password.ini 
+User: nce3usr 
+Password: welcome 
+Host: localhost 
+Port: 5133 
+Captured Root Password: iai.:Kb(z4H, 
+Updated quoted Root Password: "iai.:Kb(z4H," 
+Resetting root password for localhost:5133... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3.. 
+Current Directory: C:\SAS Opera\Companies\Company_4\system\config\instance 
+Current Directory Name: instance 
+Parent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\.. 
+Parent Directory Name: config 
+Grandparent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\.. 
+Grandparent Directory Name: system 
+DB Instances Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances 
+Instance Directory Count: 6 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\root_password.ini 
+User:  nce0usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5110... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\root_password.ini 
+User:  nce1usr 
+Password:  inst1welcome 
+Host:  
+Port:  5111 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5111... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\root_password.ini 
+User:  nce2usr 
+Password:  inst2welcome 
+Host:  
+Port:  5112 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5112... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\root_password.ini 
+User:  nce3usr 
+Password:  inst3welcome 
+Host:  
+Port:  5133 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5133... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\root_password.ini 
+User: nce4usr 
+Password: welcome 
+Host: localhost 
+Port: 5144 
+Captured Root Password: tQA(e/#ru03J 
+Updated quoted Root Password: "tQA(e/#ru03J" 
+Resetting root password for localhost:5144... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\root_password.ini 
+User: nce5usr 
+Password: welcome 
+Host: localhost 
+Port: 5155 
+Captured Root Password: 6YgKkl?u1kza 
+Updated quoted Root Password: "6YgKkl?u1kza" 
+Resetting root password for localhost:5155... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2003 (HY000): Can't connect to MySQL server on 'localhost:5155' (10061)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5.. 
+Current Directory: C:\SAS Opera\Companies\Company_4\system\config\instance 
+Current Directory Name: instance 
+Parent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\.. 
+Parent Directory Name: config 
+Grandparent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\.. 
+Grandparent Directory Name: system 
+DB Instances Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances 
+Instance Directory Count: 6 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\root_password.ini 
+User:  nce0usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5110... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\root_password.ini 
+User:  nce1usr 
+Password:  inst1welcome 
+Host:  
+Port:  5111 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5111... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\root_password.ini 
+User:  nce2usr 
+Password:  inst2welcome 
+Host:  
+Port:  5112 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5112... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\root_password.ini 
+User:  nce3usr 
+Password:  inst3welcome 
+Host:  
+Port:  5133 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5133... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\root_password.ini 
+User: nce4usr 
+Password: welcome 
+Host: localhost 
+Port: 5144 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for localhost:5144... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\root_password.ini 
+User: nce5usr 
+Password: welcome 
+Host: localhost 
+Port: 5155 
+Captured Root Password: 6YgKkl?u1kza 
+Updated quoted Root Password: "6YgKkl?u1kza" 
+Resetting root password for localhost:5155... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2003 (HY000): Can't connect to MySQL server on 'localhost:5155' (10061)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5.. 
+Current Directory: C:\SAS Opera\Companies\Company_4\system\config\instance 
+Current Directory Name: instance 
+Parent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\.. 
+Parent Directory Name: config 
+Grandparent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\.. 
+Grandparent Directory Name: system 
+DB Instances Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances 
+Instance Directory Count: 6 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\root_password.ini 
+User:  nce0usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5110... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\root_password.ini 
+User:  nce1usr 
+Password:  inst1welcome 
+Host:  
+Port:  5111 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5111... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\root_password.ini 
+User:  nce2usr 
+Password:  inst2welcome 
+Host:  
+Port:  5112 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5112... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\root_password.ini 
+User:  nce3usr 
+Password:  inst3welcome 
+Host:  
+Port:  5133 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5133... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\root_password.ini 
+User: nce4usr 
+Password: welcome 
+Host: localhost 
+Port: 5144 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for localhost:5144... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\root_password.ini 
+User: nce5usr 
+Password: welcome 
+Host: localhost 
+Port: 5155 
+Captured Root Password: 6YgKkl?u1kza 
+Updated quoted Root Password: "6YgKkl?u1kza" 
+Resetting root password for localhost:5155... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2003 (HY000): Can't connect to MySQL server on 'localhost:5155' (10061)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5.. 
+Current Directory: C:\SAS Opera\Companies\Company_4\system\config\instance 
+Current Directory Name: instance 
+Parent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\.. 
+Parent Directory Name: config 
+Grandparent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\.. 
+Grandparent Directory Name: system 
+DB Instances Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances 
+Instance Directory Count: 8 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\root_password.ini 
+User:  nce0usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5110... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\root_password.ini 
+User:  nce1usr 
+Password:  inst1welcome 
+Host:  
+Port:  5111 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5111... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\root_password.ini 
+User:  nce2usr 
+Password:  inst2welcome 
+Host:  
+Port:  5112 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5112... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\root_password.ini 
+User:  nce3usr 
+Password:  inst3welcome 
+Host:  
+Port:  5133 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5133... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\root_password.ini 
+User:  nce4usr 
+Password:  inst4welcome 
+Host:  
+Port:  5144 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5144... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\root_password.ini 
+User:  nce5usr 
+Password:  inst5welcome 
+Host:  
+Port:  5155 
+Captured Root Password: 6YgKkl?u1kza 
+Updated quoted Root Password: "6YgKkl?u1kza" 
+Resetting root password for : 5155... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6\root_password.ini 
+User: nce6usr 
+Password: welcome 
+Host: localhost 
+Port: 5166 
+Captured Root Password: -ok,#>ZIO6=a 
+Updated quoted Root Password: "-ok,#>ZIO6=a" 
+Resetting root password for localhost:5166... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7\root_password.ini 
+User: nce7usr 
+Password: welcome 
+Host: localhost 
+Port: 5177 
+Captured Root Password: c=sL5eKFh:J+ 
+Updated quoted Root Password: "c=sL5eKFh:J+" 
+Resetting root password for localhost:5177... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7.. 
+Current Directory: C:\SAS Opera\Companies\Company_4\system\config\instance 
+Current Directory Name: instance 
+Parent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\.. 
+Parent Directory Name: config 
+Grandparent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\.. 
+Grandparent Directory Name: system 
+DB Instances Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances 
+Instance Directory Count: 9 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\root_password.ini 
+User:  nce0usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5110... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\root_password.ini 
+User:  nce1usr 
+Password:  inst1welcome 
+Host:  
+Port:  5111 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5111... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\root_password.ini 
+User:  nce2usr 
+Password:  inst2welcome 
+Host:  
+Port:  5112 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5112... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\root_password.ini 
+User:  nce3usr 
+Password:  inst3welcome 
+Host:  
+Port:  5133 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5133... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\root_password.ini 
+User:  nce4usr 
+Password:  inst4welcome 
+Host:  
+Port:  5144 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5144... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\root_password.ini 
+User:  nce5usr 
+Password:  inst5welcome 
+Host:  
+Port:  5155 
+Captured Root Password: 6YgKkl?u1kza 
+Updated quoted Root Password: "6YgKkl?u1kza" 
+Resetting root password for : 5155... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6\root_password.ini 
+User: nce6usr 
+Password: welcome 
+Host: localhost 
+Port: 5166 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for localhost:5166... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7\root_password.ini 
+User: nce7usr 
+Password: welcome 
+Host: localhost 
+Port: 5177 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for localhost:5177... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8\root_password.ini 
+User: nce8usr 
+Password: welcome 
+Host: localhost 
+Port: 5188 
+Captured Root Password: gZyx(=aU.3BU 
+Updated quoted Root Password: "gZyx(=aU.3BU" 
+Resetting root password for localhost:5188... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8.. 
+Current Directory: C:\SAS Opera\Companies\Company_4\system\config\instance 
+Current Directory Name: instance 
+Parent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\.. 
+Parent Directory Name: config 
+Grandparent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\.. 
+Grandparent Directory Name: system 
+DB Instances Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances 
+Instance Directory Count: 11 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\root_password.ini 
+User:  nce0usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5110... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\root_password.ini 
+User:  nce1usr 
+Password:  inst1welcome 
+Host:  
+Port:  5111 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5111... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10\root_password.ini 
+User: ce10usr 
+Password: welcome 
+Host: localhost 
+Port: 5110 
+Captured Root Password: %Dktsm78>AoX 
+Updated quoted Root Password: "%Dktsm78>AoX" 
+Resetting root password for localhost:5110... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\root_password.ini 
+User:  nce2usr 
+Password:  inst2welcome 
+Host: localhost 
+Port:  5112 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for localhost: 5112... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\root_password.ini 
+User:  nce3usr 
+Password:  inst3welcome 
+Host: localhost 
+Port:  5133 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for localhost: 5133... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\root_password.ini 
+User:  nce4usr 
+Password:  inst4welcome 
+Host: localhost 
+Port:  5144 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for localhost: 5144... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\root_password.ini 
+User:  nce5usr 
+Password:  inst5welcome 
+Host: localhost 
+Port:  5155 
+Captured Root Password: 6YgKkl?u1kza 
+Updated quoted Root Password: "6YgKkl?u1kza" 
+Resetting root password for localhost: 5155... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6\root_password.ini 
+User:  nce6usr 
+Password:  inst6welcome 
+Host: localhost 
+Port:  5166 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for localhost: 5166... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7\root_password.ini 
+User:  nce7usr 
+Password:  inst7welcome 
+Host: localhost 
+Port:  5177 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for localhost: 5177... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8\root_password.ini 
+User:  nce8usr 
+Password:  inst8welcome 
+Host: localhost 
+Port:  5188 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for localhost: 5188... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9\root_password.ini 
+User: nce9usr 
+Password: welcome 
+Host: localhost 
+Port: 5199 
+Captured Root Password: uaUpXhu(C3<j 
+Updated quoted Root Password: "uaUpXhu(C3<j" 
+Resetting root password for localhost:5199... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful. 
+root_password.ini updated with new password: tigressAV 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9.. 
+Current Directory: C:\SAS Opera\Companies\Company_4\system\config\instance 
+Current Directory Name: instance 
+Parent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\.. 
+Parent Directory Name: config 
+Grandparent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\.. 
+Grandparent Directory Name: system 
+DB Instances Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances 
+Instance Directory Count: 11 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\root_password.ini 
+User:  nce0usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5110... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\root_password.ini 
+User:  nce1usr 
+Password:  inst1welcome 
+Host:  
+Port:  5111 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5111... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10\root_password.ini 
+User:  ce10usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+Captured Root Password: %Dktsm78>AoX 
+Updated quoted Root Password: "%Dktsm78>AoX" 
+Resetting root password for : 5110... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\root_password.ini 
+User:  nce2usr 
+Password:  inst2welcome 
+Host:  
+Port:  5112 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5112... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\root_password.ini 
+User:  nce3usr 
+Password:  inst3welcome 
+Host:  
+Port:  5133 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5133... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\root_password.ini 
+User:  nce4usr 
+Password:  inst4welcome 
+Host:  
+Port:  5144 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5144... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\root_password.ini 
+User:  nce5usr 
+Password:  inst5welcome 
+Host:  
+Port:  5155 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5155... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6\root_password.ini 
+User:  nce6usr 
+Password:  inst6welcome 
+Host:  
+Port:  5166 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5166... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7\root_password.ini 
+User:  nce7usr 
+Password:  inst7welcome 
+Host:  
+Port:  5177 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5177... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8\root_password.ini 
+User:  nce8usr 
+Password:  inst8welcome 
+Host:  
+Port:  5188 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5188... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9\root_password.ini 
+User:  nce9usr 
+Password:  inst9welcome 
+Host:  
+Port:  5199 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5199... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9.. 
+Current Directory: C:\SAS Opera\Companies\Company_4\system\config\instance 
+Current Directory Name: instance 
+Parent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\.. 
+Parent Directory Name: config 
+Grandparent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\.. 
+Grandparent Directory Name: system 
+DB Instances Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances 
+Instance Directory Count: 11 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\root_password.ini 
+User:  nce0usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5110... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\root_password.ini 
+User:  nce1usr 
+Password:  inst1welcome 
+Host:  
+Port:  5111 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5111... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10\root_password.ini 
+User:  ce10usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+Captured Root Password: %Dktsm78>AoX 
+Updated quoted Root Password: "%Dktsm78>AoX" 
+Resetting root password for : 5110... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\root_password.ini 
+User:  nce2usr 
+Password:  inst2welcome 
+Host:  
+Port:  5112 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5112... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\root_password.ini 
+User:  nce3usr 
+Password:  inst3welcome 
+Host:  
+Port:  5133 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5133... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\root_password.ini 
+User:  nce4usr 
+Password:  inst4welcome 
+Host:  
+Port:  5144 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5144... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\root_password.ini 
+User:  nce5usr 
+Password:  inst5welcome 
+Host:  
+Port:  5155 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5155... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6\root_password.ini 
+User:  nce6usr 
+Password:  inst6welcome 
+Host:  
+Port:  5166 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5166... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7\root_password.ini 
+User:  nce7usr 
+Password:  inst7welcome 
+Host:  
+Port:  5177 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5177... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8\root_password.ini 
+User:  nce8usr 
+Password:  inst8welcome 
+Host:  
+Port:  5188 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5188... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9\root_password.ini 
+User:  nce9usr 
+Password:  inst9welcome 
+Host:  
+Port:  5199 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5199... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9.. 
+Current Directory: C:\SAS Opera\Companies\Company_4\system\config\instance 
+Current Directory Name: instance 
+Parent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\.. 
+Parent Directory Name: config 
+Grandparent Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\.. 
+Grandparent Directory Name: system 
+DB Instances Directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances 
+Instance Directory Count: 11 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0\root_password.ini 
+User:  nce0usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5110... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1\root_password.ini 
+User:  nce1usr 
+Password:  inst1welcome 
+Host:  
+Port:  5111 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5111... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10\root_password.ini 
+User:  ce10usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+Captured Root Password: %Dktsm78>AoX 
+Updated quoted Root Password: "%Dktsm78>AoX" 
+Resetting root password for : 5110... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2\root_password.ini 
+User:  nce2usr 
+Password:  inst2welcome 
+Host:  
+Port:  5112 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5112... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3\root_password.ini 
+User:  nce3usr 
+Password:  inst3welcome 
+Host:  
+Port:  5133 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5133... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4\root_password.ini 
+User:  nce4usr 
+Password:  inst4welcome 
+Host:  
+Port:  5144 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5144... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5\root_password.ini 
+User:  nce5usr 
+Password:  inst5welcome 
+Host:  
+Port:  5155 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5155... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6\root_password.ini 
+User:  nce6usr 
+Password:  inst6welcome 
+Host:  
+Port:  5166 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5166... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7\root_password.ini 
+User:  nce7usr 
+Password:  inst7welcome 
+Host:  
+Port:  5177 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5177... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8\root_password.ini 
+User:  nce8usr 
+Password:  inst8welcome 
+Host:  
+Port:  5188 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5188... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8.. 
+Processing directory: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9 
+Files found: C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9\.instance.cnf and C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9\root_password.ini 
+User:  nce9usr 
+Password:  inst9welcome 
+Host:  
+Port:  5199 
+Captured Root Password: tigressAV 
+Updated quoted Root Password: "tigressAV" 
+Resetting root password for : 5199... 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9.. 
+User:  nce0usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0.. 
+User:  nce1usr 
+Password:  inst1welcome 
+Host:  
+Port:  5111 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1.. 
+User:  ce10usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10.. 
+User:  nce2usr 
+Password:  inst2welcome 
+Host:  
+Port:  5112 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2.. 
+User:  nce3usr 
+Password:  inst3welcome 
+Host:  
+Port:  5133 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3.. 
+User:  nce4usr 
+Password:  inst4welcome 
+Host:  
+Port:  5144 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4.. 
+User:  nce5usr 
+Password:  inst5welcome 
+Host:  
+Port:  5155 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5.. 
+User:  nce6usr 
+Password:  inst6welcome 
+Host:  
+Port:  5166 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6.. 
+User:  nce7usr 
+Password:  inst7welcome 
+Host:  
+Port:  5177 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7.. 
+User:  nce8usr 
+Password:  inst8welcome 
+Host:  
+Port:  5188 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8.. 
+User:  nce9usr 
+Password:  inst9welcome 
+Host:  
+Port:  5199 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9.. 
+User:  nce0usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0.. 
+User:  nce1usr 
+Password:  inst1welcome 
+Host:  
+Port:  5111 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1.. 
+User:  ce10usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10.. 
+User:  nce2usr 
+Password:  inst2welcome 
+Host:  
+Port:  5112 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2.. 
+User:  nce3usr 
+Password:  inst3welcome 
+Host:  
+Port:  5133 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3.. 
+User:  nce4usr 
+Password:  inst4welcome 
+Host:  
+Port:  5144 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4.. 
+User:  nce5usr 
+Password:  inst5welcome 
+Host:  
+Port:  5155 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5.. 
+User:  nce6usr 
+Password:  inst6welcome 
+Host:  
+Port:  5166 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6.. 
+User:  nce7usr 
+Password:  inst7welcome 
+Host:  
+Port:  5177 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7.. 
+User:  nce8usr 
+Password:  inst8welcome 
+Host:  
+Port:  5188 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8.. 
+User:  nce9usr 
+Password:  inst9welcome 
+Host:  
+Port:  5199 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9.. 
+User:  nce0usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0.. 
+User:  nce1usr 
+Password:  inst1welcome 
+Host:  
+Port:  5111 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1.. 
+User:  ce10usr 
+Password:  inst0welcome 
+Host:  
+Port:  5110 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10.. 
+User:  nce2usr 
+Password:  inst2welcome 
+Host:  
+Port:  5112 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2.. 
+User:  nce3usr 
+Password:  inst3welcome 
+Host:  
+Port:  5133 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3.. 
+User:  nce4usr 
+Password:  inst4welcome 
+Host:  
+Port:  5144 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4.. 
+User:  nce5usr 
+Password:  inst5welcome 
+Host:  
+Port:  5155 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5.. 
+User:  nce6usr 
+Password:  inst6welcome 
+Host:  
+Port:  5166 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6.. 
+User:  nce7usr 
+Password:  inst7welcome 
+Host:  
+Port:  5177 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7.. 
+User:  nce8usr 
+Password:  inst8welcome 
+Host:  
+Port:  5188 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8.. 
+User:  nce9usr 
+Password:  inst9welcome 
+Host:  
+Port:  5199 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+Error: MySQL password change failed. ERRORLEVEL: 1 
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9.. 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+Error: MySQL password change failed. ERRORLEVEL: 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0..   
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+Error: MySQL password change failed. ERRORLEVEL: 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1..   
+User:  ce10usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+Error: MySQL password change failed. ERRORLEVEL: 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10..   
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: %Dktsm78>AoX  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+Error: MySQL password change failed. ERRORLEVEL: 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2..   
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+Error: MySQL password change failed. ERRORLEVEL: 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3..   
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+Error: MySQL password change failed. ERRORLEVEL: 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4..   
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+Error: MySQL password change failed. ERRORLEVEL: 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5..   
+User:  nce6usr  
+Password:  inst6welcome   
+Host:  192.168.1.182  
+Port:  5166  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+Error: MySQL password change failed. ERRORLEVEL: 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6..   
+User:  nce7usr  
+Password:  inst7welcome   
+Host:  192.168.1.182  
+Port:  5177  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+Error: MySQL password change failed. ERRORLEVEL: 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7..   
+User:  nce8usr  
+Password:  inst8welcome   
+Host:  192.168.1.182  
+Port:  5188  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+Error: MySQL password change failed. ERRORLEVEL: 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8..   
+User:  nce9usr  
+Password:  inst9welcome   
+Host:  192.168.1.182  
+Port:  5199  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+Error: MySQL password change failed. ERRORLEVEL: 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9..   
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0 due to the error 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1 due to the error 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance1..  
+User:  ce10usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10 due to the error 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance10..  
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: %Dktsm78>AoX  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2 due to the error 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance2..  
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3 due to the error 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance3..  
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4 due to the error 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance4..  
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5 due to the error 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance5..  
+User:  nce6usr  
+Password:  inst6welcome   
+Host:  192.168.1.182  
+Port:  5166  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6 due to the error 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance6..  
+User:  nce7usr  
+Password:  inst7welcome   
+Host:  192.168.1.182  
+Port:  5177  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7 due to the error 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance7..  
+User:  nce8usr  
+Password:  inst8welcome   
+Host:  192.168.1.182  
+Port:  5188  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8 due to the error 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance8..  
+User:  nce9usr  
+Password:  inst9welcome   
+Host:  192.168.1.182  
+Port:  5199  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9 due to the error 1  
+Root password reset process completed for C:\SAS Opera\Companies\Company_4\system\config\instance\..\..\db_instances\instance9..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  ce10usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: %Dktsm78>AoX  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce6usr  
+Password:  inst6welcome   
+Host:  192.168.1.182  
+Port:  5166  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce7usr  
+Password:  inst7welcome   
+Host:  192.168.1.182  
+Port:  5177  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce8usr  
+Password:  inst8welcome   
+Host:  192.168.1.182  
+Port:  5188  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce9usr  
+Password:  inst9welcome   
+Host:  192.168.1.182  
+Port:  5199  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  ce10usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: %Dktsm78>AoX  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce6usr  
+Password:  inst6welcome   
+Host:  192.168.1.182  
+Port:  5166  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce7usr  
+Password:  inst7welcome   
+Host:  192.168.1.182  
+Port:  5177  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce8usr  
+Password:  inst8welcome   
+Host:  192.168.1.182  
+Port:  5188  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+User:  nce9usr  
+Password:  inst9welcome   
+Host:  192.168.1.182  
+Port:  5199  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for  due to the error 1  
+Root password reset process completed for ..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for instance0  due to the error 1  
+Root password reset process completed for instance0 ..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for instance1  due to the error 1  
+Root password reset process completed for instance1 ..  
+User:  ce10usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for instance10  due to the error 1  
+Root password reset process completed for instance10 ..  
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: %Dktsm78>AoX  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for instance2  due to the error 1  
+Root password reset process completed for instance2 ..  
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for instance3  due to the error 1  
+Root password reset process completed for instance3 ..  
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for instance4  due to the error 1  
+Root password reset process completed for instance4 ..  
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for instance5  due to the error 1  
+Root password reset process completed for instance5 ..  
+User:  nce6usr  
+Password:  inst6welcome   
+Host:  192.168.1.182  
+Port:  5166  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for instance6  due to the error 1  
+Root password reset process completed for instance6 ..  
+User:  nce7usr  
+Password:  inst7welcome   
+Host:  192.168.1.182  
+Port:  5177  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for instance7  due to the error 1  
+Root password reset process completed for instance7 ..  
+User:  nce8usr  
+Password:  inst8welcome   
+Host:  192.168.1.182  
+Port:  5188  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for instance8  due to the error 1  
+Root password reset process completed for instance8 ..  
+User:  nce9usr  
+Password:  inst9welcome   
+Host:  192.168.1.182  
+Port:  5199  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+root_password.ini updated with new password: welcome for instance9  due to the error 1  
+Root password reset process completed for instance9 ..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance0  due to the error 1  
+Root password reset process completed for instance0 ..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance1  due to the error 1  
+Root password reset process completed for instance1 ..  
+User:  ce10usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance10  due to the error 1  
+Root password reset process completed for instance10 ..  
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: %Dktsm78>AoX  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance2  due to the error 1  
+Root password reset process completed for instance2 ..  
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance3  due to the error 1  
+Root password reset process completed for instance3 ..  
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance4  due to the error 1  
+Root password reset process completed for instance4 ..  
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance5  due to the error 1  
+Root password reset process completed for instance5 ..  
+User:  nce6usr  
+Password:  inst6welcome   
+Host:  192.168.1.182  
+Port:  5166  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance6  due to the error 1  
+Root password reset process completed for instance6 ..  
+User:  nce7usr  
+Password:  inst7welcome   
+Host:  192.168.1.182  
+Port:  5177  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance7  due to the error 1  
+Root password reset process completed for instance7 ..  
+User:  nce8usr  
+Password:  inst8welcome   
+Host:  192.168.1.182  
+Port:  5188  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance8  due to the error 1  
+Root password reset process completed for instance8 ..  
+User:  nce9usr  
+Password:  inst9welcome   
+Host:  192.168.1.182  
+Port:  5199  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance9  due to the error 1  
+Root password reset process completed for instance9 ..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2003 (HY000): Can't connect to MySQL server on '192.168.1.182:5110' (10061)
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+User:  ce10usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2003 (HY000): Can't connect to MySQL server on '192.168.1.182:5110' (10061)
+The File root_password.ini is not updated with new password welcome for the  instance10 due to the error 1  
+Root password reset process completed for instance10..  
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: %Dktsm78>AoX  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance2 due to the error 1  
+Root password reset process completed for instance2..  
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance3 due to the error 1  
+Root password reset process completed for instance3..  
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance4 due to the error 1  
+Root password reset process completed for instance4..  
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance5 due to the error 1  
+Root password reset process completed for instance5..  
+User:  nce6usr  
+Password:  inst6welcome   
+Host:  192.168.1.182  
+Port:  5166  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance6 due to the error 1  
+Root password reset process completed for instance6..  
+User:  nce7usr  
+Password:  inst7welcome   
+Host:  192.168.1.182  
+Port:  5177  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance7 due to the error 1  
+Root password reset process completed for instance7..  
+User:  nce8usr  
+Password:  inst8welcome   
+Host:  192.168.1.182  
+Port:  5188  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance8 due to the error 1  
+Root password reset process completed for instance8..  
+User:  nce9usr  
+Password:  inst9welcome   
+Host:  192.168.1.182  
+Port:  5199  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance9 due to the error 1  
+Root password reset process completed for instance9..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2003 (HY000): Can't connect to MySQL server on '192.168.1.182:5110' (10061)
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+User:  ce10usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2003 (HY000): Can't connect to MySQL server on '192.168.1.182:5110' (10061)
+The File root_password.ini is not updated with new password welcome for the  instance10 due to the error 1  
+Root password reset process completed for instance10..  
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: %Dktsm78>AoX  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance2 due to the error 1  
+Root password reset process completed for instance2..  
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance3 due to the error 1  
+Root password reset process completed for instance3..  
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance4 due to the error 1  
+Root password reset process completed for instance4..  
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance5 due to the error 1  
+Root password reset process completed for instance5..  
+User:  nce6usr  
+Password:  inst6welcome   
+Host:  192.168.1.182  
+Port:  5166  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance6 due to the error 1  
+Root password reset process completed for instance6..  
+User:  nce7usr  
+Password:  inst7welcome   
+Host:  192.168.1.182  
+Port:  5177  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance7 due to the error 1  
+Root password reset process completed for instance7..  
+User:  nce8usr  
+Password:  inst8welcome   
+Host:  192.168.1.182  
+Port:  5188  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance8 due to the error 1  
+Root password reset process completed for instance8..  
+User:  nce9usr  
+Password:  inst9welcome   
+Host:  192.168.1.182  
+Port:  5199  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance9 due to the error 1  
+Root password reset process completed for instance9..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2003 (HY000): Can't connect to MySQL server on '192.168.1.182:5110' (10061)
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+User:  ce10usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2003 (HY000): Can't connect to MySQL server on '192.168.1.182:5110' (10061)
+The File root_password.ini is not updated with new password welcome for the  instance10 due to the error 1  
+Root password reset process completed for instance10..  
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: %Dktsm78>AoX  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance2 due to the error 1  
+Root password reset process completed for instance2..  
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance3 due to the error 1  
+Root password reset process completed for instance3..  
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance4 due to the error 1  
+Root password reset process completed for instance4..  
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance5 due to the error 1  
+Root password reset process completed for instance5..  
+User:  nce6usr  
+Password:  inst6welcome   
+Host:  192.168.1.182  
+Port:  5166  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance6 due to the error 1  
+Root password reset process completed for instance6..  
+User:  nce7usr  
+Password:  inst7welcome   
+Host:  192.168.1.182  
+Port:  5177  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance7 due to the error 1  
+Root password reset process completed for instance7..  
+User:  nce8usr  
+Password:  inst8welcome   
+Host:  192.168.1.182  
+Port:  5188  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance8 due to the error 1  
+Root password reset process completed for instance8..  
+User:  nce9usr  
+Password:  inst9welcome   
+Host:  192.168.1.182  
+Port:  5199  
+Old Password: tigressAV  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance9 due to the error 1  
+Root password reset process completed for instance9..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  ce10usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2003 (HY000): Can't connect to MySQL server on '192.168.1.182:5110' (10061)
+The File root_password.ini is not updated with new password tigressAV for the  instance10 due to the error 1  
+Root password reset process completed for instance10..  
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: %Dktsm78>AoX  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce6usr  
+Password:  inst6welcome   
+Host:  192.168.1.182  
+Port:  5166  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce7usr  
+Password:  inst7welcome   
+Host:  192.168.1.182  
+Port:  5177  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce8usr  
+Password:  inst8welcome   
+Host:  192.168.1.182  
+Port:  5188  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce9usr  
+Password:  inst9welcome   
+Host:  192.168.1.182  
+Port:  5199  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance0   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance0   , no changes required. Skipping...
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance1   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance1   , no changes required. Skipping...
+User:  ce10usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2003 (HY000): Can't connect to MySQL server on '192.168.1.182:5110' (10061)
+The File root_password.ini is not updated with new password tigressAV for the  instance10 due to the error 1  
+Root password reset process completed for instance10..  
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: %Dktsm78>AoX  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance2   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance2   , no changes required. Skipping...
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance3   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance3   , no changes required. Skipping...
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance4   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance4   , no changes required. Skipping...
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance5   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance5   , no changes required. Skipping...
+User:  nce6usr  
+Password:  inst6welcome   
+Host:  192.168.1.182  
+Port:  5166  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance6   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance6   , no changes required. Skipping...
+User:  nce7usr  
+Password:  inst7welcome   
+Host:  192.168.1.182  
+Port:  5177  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance7   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance7   , no changes required. Skipping...
+User:  nce8usr  
+Password:  inst8welcome   
+Host:  192.168.1.182  
+Port:  5188  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance8   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance8   , no changes required. Skipping...
+User:  nce9usr  
+Password:  inst9welcome   
+Host:  192.168.1.182  
+Port:  5199  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance9   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance9   , no changes required. Skipping...
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance0   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance0   , no changes required. Skipping...
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance1   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance1   , no changes required. Skipping...
+User:  ce10usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2003 (HY000): Can't connect to MySQL server on '192.168.1.182:5110' (10061)
+The File root_password.ini is not updated with new password tigressAV for the  instance10 due to the error 1  
+Root password reset process completed for instance10..  
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: %Dktsm78>AoX  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance2   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance2   , no changes required. Skipping...
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance3   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance3   , no changes required. Skipping...
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance4   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance4   , no changes required. Skipping...
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance5   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance5   , no changes required. Skipping...
+User:  nce6usr  
+Password:  inst6welcome   
+Host:  192.168.1.182  
+Port:  5166  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance6   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance6   , no changes required. Skipping...
+User:  nce7usr  
+Password:  inst7welcome   
+Host:  192.168.1.182  
+Port:  5177  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance7   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance7   , no changes required. Skipping...
+User:  nce8usr  
+Password:  inst8welcome   
+Host:  192.168.1.182  
+Port:  5188  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance8   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance8   , no changes required. Skipping...
+User:  nce9usr  
+Password:  inst9welcome   
+Host:  192.168.1.182  
+Port:  5199  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same  tigressAV for the  instance9   , no changes required. Skipping... 
+Both existing and requested root passwords are the same  tigressAV for the  instance9   , no changes required. Skipping...
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  ce10usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2003 (HY000): Can't connect to MySQL server on '192.168.1.182:5110' (10061)
+The File root_password.ini is not updated with new password tigressAV for the  instance10 due to the error 1  
+Root password reset process completed for instance10..  
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: %Dktsm78>AoX  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce6usr  
+Password:  inst6welcome   
+Host:  192.168.1.182  
+Port:  5166  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce7usr  
+Password:  inst7welcome   
+Host:  192.168.1.182  
+Port:  5177  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce8usr  
+Password:  inst8welcome   
+Host:  192.168.1.182  
+Port:  5188  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+User:  nce9usr  
+Password:  inst9welcome   
+Host:  192.168.1.182  
+Port:  5199  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same, no changes required. Skipping... 
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same for the instance instance0, no changes required. Skipping... 
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same for the instance instance1, no changes required. Skipping... 
+User:  ce10usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2003 (HY000): Can't connect to MySQL server on '192.168.1.182:5110' (10061)
+The File root_password.ini is not updated with new password tigressAV for the  instance10 due to the error 1  
+Root password reset process completed for instance10..  
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: %Dktsm78>AoX  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same for the instance instance2, no changes required. Skipping... 
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same for the instance instance3, no changes required. Skipping... 
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same for the instance instance4, no changes required. Skipping... 
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same for the instance instance5, no changes required. Skipping... 
+User:  nce6usr  
+Password:  inst6welcome   
+Host:  192.168.1.182  
+Port:  5166  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same for the instance instance6, no changes required. Skipping... 
+User:  nce7usr  
+Password:  inst7welcome   
+Host:  192.168.1.182  
+Port:  5177  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same for the instance instance7, no changes required. Skipping... 
+User:  nce8usr  
+Password:  inst8welcome   
+Host:  192.168.1.182  
+Port:  5188  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same for the instance instance8, no changes required. Skipping... 
+User:  nce9usr  
+Password:  inst9welcome   
+Host:  192.168.1.182  
+Port:  5199  
+Old Password: tigressAV  
+New Password: tigressAV 	 	
+Both existing and requested root passwords are the same for the instance instance9, no changes required. Skipping... 
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User: nce0usr  
+Password: welcome   
+Host: 192.168.1.182  
+Port: 5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User: nce1usr  
+Password: welcome   
+Host: 192.168.1.182  
+Port: 5111  
+Old Password: Q%j0jood5/iA  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+User: nce2usr  
+Password: welcome   
+Host: 192.168.1.182  
+Port: 5112  
+Old Password: m/Cv4iY6I/Gg  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance2 due to the error 1  
+Root password reset process completed for instance2..  
+User: nce3usr  
+Password: welcome   
+Host: 192.168.1.182  
+Port: 5133  
+Old Password: 6yyLSKp4tHw  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance3 due to the error 1  
+Root password reset process completed for instance3..  
+User: nce4usr  
+Password: welcome   
+Host: 192.168.1.182  
+Port: 5144  
+Old Password: 3p2WwF_qM:,=  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance4 due to the error 1  
+Root password reset process completed for instance4..  
+User: nce5usr  
+Password: welcome   
+Host: 192.168.1.182  
+Port: 5155  
+Old Password: hmNruKjlX0?,  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance5 due to the error 1  
+Root password reset process completed for instance5..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: Q%j0jood5/iA  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+User:  nce2usr  
+Password:  inst2welcome   
+Host:  192.168.1.182  
+Port:  5112  
+Old Password: m/Cv4iY6I/Gg  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance2 due to the error 1  
+Root password reset process completed for instance2..  
+User:  nce3usr  
+Password:  inst3welcome   
+Host:  192.168.1.182  
+Port:  5133  
+Old Password: 6yyLSKp4tHw  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance3 due to the error 1  
+Root password reset process completed for instance3..  
+User:  nce4usr  
+Password:  inst4welcome   
+Host:  192.168.1.182  
+Port:  5144  
+Old Password: 3p2WwF_qM:,=  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance4 due to the error 1  
+Root password reset process completed for instance4..  
+User:  nce5usr  
+Password:  inst5welcome   
+Host:  192.168.1.182  
+Port:  5155  
+Old Password: hmNruKjlX0?,  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance5 due to the error 1  
+Root password reset process completed for instance5..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: Q%j0jood5/iA  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: Q%j0jood5/iA  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  nce0usr  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+^CThe File root_password.ini is not updated with new password welcome for the  instance0 due to the error -1073741510  
+Root password reset process completed for instance0..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: Q%j0jood5/iA  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  192.168.1.182  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  192.168.1.182  
+Port:  5111  
+Old Password: Q%j0jood5/iA  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1130 (HY000): Host 'DELPHI-K' is not allowed to connect to this MySQL server
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:   
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 2005 (HY000): Unknown MySQL server host '-P' (11001)
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  localhost  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+password=welcome  
+The File root_password.ini is updated with new password welcome for the  instance0   
+Root password reset process completed for instance0..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User: nce0usr  
+Password: welcome   
+Host: localhost  
+Port: 5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+password=welcome  
+The File root_password.ini is updated with new password welcome for the  instance0   
+Root password reset process completed for instance0..  
+User: nce1usr  
+Password: welcome   
+Host: localhost  
+Port: 5111  
+Old Password: fpf#D3;hiLsR  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+password=welcome  
+The File root_password.ini is updated with new password welcome for the  instance1   
+Root password reset process completed for instance1..  
+User: nce2usr  
+Password: welcome   
+Host: localhost  
+Port: 5112  
+Old Password: vvhsC_pl(9g_  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+password=welcome  
+The File root_password.ini is updated with new password welcome for the  instance2   
+Root password reset process completed for instance2..  
+User: nce3usr  
+Password: welcome   
+Host: localhost  
+Port: 5133  
+Old Password: BDpH&yp7J9oK  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+password=welcome  
+The File root_password.ini is updated with new password welcome for the  instance3   
+Root password reset process completed for instance3..  
+User: nce4usr  
+Password: welcome   
+Host: localhost  
+Port: 5144  
+Old Password: PfIuzfk?7=XR  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+password=welcome  
+The File root_password.ini is updated with new password welcome for the  instance4   
+Root password reset process completed for instance4..  
+User: nce5usr  
+Password: welcome   
+Host: localhost  
+Port: 5155  
+Old Password: )tntojj8Vu=:  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+password=welcome  
+The File root_password.ini is updated with new password welcome for the  instance5   
+Root password reset process completed for instance5..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User: nce0usr  
+Password: welcome   
+Host: localhost  
+Port: 5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+The File root_password.ini is updated with new password welcome for the  instance0   
+Root password reset process completed for instance0..  
+User: nce1usr  
+Password: welcome   
+Host: localhost  
+Port: 5111  
+Old Password: upi:X9Us6,8j  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+The File root_password.ini is updated with new password welcome for the  instance1   
+Root password reset process completed for instance1..  
+User: nce2usr  
+Password: welcome   
+Host: localhost  
+Port: 5112  
+Old Password: yjT*i0LDftsj  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+The File root_password.ini is updated with new password welcome for the  instance2   
+Root password reset process completed for instance2..  
+User: nce3usr  
+Password: welcome   
+Host: localhost  
+Port: 5133  
+Old Password: 8zlH?aaycBJ/  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+The File root_password.ini is updated with new password welcome for the  instance3   
+Root password reset process completed for instance3..  
+User: nce4usr  
+Password: welcome   
+Host: localhost  
+Port: 5144  
+Old Password: Qj7plb7=*g/D  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+The File root_password.ini is not updated with new password welcome for the  instance4 due to the error 1  
+Root password reset process completed for instance4..  
+User: nce5usr  
+Password: welcome   
+Host: localhost  
+Port: 5155  
+Old Password: u8pireCd#d5  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+The File root_password.ini is updated with new password welcome for the  instance5   
+Root password reset process completed for instance5..  

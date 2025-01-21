@@ -1,0 +1,374 @@
+Execution started at BATCH000_PROCESS.py
+
+Starting execution of: 001_00config_ini_file_update.bat
+Successfully executed: 001_00config_ini_file_update.bat
+Execution completed for: 001_00config_ini_file_update.bat
+
+Starting execution of: 002_global_ini_file_update_bat.bat
+Successfully executed: 002_global_ini_file_update_bat.bat
+Execution completed for: 002_global_ini_file_update_bat.bat
+
+Starting execution of: 003_create_instance_folders.bat
+Successfully executed: 003_create_instance_folders.bat
+Execution completed for: 003_create_instance_folders.bat
+
+Starting execution of: 004_copy_update_instance_myini_file_bat.bat
+Successfully executed: 004_copy_update_instance_myini_file_bat.bat
+Execution completed for: 004_copy_update_instance_myini_file_bat.bat
+
+Starting execution of: 005_initialize_data_folder.bat
+Successfully executed: 005_initialize_data_folder.bat
+Execution completed for: 005_initialize_data_folder.bat
+
+Starting execution of: 006_get_mysql_root_pwd.bat
+Successfully executed: 006_get_mysql_root_pwd.bat
+Execution completed for: 006_get_mysql_root_pwd.bat
+
+Starting execution of: 009_update_const_decl_js_file.bat
+Successfully executed: 009_update_const_decl_js_file.bat
+Execution completed for: 009_update_const_decl_js_file.bat
+
+Starting execution of: 010_configpy_file_update.bat
+Successfully executed: 010_configpy_file_update.bat
+Execution completed for: 010_configpy_file_update.bat
+
+Starting execution of: 011_env_file_update_bat.bat
+Successfully executed: 011_env_file_update_bat.bat
+Execution completed for: 011_env_file_update_bat.bat
+
+Starting execution of: 013_instance_file_to_instances.bat
+Successfully executed: 013_instance_file_to_instances.bat
+Execution completed for: 013_instance_file_to_instances.bat
+
+Starting execution of: 014_update_every_instance_file.bat
+Successfully executed: 014_update_every_instance_file.bat
+Execution completed for: 014_update_every_instance_file.bat
+
+Execution completed for all batch files.
+Execution started at BATCH100_PROCESS.py
+
+Starting execution of: 101_create_services.bat
+Successfully executed: 101_create_services.bat
+Execution completed for: 101_create_services.bat
+
+Starting execution of: 102_start_services.bat
+Successfully executed: 102_start_services.bat
+Execution completed for: 102_start_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH200_PROCESS.py
+
+Starting execution of: 201_reset_root_password.bat
+Successfully executed: 201_reset_root_password.bat
+Execution completed for: 201_reset_root_password.bat
+
+Starting execution of: 202_update_new_user_to_instance_cnf.bat
+Successfully executed: 202_update_new_user_to_instance_cnf.bat
+Execution completed for: 202_update_new_user_to_instance_cnf.bat
+
+Execution completed for all batch files.
+Execution started at BATCH100_PROCESS.py
+
+Starting execution of: 101_create_services.bat
+Successfully executed: 101_create_services.bat
+Execution completed for: 101_create_services.bat
+
+Starting execution of: 102_start_services.bat
+Successfully executed: 102_start_services.bat
+Execution completed for: 102_start_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH100_PROCESS.py
+
+Starting execution of: 101_create_services.bat
+Successfully executed: 101_create_services.bat
+Execution completed for: 101_create_services.bat
+
+Starting execution of: 102_start_services.bat
+Successfully executed: 102_start_services.bat
+Execution completed for: 102_start_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH800_PROCESS.py
+
+Starting execution of: 801_stop_services.bat
+Successfully executed: 801_stop_services.bat
+Execution completed for: 801_stop_services.bat
+
+Starting execution of: 802_Remove_services.bat
+Successfully executed: 802_Remove_services.bat
+Execution completed for: 802_Remove_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH000_PROCESS.py
+
+Starting execution of: 001_00config_ini_file_update.bat
+Successfully executed: 001_00config_ini_file_update.bat
+Execution completed for: 001_00config_ini_file_update.bat
+
+Starting execution of: 002_global_ini_file_update_bat.bat
+Successfully executed: 002_global_ini_file_update_bat.bat
+Execution completed for: 002_global_ini_file_update_bat.bat
+
+Starting execution of: 003_create_instance_folders.bat
+Successfully executed: 003_create_instance_folders.bat
+Execution completed for: 003_create_instance_folders.bat
+
+Starting execution of: 004_copy_update_instance_myini_file_bat.bat
+Successfully executed: 004_copy_update_instance_myini_file_bat.bat
+Execution completed for: 004_copy_update_instance_myini_file_bat.bat
+
+Starting execution of: 005_initialize_data_folder.bat
+Successfully executed: 005_initialize_data_folder.bat
+Execution completed for: 005_initialize_data_folder.bat
+
+Starting execution of: 006_get_mysql_root_pwd.bat
+Successfully executed: 006_get_mysql_root_pwd.bat
+Execution completed for: 006_get_mysql_root_pwd.bat
+
+Starting execution of: 009_update_const_decl_js_file.bat
+Successfully executed: 009_update_const_decl_js_file.bat
+Execution completed for: 009_update_const_decl_js_file.bat
+
+Starting execution of: 010_configpy_file_update.bat
+Successfully executed: 010_configpy_file_update.bat
+Execution completed for: 010_configpy_file_update.bat
+
+Starting execution of: 011_env_file_update_bat.bat
+Successfully executed: 011_env_file_update_bat.bat
+Execution completed for: 011_env_file_update_bat.bat
+
+Starting execution of: 013_instance_file_to_instances.bat
+Successfully executed: 013_instance_file_to_instances.bat
+Execution completed for: 013_instance_file_to_instances.bat
+
+Execution completed for all batch files.
+Execution started at BATCH100_PROCESS.py
+
+Starting execution of: 101_create_services.bat
+Successfully executed: 101_create_services.bat
+Execution completed for: 101_create_services.bat
+
+Starting execution of: 102_start_services.bat
+Successfully executed: 102_start_services.bat
+Execution completed for: 102_start_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH100_PROCESS.py
+
+Starting execution of: 101_create_services.bat
+Successfully executed: 101_create_services.bat
+Execution completed for: 101_create_services.bat
+
+Starting execution of: 102_start_services.bat
+Successfully executed: 102_start_services.bat
+Execution completed for: 102_start_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH100_PROCESS.py
+
+Starting execution of: 101_create_services.bat
+Successfully executed: 101_create_services.bat
+Execution completed for: 101_create_services.bat
+
+Starting execution of: 102_start_services.bat
+Successfully executed: 102_start_services.bat
+Execution completed for: 102_start_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH100_PROCESS.py
+
+Starting execution of: 101_create_services.bat
+Successfully executed: 101_create_services.bat
+Execution completed for: 101_create_services.bat
+
+Starting execution of: 102_start_services.bat
+Successfully executed: 102_start_services.bat
+Execution completed for: 102_start_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH200_PROCESS.py
+
+Starting execution of: 201_reset_root_password.bat
+Successfully executed: 201_reset_root_password.bat
+Execution completed for: 201_reset_root_password.bat
+
+Starting execution of: 202_update_new_user_to_instance_cnf.bat
+Successfully executed: 202_update_new_user_to_instance_cnf.bat
+Execution completed for: 202_update_new_user_to_instance_cnf.bat
+
+Execution completed for all batch files.
+Execution started at BATCH800_PROCESS.py
+
+Starting execution of: 801_stop_services.bat
+Successfully executed: 801_stop_services.bat
+Execution completed for: 801_stop_services.bat
+
+Starting execution of: 802_Remove_services.bat
+Successfully executed: 802_Remove_services.bat
+Execution completed for: 802_Remove_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH800_PROCESS.py
+
+Starting execution of: 801_stop_services.bat
+Successfully executed: 801_stop_services.bat
+Execution completed for: 801_stop_services.bat
+
+Starting execution of: 802_Remove_services.bat
+Successfully executed: 802_Remove_services.bat
+Execution completed for: 802_Remove_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH800_PROCESS.py
+
+Starting execution of: 801_stop_services.bat
+Successfully executed: 801_stop_services.bat
+Execution completed for: 801_stop_services.bat
+
+Starting execution of: 802_Remove_services.bat
+Successfully executed: 802_Remove_services.bat
+Execution completed for: 802_Remove_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH800_PROCESS.py
+
+Starting execution of: 801_stop_services.bat
+Successfully executed: 801_stop_services.bat
+Execution completed for: 801_stop_services.bat
+
+Starting execution of: 802_Remove_services.bat
+Successfully executed: 802_Remove_services.bat
+Execution completed for: 802_Remove_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH000_PROCESS.py
+
+Starting execution of: 001_00config_ini_file_update.bat
+Successfully executed: 001_00config_ini_file_update.bat
+Execution completed for: 001_00config_ini_file_update.bat
+
+Starting execution of: 002_global_ini_file_update_bat.bat
+Successfully executed: 002_global_ini_file_update_bat.bat
+Execution completed for: 002_global_ini_file_update_bat.bat
+
+Starting execution of: 003_create_instance_folders.bat
+Successfully executed: 003_create_instance_folders.bat
+Execution completed for: 003_create_instance_folders.bat
+
+Starting execution of: 004_copy_update_instance_myini_file_bat.bat
+Successfully executed: 004_copy_update_instance_myini_file_bat.bat
+Execution completed for: 004_copy_update_instance_myini_file_bat.bat
+
+Starting execution of: 005_initialize_data_folder.bat
+Successfully executed: 005_initialize_data_folder.bat
+Execution completed for: 005_initialize_data_folder.bat
+
+Starting execution of: 006_get_mysql_root_pwd.bat
+Successfully executed: 006_get_mysql_root_pwd.bat
+Execution completed for: 006_get_mysql_root_pwd.bat
+
+Starting execution of: 009_update_const_decl_js_file.bat
+Successfully executed: 009_update_const_decl_js_file.bat
+Execution completed for: 009_update_const_decl_js_file.bat
+
+Starting execution of: 010_configpy_file_update.bat
+Successfully executed: 010_configpy_file_update.bat
+Execution completed for: 010_configpy_file_update.bat
+
+Starting execution of: 011_env_file_update_bat.bat
+Successfully executed: 011_env_file_update_bat.bat
+Execution completed for: 011_env_file_update_bat.bat
+
+Starting execution of: 013_instance_file_to_instances.bat
+Successfully executed: 013_instance_file_to_instances.bat
+Execution completed for: 013_instance_file_to_instances.bat
+
+Execution completed for all batch files.
+Execution started at BATCH100_PROCESS.py
+
+Starting execution of: 101_create_services.bat
+Successfully executed: 101_create_services.bat
+Execution completed for: 101_create_services.bat
+
+Starting execution of: 102_start_services.bat
+Successfully executed: 102_start_services.bat
+Execution completed for: 102_start_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH800_PROCESS.py
+
+Starting execution of: 801_stop_services.bat
+Successfully executed: 801_stop_services.bat
+Execution completed for: 801_stop_services.bat
+
+Starting execution of: 802_Remove_services.bat
+Successfully executed: 802_Remove_services.bat
+Execution completed for: 802_Remove_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH000_PROCESS.py
+
+Starting execution of: 001_00config_ini_file_update.bat
+Successfully executed: 001_00config_ini_file_update.bat
+Execution completed for: 001_00config_ini_file_update.bat
+
+Starting execution of: 002_global_ini_file_update_bat.bat
+Successfully executed: 002_global_ini_file_update_bat.bat
+Execution completed for: 002_global_ini_file_update_bat.bat
+
+Starting execution of: 003_create_instance_folders.bat
+Successfully executed: 003_create_instance_folders.bat
+Execution completed for: 003_create_instance_folders.bat
+
+Starting execution of: 004_copy_update_instance_myini_file_bat.bat
+Successfully executed: 004_copy_update_instance_myini_file_bat.bat
+Execution completed for: 004_copy_update_instance_myini_file_bat.bat
+
+Starting execution of: 005_initialize_data_folder.bat
+Successfully executed: 005_initialize_data_folder.bat
+Execution completed for: 005_initialize_data_folder.bat
+
+Starting execution of: 006_get_mysql_root_pwd.bat
+Successfully executed: 006_get_mysql_root_pwd.bat
+Execution completed for: 006_get_mysql_root_pwd.bat
+
+Starting execution of: 009_update_const_decl_js_file.bat
+Successfully executed: 009_update_const_decl_js_file.bat
+Execution completed for: 009_update_const_decl_js_file.bat
+
+Starting execution of: 010_configpy_file_update.bat
+Successfully executed: 010_configpy_file_update.bat
+Execution completed for: 010_configpy_file_update.bat
+
+Starting execution of: 011_env_file_update_bat.bat
+Successfully executed: 011_env_file_update_bat.bat
+Execution completed for: 011_env_file_update_bat.bat
+
+Starting execution of: 013_instance_file_to_instances.bat
+Successfully executed: 013_instance_file_to_instances.bat
+Execution completed for: 013_instance_file_to_instances.bat
+
+Execution completed for all batch files.
+Execution started at BATCH100_PROCESS.py
+
+Starting execution of: 101_create_services.bat
+Successfully executed: 101_create_services.bat
+Execution completed for: 101_create_services.bat
+
+Starting execution of: 102_start_services.bat
+Successfully executed: 102_start_services.bat
+Execution completed for: 102_start_services.bat
+
+Execution completed for all batch files.
+Execution started at BATCH200_PROCESS.py
+
+Starting execution of: 201_reset_root_password.bat
+Successfully executed: 201_reset_root_password.bat
+Execution completed for: 201_reset_root_password.bat
+
+Starting execution of: 202_update_new_user_to_instance_cnf.bat
+Successfully executed: 202_update_new_user_to_instance_cnf.bat
+Execution completed for: 202_update_new_user_to_instance_cnf.bat
+
+Execution completed for all batch files.

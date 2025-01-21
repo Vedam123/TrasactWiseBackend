@@ -60,7 +60,7 @@ echo Config file directory %CONFIG_FILE%
 
 REM Read the company name, gcname, and instances from the INI file
 for /f "tokens=1,2 delims==" %%A in ('findstr /i "gcname" "%CONFIG_FILE%"') do set "gcname=%%B"
-for /f "tokens=1,2 delims==" %%A in ('findstr /i "name" "%CONFIG_FILE%"') do set "company=%%B"
+for /f "tokens=1,2 delims==" %%A in ('findstr /i "name=" "%CONFIG_FILE%"') do set "company=%%B"
 for /f "tokens=1,2 delims==" %%A in ('findstr /i "instances" "%CONFIG_FILE%"') do set "instances=%%B"
 
 REM Remove any spaces or quotes from the input
@@ -105,34 +105,26 @@ for /L %%i in (0,1,%instances%) do (
     REM Debug: Print the path of MY_CNF to ensure it's correct
     echo Debug: MY_CNF = !MY_CNF!
 
-    REM Check if the instance directory exists
+REM Check if the instance directory exists
     if exist "!INSTANCE_DIR!" (
         
-        REM Check if the service is already running (service specific check)
-        sc query "!SERVICE_NAME!" | findstr /i "RUNNING" >nul
+        REM Check if the service already exists
+        sc qc "!SERVICE_NAME!" >nul 2>&1
         if !errorlevel! equ 0 (
-            echo Service !SERVICE_NAME! is already running. Stopping it first...
-            REM Stop the running MySQL service for the specific instance
-            net stop "!SERVICE_NAME!"
-            timeout /t 5 /nobreak
-        )
-
-        REM Create the MySQL service for the instance
-        echo Creating service !SERVICE_NAME!... 
-
-        REM Redirect both output and error to the log file
-        "%MYSQL_BIN%\mysqld.exe" --install !SERVICE_NAME! --defaults-file="!MY_CNF!" > "!INSTANCE_DIR!\services_log.txt" 2>&1
-
-        REM Check the log file for errors by searching for the word 'error'
-        findstr /i "error denied" "!INSTANCE_DIR!\services_log.txt" >nul
-
-        REM If error found, the service creation has failed, otherwise it's successful
-        if !errorlevel! equ 0 (
-            echo Failed to create service !SERVICE_NAME! for instance %%i.
-            REM Optionally, print the entire log to help with troubleshooting
-            type "!INSTANCE_DIR!\services_log.txt"
+            echo Service !SERVICE_NAME! already exists. Skipping creation...
         ) else (
-            echo Service !SERVICE_NAME! created successfully for instance %%i.
+            REM Create the MySQL service for the instance
+            echo Creating service !SERVICE_NAME!... 
+            "%MYSQL_BIN%\mysqld.exe" --install !SERVICE_NAME! --defaults-file="!MY_CNF!" > "!INSTANCE_DIR!\services_log.txt" 2>&1
+
+            REM Check the log file for errors
+            findstr /i "error denied" "!INSTANCE_DIR!\services_log.txt" >nul
+            if !errorlevel! equ 0 (
+                echo Failed to create service !SERVICE_NAME! for instance %%i.
+                type "!INSTANCE_DIR!\services_log.txt"
+            ) else (
+                echo Service !SERVICE_NAME! created successfully for instance %%i.
+            )
         )
     ) else (
         echo Instance folder !INSTANCE_DIR! does not exist. Skipping.

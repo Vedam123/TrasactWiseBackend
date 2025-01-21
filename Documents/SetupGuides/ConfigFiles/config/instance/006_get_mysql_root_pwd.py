@@ -17,6 +17,13 @@ def find_root_password_in_err_file(err_file_path):
 
 def process_instance_directory(instance_dir):
     """Process each instance directory, check for .err file, and extract password."""
+    root_password_file = os.path.join(instance_dir, 'root_password.ini')
+    
+    # Check if root_password.ini file already exists
+    if os.path.exists(root_password_file):
+        print(f"Skipping {instance_dir} as root_password.ini already exists. so no update is done to existing file ")
+        return  # Skip processing this instance if the file already exists
+    
     data_dir = os.path.join(instance_dir, 'data')
     if os.path.isdir(data_dir):
         print(f"Processing {data_dir}...")  # Log the data directory being processed
@@ -30,20 +37,8 @@ def process_instance_directory(instance_dir):
                     password = find_root_password_in_err_file(err_file_path)
                     if password:
                         print(f"Extracted password: {password}")
-                        # Write the password to a .ini file inside the instance folder
-                        root_password_file = os.path.join(instance_dir, 'root_password.ini')
-
-                        # Check if the file exists and is not empty, if so, clear it
-                        if os.path.exists(root_password_file):
-                            with open(root_password_file, 'r', encoding='utf-8') as file:
-                                content = file.read()
-                                if content.strip():  # If the file is not empty
-                                    print(f"{root_password_file} is not empty. Clearing it.")
-                                    with open(root_password_file, 'w', encoding='utf-8') as clear_file:
-                                        clear_file.truncate(0)  # Empty the file
-
                         # Save the password in the format Password=<password> with no spaces around '='
-                        with open(root_password_file, 'a', encoding='utf-8') as password_file:
+                        with open(root_password_file, 'w', encoding='utf-8') as password_file:
                             password_file.write(f"password={password}\n")
                         print(f"Password written to {root_password_file}")
                         found_password = True

@@ -72,65 +72,65 @@ else:
 INST_DIR_COUNT = len([name for name in os.listdir(DB_INST_DIR) if os.path.isdir(os.path.join(DB_INST_DIR, name))])
 print(f"Number of instance directories: {INST_DIR_COUNT}")
 
-# 9. Copy the SOURCE_MYINI_FILE to every subdirectory of DB_INST_DIR
-for i in range(INST_DIR_COUNT):
-    instance_dir = os.path.join(DB_INST_DIR, f'instance{i}')
-    if os.path.isdir(instance_dir):
-        shutil.copy(SOURCE_MYINI_FILE, instance_dir)
-        print(f"Copied my.ini to {instance_dir}")
-
-# 10. Read 00_config.ini for port mappings
 config_file = os.path.join(CNF_DIR, '00_config.ini')
 config.read(config_file)
 
+# 9. Define ports list for each instance
+# Define the ports for each instance (the length should match the INST_DIR_COUNT)
 ports = [config['MySQL'].get(f'port{i}') for i in range(INST_DIR_COUNT)]
+print(f"Ports for each instance: {ports}")
 
-# 11. Update my.ini in each subdirectory of DB_INST_DIR
-# Update the my.ini file for each instance
+# 10. Single loop to handle both copy and update
 for i in range(INST_DIR_COUNT):
     instance_dir = os.path.join(DB_INST_DIR, f'instance{i}')
     my_ini_file = os.path.join(instance_dir, 'my.ini')
     
-    if os.path.isfile(my_ini_file):
-        with open(my_ini_file, 'r') as file:
-            lines = file.readlines()
+    if os.path.isdir(instance_dir):
+        # If the my.ini file does not exist, copy it and then update it
+        if not os.path.isfile(my_ini_file):  # Only copy if my.ini does not exist
+            shutil.copy(SOURCE_MYINI_FILE, instance_dir)
+            print(f"Copied my.ini to {instance_dir}")
 
-        # Store the subdirectory's name
-        CURR_INST_DIR_NAME = os.path.basename(instance_dir)
-        CURR_INST_DATA_DIR = os.path.join(instance_dir, 'data')
+            # After copying, update the my.ini file
+            with open(my_ini_file, 'r') as file:
+                lines = file.readlines()
 
-        # Update port, mysqlx_port, datadir, secure-file-priv, general_log_file, log-error
-        new_lines = []
-        for line in lines:
-            # Update port (only update 'port' line)
-            if line.strip().startswith('port='):
-                new_lines.append(f"port={ports[i]}\n")
-            # Update mysqlx_port (ensure it gets a separate treatment)
-            elif line.strip().startswith('mysqlx_port='):
-                new_lines.append(f"mysqlx_port={int(ports[i])}0\n")  # Append '0' to the port value for mysqlx_port
-            # Update datadir
-            elif line.strip().startswith('datadir='):
-                new_lines.append(f"datadir={BASE_PATH}/{GREAT_GRAND_PAR_DIR_NAME}/{GRAND_PAR_DIR_NAME}/{DB_INST_DIR_NAME}/{CURR_INST_DIR_NAME}/data\n")
-            # Update secure-file-priv
-            elif line.strip().startswith('secure-file-priv='):
-                new_lines.append(f"secure-file-priv={BASE_PATH}/{GREAT_GRAND_PAR_DIR_NAME}/{GRAND_PAR_DIR_NAME}/{DB_INST_DIR_NAME}/{CURR_INST_DIR_NAME}/Uploads\n")
-            # Update general_log_file
-            elif line.strip().startswith('general_log_file='):
-                new_lines.append(f"general_log_file={CURR_INST_DIR_NAME}.log\n")
-            # Update log-error
-            elif line.strip().startswith('log-error='):
-                new_lines.append(f"log-error={CURR_INST_DIR_NAME}.err\n")
-            else:
-                new_lines.append(line)
+            # Store the subdirectory's name
+            CURR_INST_DIR_NAME = os.path.basename(instance_dir)
+            CURR_INST_DATA_DIR = os.path.join(instance_dir, 'data')
 
-        # Write the updated contents back to my.ini
-        with open(my_ini_file, 'w') as file:
-            file.writelines(new_lines)
+            # Update port, mysqlx_port, datadir, secure-file-priv, general_log_file, log-error
+            new_lines = []
+            for line in lines:
+                # Update port (only update 'port' line)
+                if line.strip().startswith('port='):
+                    new_lines.append(f"port={ports[i]}\n")
+                # Update mysqlx_port (ensure it gets a separate treatment)
+                elif line.strip().startswith('mysqlx_port='):
+                    new_lines.append(f"mysqlx_port={int(ports[i])}0\n")  # Append '0' to the port value for mysqlx_port
+                # Update datadir
+                elif line.strip().startswith('datadir='):
+                    new_lines.append(f"datadir={BASE_PATH}/{GREAT_GRAND_PAR_DIR_NAME}/{GRAND_PAR_DIR_NAME}/{DB_INST_DIR_NAME}/{CURR_INST_DIR_NAME}/data\n")
+                # Update secure-file-priv
+                elif line.strip().startswith('secure-file-priv='):
+                    new_lines.append(f"secure-file-priv={BASE_PATH}/{GREAT_GRAND_PAR_DIR_NAME}/{GRAND_PAR_DIR_NAME}/{DB_INST_DIR_NAME}/{CURR_INST_DIR_NAME}/Uploads\n")
+                # Update general_log_file
+                elif line.strip().startswith('general_log_file='):
+                    new_lines.append(f"general_log_file={CURR_INST_DIR_NAME}.log\n")
+                # Update log-error
+                elif line.strip().startswith('log-error='):
+                    new_lines.append(f"log-error={CURR_INST_DIR_NAME}.err\n")
+                else:
+                    new_lines.append(line)
+
+            # Write the updated contents back to my.ini
+            with open(my_ini_file, 'w') as file:
+                file.writelines(new_lines)
+
+            # Create directories if necessary
+            os.makedirs(os.path.join(instance_dir, 'Uploads'), exist_ok=True)
+            os.makedirs(CURR_INST_DATA_DIR, exist_ok=True)
+            print(f"Updated my.ini in {instance_dir}")
         
-        # Create directories if necessary
-        os.makedirs(os.path.join(instance_dir, 'Uploads'), exist_ok=True)
-        os.makedirs(CURR_INST_DATA_DIR, exist_ok=True)
-        print(f"Updated my.ini in {instance_dir}")
-    else:
-        print(f"my.ini not found in {instance_dir}")
-
+        else:
+            print(f"my.ini already exists in {instance_dir}, skipping copy and update.")

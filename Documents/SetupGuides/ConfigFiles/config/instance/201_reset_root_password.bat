@@ -1,4 +1,5 @@
 @echo off
+
 setlocal enabledelayedexpansion
 
 :: Create log directory if it doesn't exist
@@ -9,25 +10,18 @@ set LOG_FILE=reset_root_pwd\reset_root_pwd_log.txt
 
 set CURR_DIR=%cd%
 for %%a in ("%CURR_DIR%") do set CURR_DIR_NAME=%%~nxa
-echo Current Directory: %CURR_DIR% >> %LOG_FILE%
-echo Current Directory Name: %CURR_DIR_NAME% >> %LOG_FILE%
 
 :: Step 2: Find Parent directory of CURR_DIR and store in PAR_DIR
 set PAR_DIR=%CURR_DIR%\..
 for %%a in ("%PAR_DIR%") do set PAR_DIR_NAME=%%~nxa
-echo Parent Directory: %PAR_DIR% >> %LOG_FILE%
-echo Parent Directory Name: %PAR_DIR_NAME% >> %LOG_FILE%
 
 :: Step 3: Find Grandparent directory of PAR_DIR and store in GRAND_PAR_DIR
 set GRAND_PAR_DIR=%PAR_DIR%\..
 for %%a in ("%GRAND_PAR_DIR%") do set GRAND_PAR_DIR_NAME=%%~nxa
-echo Grandparent Directory: %GRAND_PAR_DIR% >> %LOG_FILE%
-echo Grandparent Directory Name: %GRAND_PAR_DIR_NAME% >> %LOG_FILE%
 
 :: Step 4: Locate db_instances directory and store in DB_INSTANCES_DIR
 set DB_INSTANCES_DIR=%GRAND_PAR_DIR%\db_instances
 set DB_INSTANCES_DIR_NAME=db_instances
-echo DB Instances Directory: %DB_INSTANCES_DIR% >> %LOG_FILE%
 
 :: Step 5: Count subdirectories in DB_INSTANCES_DIR that start with 'instance'
 set INSTANCE_DIR_COUNT=0
@@ -37,15 +31,28 @@ for /d %%a in ("%DB_INSTANCES_DIR%\instance*") do (
     set /a INSTANCE_DIR_COUNT+=1
 )
 
-echo Instance Directory Count: %INSTANCE_DIR_COUNT% >> %LOG_FILE%
+set BATCH_DIR=%~dp0
+echo Batch Directory : %BATCH_DIR% >> %LOG_FILE%
+
+:: Define the cnf directory (which is in the same directory as the batch file)
+set CNF_DIR=%BATCH_DIR%cnf
+
+:: Define the 00_config.ini file path
+set CONFIG_FILE=%CNF_DIR%\00_config.ini
+
+:: Read the ROOT_PASSWORD value from the global_variables.ini file
+for /f "tokens=1,2 delims==" %%A in ('findstr /i "ROOT_PASSWORD" "%CONFIG_FILE%"') do set "ROOT_PASSWORD=%%B"
+
+:: Remove any leading and trailing spaces from ROOT_PASSWORD
+for /f "tokens=* delims=" %%a in ("%ROOT_PASSWORD%") do set "ROOT_PASSWORD=%%a"
 
 :: Step 6: Set root and new root password
 set ROOT_USER=root
-set NEW_ROOT_PASSWORD=tigressAV
+
 :: Step 7: Loop through each instance subdirectory and process files
 for /d %%a in ("%DB_INSTANCES_DIR%\instance*") do (
     set INSTANCE_DIR=%%a
-    echo Processing directory: !INSTANCE_DIR! >> %LOG_FILE%
+    set INSTANCE_DIR_NAME=%%~nxa
 
     :: Step 8: Set file paths for .instance.cnf and root_password.txt
     set INS_FILE_NAME=!INSTANCE_DIR!\.instance.cnf
@@ -53,75 +60,90 @@ for /d %%a in ("%DB_INSTANCES_DIR%\instance*") do (
 
     :: Step 9: Check if the .instance.cnf and root_password.txt exist
     if exist "!INS_FILE_NAME!" if exist "!ROOT_FILE_NAME!" (
-        echo Files found: !INS_FILE_NAME! and !ROOT_FILE_NAME! >> %LOG_FILE%
 
         :: Read user
         for /f "tokens=2 delims==" %%b in ('findstr "user" "!INS_FILE_NAME!"') do set CL_USER=%%b
+        REM Remove any leading and trailing spaces
+        for /f "tokens=* delims=" %%a in ("%CL_USER%") do set "CL_USER=%%a"
 
         :: Read password
         for /f "tokens=2 delims==" %%b in ('findstr "password" "!INS_FILE_NAME!"') do set CL_PASSWORD=%%b
+        REM Remove any leading and trailing spaces
+        for /f "tokens=* delims=" %%a in ("%CL_PASSWORD%") do set "CL_PASSWORD=%%a"
 
         :: Read host (searching specifically for 'host')
-        for /f "tokens=2 delims==" %%b in ('findstr "host=" "!INS_FILE_NAME!"') do set CL_HOST=%%b
+        for /f "tokens=2 delims==" %%b in ('findstr "host" "!INS_FILE_NAME!"') do set CL_HOST=%%b
+		
+		echo the extracted CL_HOST !CL_HOST! 
+        REM Remove any leading and trailing spaces
+        for /f "tokens=* delims=" %%a in ("%CL_HOST%") do set "CL_HOST=%%a"
 
         :: Read port
         for /f "tokens=2 delims==" %%b in ('findstr "port" "!INS_FILE_NAME!"') do set CL_PORT=%%b
+        REM Remove any leading and trailing spaces
+        for /f "tokens=* delims=" %%a in ("%CL_PORT%") do set "CL_PORT=%%a"
 
-        echo User: !CL_USER! >> %LOG_FILE%
-        echo Password: !CL_PASSWORD! >> %LOG_FILE%
-        echo Host: !CL_HOST! >> %LOG_FILE%
-        echo Port: !CL_PORT! >> %LOG_FILE%
+        echo User: !CL_USER!  >> %LOG_FILE%
+        echo Password: !CL_PASSWORD!   >> %LOG_FILE%
+        echo Host: !CL_HOST!  >> %LOG_FILE%
+        echo Port: !CL_PORT!  >> %LOG_FILE%
+        echo Old Password: !ROOT_PWD!  >> %LOG_FILE%
+        echo New Password: !ROOT_PASSWORD! 	 >> %LOG_FILE%	
 
         :: Read root password
-        REM for /f "tokens=2 delims==" %%b in ('findstr "password" "!ROOT_FILE_NAME!"') do set ROOT_PWD=%%b
-		:: Read root password
-		for /f "tokens=1* delims==" %%b in ('findstr "password" "!ROOT_FILE_NAME!"') do set ROOT_PWD=%%c
+        for /f "tokens=1* delims==" %%b in ('findstr "password" "!ROOT_FILE_NAME!"') do set ROOT_PWD=%%c
+    
+        set "ROOT_PWD=!ROOT_PWD: =!"  :: Remove spaces from ROOT_PWD
 
-		:: Step 2: Display the extracted password
-		echo Captured Root Password: !ROOT_PWD! >> %LOG_FILE%
-		
-		set "ROOT_PWD=!ROOT_PWD: =!"
+        :: Remove leading spaces from ROOT_PWD
+        for /f "tokens=* delims=" %%a in ("!ROOT_PWD!") do set "ROOT_PWD=%%a"
+        
+        REM Remove any leading and trailing spaces from ROOT_PWD
+        for /f "tokens=* delims=" %%a in ("%ROOT_PWD%") do set "ROOT_PWD=%%a"
 
-		:: Remove leading spaces
-		for /f "tokens=* delims=" %%a in ("!ROOT_PWD!") do set "ROOT_PWD=%%a"
+        :: Trim ROOT_PASSWORD in the same way (remove leading and trailing spaces)
+        set "ROOT_PASSWORD=!ROOT_PASSWORD: =!"
 
-		:: Remove trailing spaces
-		for /l %%a in (1,1,255) do (
-			set "ROOT_PWD=!ROOT_PWD!"
-			if "!ROOT_PWD:~-1!"==" " set "ROOT_PWD=!ROOT_PWD:~0,-1!"
-		)
+        :: Compare the existing root password (ROOT_PWD) with the new password (ROOT_PASSWORD)
+        if "!ROOT_PWD!" == "!ROOT_PASSWORD!" (
+            echo Both existing and requested root passwords are the same for the instance !INSTANCE_DIR_NAME!, no changes required. Skipping... >> %LOG_FILE%
+            echo Both existing and requested root passwords are the same for the instance !INSTANCE_DIR_NAME!, no changes required. Skipping...
+        ) else (
+			
+			echo  Host !CL_HOST! , PORT !CL_PORT!, ROOT USER !ROOT_USER!, ROOT PASSWD !ROOT_PWD!,  ALTER TO THE PASSWORD  !ROOT_PASSWORD! for the  !INSTANCE_DIR_NAME! 
+			:: Proceed with password change if passwords are different
+			mysql -h !CL_HOST! -P !CL_PORT! -u !ROOT_USER! -p"!ROOT_PWD!" --connect-expired-password -e "ALTER USER '!ROOT_USER!'@'!CL_HOST!' IDENTIFIED BY '!ROOT_PASSWORD!';" >> %LOG_FILE% 2>&1					
+			
+			:: Capture the ERRORLEVEL immediately after the mysql command
+			set MYSQL_ERRORLEVEL=!ERRORLEVEL!
+			echo Mysql error level !MYSQL_ERRORLEVEL!
+			:: Step 3: Check if the MySQL command was successful
+			if !MYSQL_ERRORLEVEL! EQU 0 (
+				echo MySQL password change successful.  >> %LOG_FILE%
 
-		:: Step 2: Display the extracted password
-		echo Updated quoted Root Password: "!ROOT_PWD!" >> %LOG_FILE%
-		
+				:: Step 4: Update the root_password.ini with the new password
+				set ROOT_FILE_NAME=!INSTANCE_DIR!\root_password.ini
 
-        :: Step 12: Connect to MySQL using the captured details and reset the root password
-        echo Resetting root password for !CL_HOST!:!CL_PORT!... >> %LOG_FILE%
+				:: Ensure the file is empty before updating (without adding extra line)
+				> "!ROOT_FILE_NAME!" (
+					echo password=!ROOT_PASSWORD!
+				)
 
-		:: Use mysqld to connect and change the root password 
-		mysql -h !CL_HOST! -P !CL_PORT! -u !ROOT_USER! -p"!ROOT_PWD!" --connect-expired-password -e "ALTER USER '!ROOT_USER!'@'!CL_HOST!' IDENTIFIED BY '!NEW_ROOT_PASSWORD!';" >> %LOG_FILE% 2>&1
-
-        :: Step 3: Check if the MySQL command was successful
-       if !ERRORLEVEL! EQU 0 (
-			echo MySQL password change successful. >> %LOG_FILE%
-
-			:: Step 4: Update the root_password.ini with the new password
-			set ROOT_FILE_NAME=!INSTANCE_DIR!\root_password.ini
-
-			:: Ensure the file is empty before updating (without adding extra line)
-			> "!ROOT_FILE_NAME!" (
-				echo password=!NEW_ROOT_PASSWORD!
+				echo The File root_password.ini is updated with new password !ROOT_PASSWORD! for the  !INSTANCE_DIR_NAME!   >> %LOG_FILE%
+				echo The File root_password.ini is updated with new password !ROOT_PASSWORD! for the  !INSTANCE_DIR_NAME!			
+			) else (
+				echo The File root_password.ini is not updated with new password !ROOT_PASSWORD! for the  !INSTANCE_DIR_NAME! due to the error !MYSQL_ERRORLEVEL!  >> %LOG_FILE%
+				echo The File root_password.ini is not updated with new password !ROOT_PASSWORD! for the  !INSTANCE_DIR_NAME! due to the error !MYSQL_ERRORLEVEL! 			
 			)
 
-			echo root_password.ini updated with new password: !NEW_ROOT_PASSWORD! >> %LOG_FILE%
-		) else (
-			echo Error: MySQL password change failed. ERRORLEVEL: !ERRORLEVEL! >> %LOG_FILE%
+			echo Root password reset process completed for !INSTANCE_DIR_NAME!..  >> %LOG_FILE%
+			echo Root password reset process completed for !INSTANCE_DIR_NAME!..  
 		)
-
-        echo Root password reset process completed for !INSTANCE_DIR!.. >> %LOG_FILE%
     ) else (
-        echo Missing files for !INSTANCE_DIR!, skipping... >> %LOG_FILE%
+        echo Missing files for !INSTANCE_DIR_NAME!, skipping...  >> %LOG_FILE%
+        echo Missing files for !INSTANCE_DIR_NAME!, skipping...  
     )
+	
 )
 
 endlocal

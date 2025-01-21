@@ -43,7 +43,6 @@ REM Define the INI configuration file path based on the batch file location
 set INI_FILE=%BATCH_DIR%cnf\00_config.ini
 echo Ini file  Directory : %INI_FILE%
 
-
 set CONFIG_FILE=%BATCH_DIR%cnf\00_config.ini
 echo config file  Directory : %CONFIG_FILE%
 
@@ -96,18 +95,32 @@ for /L %%i in (0,1,%instances%) do (
             echo Created data directory: !DATA_DIR!
         )
 
-        REM Print the command before executing it
-        echo Running command: "%MYSQL_BIN%\mysqld.exe" --initialize --datadir="!DATA_DIR!"
+        REM Initialize the flag to check if the data directory is empty
+        set DATA_DIR_NOT_EMPTY=0
 
-        REM Run MySQL initialization with proper quoting and capture output
-        "%MYSQL_BIN%\mysqld.exe" --initialize --datadir="!DATA_DIR!" > "!INSTANCE_DIR!\initialize_log.txt" 2>&1
+        REM Check if the data directory is empty by listing its contents
+        for /f %%A in ('dir /b "!DATA_DIR!"') do (
+            REM If any files are found, set the flag and break the loop
+            set DATA_DIR_NOT_EMPTY=1
+        )
 
-        REM Check the log file for errors
-        findstr /i "error" "!INSTANCE_DIR!\initialize_log.txt" >nul
-        if !errorlevel! equ 0 (
-            echo Initialization failed. Check the log for details: !INSTANCE_DIR!\initialize_log.txt
+        REM Only initialize if the data directory is empty (i.e., flag is 0)
+        if !DATA_DIR_NOT_EMPTY! equ 0 (
+            REM Print the command before executing it
+            echo Running command: "%MYSQL_BIN%\mysqld.exe" --initialize --datadir="!DATA_DIR!"
+
+            REM Run MySQL initialization with proper quoting and capture output
+            "%MYSQL_BIN%\mysqld.exe" --initialize --datadir="!DATA_DIR!" > "!INSTANCE_DIR!\initialize_log.txt" 2>&1
+
+            REM Check the log file for errors
+            findstr /i "error" "!INSTANCE_DIR!\initialize_log.txt" >nul
+            if !errorlevel! equ 0 (
+                echo Initialization failed. Check the log for details: !INSTANCE_DIR!\initialize_log.txt
+            ) else (
+                echo Data directory initialized successfully for instance %%i.
+            )
         ) else (
-            echo Data directory initialized successfully for instance %%i.
+            echo Data directory for instance %%i is not empty. Skipping initialization.
         )
     ) else (
         echo Instance folder !INSTANCE_DIR! does not exist. Skipping.

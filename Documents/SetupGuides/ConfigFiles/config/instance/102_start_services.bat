@@ -22,13 +22,10 @@ REM Traverse up the directory to find the SAS Opera root directory
 set ROOT_DIR=%BATCH_DIR%..\..\db_instances
 echo Root Directory : %ROOT_DIR%
 
-REM Check if the instances directory exists. If not, create it.
+REM Check if ROOT_DIR exists, if not exit with a comment
 if not exist "%ROOT_DIR%" (
-    echo Directory %ROOT_DIR% does not exist. Creating %ROOT_DIR%...
-    mkdir "%ROOT_DIR%"
-    echo Created %ROOT_DIR%.
-) else (
-    echo Directory %ROOT_DIR% already exists.
+    echo Root directory "%ROOT_DIR%" does not exist. Exiting the script.
+    exit /b
 )
 
 REM Define the cnf directory (which is in the same directory as the batch file)
@@ -61,7 +58,7 @@ echo Config file directory %CONFIG_FILE%
 
 REM Read the company name, gcname, and instances from the INI file
 for /f "tokens=1,2 delims==" %%A in ('findstr /i "gcname" "%CONFIG_FILE%"') do set "gcname=%%B"
-for /f "tokens=1,2 delims==" %%A in ('findstr /i "name" "%CONFIG_FILE%"') do set "company=%%B"
+for /f "tokens=1,2 delims==" %%A in ('findstr /i "name=" "%CONFIG_FILE%"') do set "company=%%B"
 for /f "tokens=1,2 delims==" %%A in ('findstr /i "instances" "%CONFIG_FILE%"') do set "instances=%%B"
 
 REM Remove any spaces or quotes from the input
@@ -100,10 +97,13 @@ for /L %%i in (0,1,%instances%) do (
         set SERVICE_NAME=%company%_instance%%i
     )
 
-    REM Check if the service exists and start it
-    sc qc !SERVICE_NAME! >nul 2>&1
+    REM Check if the service exists and is running
+    sc query !SERVICE_NAME! | findstr /i "RUNNING" >nul
     if !errorlevel! equ 0 (
-        REM Start the MySQL service for the instance
+        REM The service is already running
+        echo Service !SERVICE_NAME! is already running. Skipping start.
+    ) else (
+        REM The service is not running, start it
         echo Starting service !SERVICE_NAME!...
         sc start !SERVICE_NAME!
 
@@ -111,10 +111,8 @@ for /L %%i in (0,1,%instances%) do (
         if !errorlevel! equ 0 (
             echo Service !SERVICE_NAME! started successfully.
         ) else (
-            echo Failed to start service !SERVICE_NAME!..
+            echo Failed to start service !SERVICE_NAME!.
         )
-    ) else (
-        echo Service !SERVICE_NAME! does not exist. Skipping.
     )
 )
 

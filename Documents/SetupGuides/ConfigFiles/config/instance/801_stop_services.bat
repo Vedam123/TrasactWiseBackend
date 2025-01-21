@@ -46,7 +46,7 @@ echo Config file directory %CONFIG_FILE%
 
 REM Read the company name, gcname, and instances from the INI file
 for /f "tokens=1,2 delims==" %%A in ('findstr /i "gcname" "%CONFIG_FILE%"') do set "gcname=%%B"
-for /f "tokens=1,2 delims==" %%A in ('findstr /i "name" "%CONFIG_FILE%"') do set "company=%%B"
+for /f "tokens=1,2 delims==" %%A in ('findstr /i "name=" "%CONFIG_FILE%"') do set "company=%%B"
 for /f "tokens=1,2 delims==" %%A in ('findstr /i "instances" "%CONFIG_FILE%"') do set "instances=%%B"
 
 REM Remove any spaces or quotes from the input
