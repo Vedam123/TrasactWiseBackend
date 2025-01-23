@@ -53,6 +53,29 @@ with open(TEMP_FILE, "w") as file:
 
 # Ask user if they want to process all instances
 process_all = input("Do you want to process all instances? (Yes --YES / Any letter): ")
+   
+def check_tables_exist(MYSQL_USER, MYSQL_PASS, MYSQL_HOST, MYSQL_PORT):
+    """Function to check if any tables exist in the MySQL database."""
+    # First, select the database
+    use_db_query = f"USE com;"
+    show_tables_query = "SHOW TABLES;"
+
+    # Run the command to select the database and check for tables
+    mysql_command = [
+        "mysql", "-u", MYSQL_USER, "-p" + MYSQL_PASS, "-h", MYSQL_HOST, "-P", str(MYSQL_PORT), "-e", f"{use_db_query} {show_tables_query}"
+    ]
+    
+    result = subprocess.run(mysql_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    
+    if result.returncode != 0:
+        print(f"Error checking tables: {result.stderr.decode()}")
+        return False
+    
+    output = result.stdout.decode()
+    
+    # If the output contains 'Empty set', it means no tables exist
+    return 'Empty set' not in output
+
 
 if process_all.strip().lower() in ["yes", "y"]:
     # Process each instance folder in the instances directory
@@ -110,6 +133,11 @@ if process_all.strip().lower() in ["yes", "y"]:
             print(f"Error: Cannot connect to MySQL for instance {instance_dir}.")
             print(f"stderr: {mysql_ping.stderr.decode()}")  # Print detailed error message from stderr
             continue
+
+        # Check if tables exist in the instance's database
+        if check_tables_exist(MYSQL_USER, MYSQL_PASS, MYSQL_HOST, MYSQL_PORT):
+            print(f"Tables already exist in the database for instance {instance_dir}. Skipping SQL execution.")
+            continue  # Skip running SQL files if tables exist
 
         # Execute SQL files in sorted order
         print(f"Running SQL files for instance {instance_dir}...")
@@ -194,6 +222,11 @@ else:
         if mysql_ping.returncode != 0:
             print(f"Error: Cannot connect to MySQL for instance {instance_name}.")
             exit(1)
+
+        # Check if tables exist in the instance's database
+        if check_tables_exist(MYSQL_USER, MYSQL_PASS, MYSQL_HOST, MYSQL_PORT):
+            print(f"Tables already exist in the database for instance {instance_name}. Skipping SQL execution.")
+            exit(0)  # Skip running SQL files if tables exist
 
         # Execute SQL files in sorted order
         print(f"Running SQL files for instance {instance_name}...")

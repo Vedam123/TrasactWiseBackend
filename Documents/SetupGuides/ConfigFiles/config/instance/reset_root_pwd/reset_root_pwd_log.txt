@@ -3418,3 +3418,417 @@ mysql: [Warning] Using a password on the command line interface can be insecure.
 MySQL password change successful.  
 The File root_password.ini is updated with new password welcome for the  instance5   
 Root password reset process completed for instance5..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User: nce0usr  
+Password: welcome   
+Host: localhost  
+Port: 5110  
+Old Password:   
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  localhost  
+Port:  5110  
+Old Password:   
+New Password: welcome 	 	
+Both existing and requested root passwords are the same for the instance instance0, no changes required. Skipping... 
+User: nce1usr  
+Password: welcome   
+Host: localhost  
+Port: 5111  
+Old Password: welcome  
+New Password: welcome 	 	
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+The File root_password.ini is updated with new password welcome for the  instance1   
+Root password reset process completed for instance1..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  localhost  
+Port:  5110  
+Current Password:   
+New Password: welcome 	 	
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  localhost  
+Port:  5111  
+Current Password:   
+New Password: welcome 	 	
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+User: nce2usr  
+Password: welcome   
+Host: localhost  
+Port: 5203  
+Current Password:   
+New Password: welcome 	 	
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance2 due to the error 1  
+Root password reset process completed for instance2..  
+User: nce3usr  
+Password: welcome   
+Host: localhost  
+Port: 5204  
+Current Password:   
+New Password: welcome 	 	
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance3 due to the error 1  
+Root password reset process completed for instance3..  
+User: nce4usr  
+Password: welcome   
+Host: localhost  
+Port: 5205  
+Current Password:   
+New Password: welcome 	 	
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance4 due to the error 1  
+Root password reset process completed for instance4..  
+User: nce5usr  
+Password: welcome   
+Host: localhost  
+Port: 5206  
+Current Password:   
+New Password: welcome 	 	
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance5 due to the error 1  
+Root password reset process completed for instance5..  
+User: nce6usr  
+Password: welcome   
+Host: localhost  
+Port: 5207  
+Current Password:   
+New Password: welcome 	 	
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance6 due to the error 1  
+Root password reset process completed for instance6..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  localhost  
+Port:  5110  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  localhost  
+Port:  5111  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+User: nce2usr  
+Password: welcome   
+Host: localhost  
+Port: 5203  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance2 due to the error 1  
+Root password reset process completed for instance2..  
+User: nce3usr  
+Password: welcome   
+Host: localhost  
+Port: 5204  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance3 due to the error 1  
+Root password reset process completed for instance3..  
+User: nce4usr  
+Password: welcome   
+Host: localhost  
+Port: 5205  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance4 due to the error 1  
+Root password reset process completed for instance4..  
+User: nce5usr  
+Password: welcome   
+Host: localhost  
+Port: 5206  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance5 due to the error 1  
+Root password reset process completed for instance5..  
+User: nce6usr  
+Password: welcome   
+Host: localhost  
+Port: 5207  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance6 due to the error 1  
+Root password reset process completed for instance6..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  localhost  
+Port:  5110  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  localhost  
+Port:  5111  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+User: nce2usr  
+Password: welcome   
+Host: localhost  
+Port: 5203  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance2 due to the error 1  
+Root password reset process completed for instance2..  
+User: nce3usr  
+Password: welcome   
+Host: localhost  
+Port: 5204  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance3 due to the error 1  
+Root password reset process completed for instance3..  
+User: nce4usr  
+Password: welcome   
+Host: localhost  
+Port: 5205  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance4 due to the error 1  
+Root password reset process completed for instance4..  
+User: nce5usr  
+Password: welcome   
+Host: localhost  
+Port: 5206  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance5 due to the error 1  
+Root password reset process completed for instance5..  
+User: nce6usr  
+Password: welcome   
+Host: localhost  
+Port: 5207  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance6 due to the error 1  
+Root password reset process completed for instance6..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  localhost  
+Port:  5110  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  localhost  
+Port:  5111  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+User: nce2usr  
+Password: welcome   
+Host: localhost  
+Port: 5203  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance2 due to the error 1  
+Root password reset process completed for instance2..  
+User: nce3usr  
+Password: welcome   
+Host: localhost  
+Port: 5204  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance3 due to the error 1  
+Root password reset process completed for instance3..  
+User: nce4usr  
+Password: welcome   
+Host: localhost  
+Port: 5205  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance4 due to the error 1  
+Root password reset process completed for instance4..  
+User: nce5usr  
+Password: welcome   
+Host: localhost  
+Port: 5206  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance5 due to the error 1  
+Root password reset process completed for instance5..  
+User: nce6usr  
+Password: welcome   
+Host: localhost  
+Port: 5207  
+Current Password:   
+New Password: welcome 	 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance6 due to the error 1  
+Root password reset process completed for instance6..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  localhost  
+Port:  5110  
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  localhost  
+Port:  5111  
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+User: nce2usr  
+Password: welcome   
+Host: localhost  
+Port: 5203  
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance2 due to the error 1  
+Root password reset process completed for instance2..  
+User: nce3usr  
+Password: welcome   
+Host: localhost  
+Port: 5204  
+^CThe File root_password.ini is not updated with new password welcome for the  instance3 due to the error -1073741510  
+Root password reset process completed for instance3..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  localhost  
+Port:  5110  
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance0 due to the error 1  
+Root password reset process completed for instance0..  
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  localhost  
+Port:  5111  
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance1 due to the error 1  
+Root password reset process completed for instance1..  
+User: nce2usr  
+Password: welcome   
+Host: localhost  
+Port: 5203  
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance2 due to the error 1  
+Root password reset process completed for instance2..  
+User: nce3usr  
+Password: welcome   
+Host: localhost  
+Port: 5204  
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance3 due to the error 1  
+Root password reset process completed for instance3..  
+User: nce4usr  
+Password: welcome   
+Host: localhost  
+Port: 5205  
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance4 due to the error 1  
+Root password reset process completed for instance4..  
+User: nce5usr  
+Password: welcome   
+Host: localhost  
+Port: 5206  
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance5 due to the error 1  
+Root password reset process completed for instance5..  
+User: nce6usr  
+Password: welcome   
+Host: localhost  
+Port: 5207  
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+The File root_password.ini is not updated with new password welcome for the  instance6 due to the error 1  
+Root password reset process completed for instance6..  
+Batch Directory : C:\SAS Opera\Companies\Company_4\system\config\instance\ 
+User:  nce0usr  
+Password:  inst0welcome   
+Host:  localhost  
+Port:  5110  
+Both existing and requested root passwords are the same for the instance instance0, no changes required. Skipping... 
+User:  nce1usr  
+Password:  inst1welcome   
+Host:  localhost  
+Port:  5111  
+Both existing and requested root passwords are the same for the instance instance1, no changes required. Skipping... 
+User: nce2usr  
+Password: welcome   
+Host: localhost  
+Port: 5203  
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+The File root_password.ini is updated with new password welcome for the  instance2   
+Root password reset process completed for instance2..  
+User: nce3usr  
+Password: welcome   
+Host: localhost  
+Port: 5204  
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+The File root_password.ini is updated with new password welcome for the  instance3   
+Root password reset process completed for instance3..  
+User: nce4usr  
+Password: welcome   
+Host: localhost  
+Port: 5205  
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+The File root_password.ini is not updated with new password welcome for the  instance4 due to the error 1  
+Root password reset process completed for instance4..  
+User: nce5usr  
+Password: welcome   
+Host: localhost  
+Port: 5206  
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+The File root_password.ini is updated with new password welcome for the  instance5   
+Root password reset process completed for instance5..  
+User: nce6usr  
+Password: welcome   
+Host: localhost  
+Port: 5207  
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL password change successful.  
+The File root_password.ini is updated with new password welcome for the  instance6   
+Root password reset process completed for instance6..  

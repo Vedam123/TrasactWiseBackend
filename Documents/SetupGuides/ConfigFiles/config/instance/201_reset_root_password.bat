@@ -8,6 +8,17 @@ if not exist "reset_root_pwd" mkdir reset_root_pwd
 :: Define log file
 set LOG_FILE=reset_root_pwd\reset_root_pwd_log.txt
 
+set "FETCH_ROOT_PWD_FROM_FILE=201_fetch_root_password.py"
+
+
+REM Debugging: Check if Python is available in the PATH
+python --version
+if %errorlevel% neq 0 (
+    echo Python is not found in the system PATH.
+    pause
+    exit /b 1
+)
+
 set CURR_DIR=%cd%
 for %%a in ("%CURR_DIR%") do set CURR_DIR_NAME=%%~nxa
 
@@ -87,22 +98,22 @@ for /d %%a in ("%DB_INSTANCES_DIR%\instance*") do (
         echo Password: !CL_PASSWORD!   >> %LOG_FILE%
         echo Host: !CL_HOST!  >> %LOG_FILE%
         echo Port: !CL_PORT!  >> %LOG_FILE%
-        echo Old Password: !ROOT_PWD!  >> %LOG_FILE%
-        echo New Password: !ROOT_PASSWORD! 	 >> %LOG_FILE%	
+        echo Current Password: !ROOT_PWD!  >> %LOG_FILE%
+        echo New Password: !ROOT_PASSWORD!  >> %LOG_FILE%
+		echo File name !FETCH_ROOT_PWD_FROM_FILE! >> %LOG_FILE%
 
-        :: Read root password
-        for /f "tokens=1* delims==" %%b in ('findstr "password" "!ROOT_FILE_NAME!"') do set ROOT_PWD=%%c
-    
-        set "ROOT_PWD=!ROOT_PWD: =!"  :: Remove spaces from ROOT_PWD
-
-        :: Remove leading spaces from ROOT_PWD
-        for /f "tokens=* delims=" %%a in ("!ROOT_PWD!") do set "ROOT_PWD=%%a"
-        
-        REM Remove any leading and trailing spaces from ROOT_PWD
-        for /f "tokens=* delims=" %%a in ("%ROOT_PWD%") do set "ROOT_PWD=%%a"
+		echo Instance Name  !INSTANCE_DIR_NAME! >> %LOG_FILE%
+		
+		set ROOT_PWD=
+		set SCRIPT_PATH=%CURRENT_DIR%!FETCH_ROOT_PWD_FROM_FILE!
+		echo Script Path with file name !SCRIPT_PATH!	>> %LOG_FILE%	
+		for /f %%i in ('python "!SCRIPT_PATH!" "!INSTANCE_DIR_NAME!"') do set ROOT_PWD=%%i
 
         :: Trim ROOT_PASSWORD in the same way (remove leading and trailing spaces)
         set "ROOT_PASSWORD=!ROOT_PASSWORD: =!"
+		
+		echo Current Password: !ROOT_PWD!
+		echo New Password: !ROOT_PASSWORD!
 
         :: Compare the existing root password (ROOT_PWD) with the new password (ROOT_PASSWORD)
         if "!ROOT_PWD!" == "!ROOT_PASSWORD!" (
