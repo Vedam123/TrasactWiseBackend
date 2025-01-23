@@ -8,6 +8,7 @@ batch_files = [
     "004_copy_update_instance_myini_file_bat.bat",
     "005_initialize_data_folder.bat",
     "006_get_mysql_root_pwd.bat",
+    "009_update_const_decl_js_file.bat",
     "013_instance_file_to_instances.bat"
 ]
 
