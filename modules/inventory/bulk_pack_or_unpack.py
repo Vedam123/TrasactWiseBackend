@@ -3,6 +3,7 @@ from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
 from modules.products.routines.uom_conversion import uom_conversion
 from modules.inventory.routines.bulk_packing_or_unpacking import bulk_packing_or_unpacking
+from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.utilities.logger import logger
 
 bulk_pack_or_unpack_api = Blueprint('bulk_pack_or_unpack_api', __name__)
@@ -149,9 +150,6 @@ def bulk_pack_or_unpack():
 
 
     except Exception as e:
-        # Log exception details
-        if mydb:
-            mydb.close()
         if mydb1:
             mydb1.close() 
         logger.error(f"Error occurred: {str(e)}")

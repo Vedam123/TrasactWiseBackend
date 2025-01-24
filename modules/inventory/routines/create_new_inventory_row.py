@@ -44,7 +44,7 @@ def create_new_inventory_row(execution_id, inventory, remaining_quantity, sales_
             inventory_id, remaining_quantity, pick_status, appuserid, mydb)
         
         insert_pick_and_ship_stage(appuserid, MODULE_NAME, mydb, execution_id, sales_header_id, sales_order_line_id, sales_item_id, 
-                inventory['inventory_id'], remaining_quantity, picker_id, 
+                inventory_id, remaining_quantity, picker_id, 
                 ship_status, shipping_method, shipping_address) 
 
         # Return JSON response with inventory_id and success status code

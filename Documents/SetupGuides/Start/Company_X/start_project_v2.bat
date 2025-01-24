@@ -241,6 +241,8 @@ REM Step 14: Copy config and configfiles directories
 echo Copying config and configfiles directories to system folder...   >> "%LOG_FILE%"
 xcopy /e /i /y "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%app_root%\Documents\SetupGuides\ConfigFiles\config\*" "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\config"
 xcopy "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%app_root%\Documents\SetupGuides\*.*" "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\Documents\SetupGuides\" /i /y /h /r
+xcopy "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%app_root%\Documents\Tools\*.*" "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\Tools\" /i /y /h /r
+xcopy "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\%project_root%\%app_root%\Documents\Logs\*.*" "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\Logs\" /i /y /h /r
 echo Config and configfiles directories copied successfully.    >> "%LOG_FILE%"
 
 REM ####################################REMOVED SHORT CUTU CREATION Block2 ###################################################
