@@ -46,7 +46,7 @@ echo Config file directory %CONFIG_FILE%
 
 REM Read the company name, gcname, and instances from the INI file
 for /f "tokens=1,2 delims==" %%A in ('findstr /i "gcname" "%CONFIG_FILE%"') do set "gcname=%%B"
-for /f "tokens=1,2 delims==" %%A in ('findstr /i "name " "%CONFIG_FILE%"') do set "company=%%B"
+for /f "tokens=1,2 delims==" %%A in ('findstr /i "Company" "%CONFIG_FILE%"') do set "company=%%B"
 for /f "tokens=1,2 delims==" %%A in ('findstr /i "instances" "%CONFIG_FILE%"') do set "instances=%%B"
 
 REM Remove any spaces or quotes from the input
@@ -68,6 +68,8 @@ if !errorlevel! neq 0 (
 REM Loop through the instances and remove the service for each instance
 for /L %%i in (0,1,%instances%) do (
     REM Define the service name for each instance
+	echo GC NAME with percent %gcname%
+	echo Company name  %company%
     if %%i==0 (
         REM Use gcname for instance0
         set SERVICE_NAME=%gcname%_instance%%i
