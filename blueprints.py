@@ -7,6 +7,7 @@ from modules.finance.routes.finance_routes import register_finance_routes as reg
 from modules.inventory.routes.Inventory_routes import register_inventory_routes as register_inventory
 from modules.purchase.routes.purchase_routes import register_purchase_routes as register_purchase
 from modules.sales.routes.sales_routes import register_sales_routes as register_sales
+from modules.utilities.routes.utility_routes import register_utility_routes as register_utilities
 
 def register_blueprints(app):
     register_employee(app)
@@ -17,5 +18,6 @@ def register_blueprints(app):
     register_finance(app)
     register_inventory(app)
     register_purchase(app)
-    register_sales(app)    
+    register_sales(app)
+    register_utilities(app)   
 
