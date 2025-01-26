@@ -5,9 +5,9 @@ from config import READ_ACCESS_TYPE
 from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.utilities.logger import logger
 
-file_api = Blueprint('file_api', __name__)
+download_file_api = Blueprint('download_file_api', __name__)
 
-@file_api.route('/download_file', methods=['GET'])
+@download_file_api.route('/download_file', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE, __file__)
 def download_file():
     try:

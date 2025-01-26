@@ -32,22 +32,23 @@ def get_and_download_file():
         g_par_dir = os.path.dirname(par_dir)
         gg_par_dir = os.path.dirname(g_par_dir)
         
-        # Locate the SetupGuides/Product Info directory
-        setup_guides_dir = os.path.join(gg_par_dir, 'SetupGuides')
-        product_info_dir = os.path.join(setup_guides_dir, 'Product Info')
+        # Locate the SetupGuides/Project Info directory
+        docu_guides_dir = os.path.join(curr_dir, 'Documents')
+        setup_guides_dir = os.path.join(docu_guides_dir, 'SetupGuides')
+        product_info_dir = os.path.join(setup_guides_dir, 'Project Info')
 
         if not os.path.exists(product_info_dir):
-            logger.error(f"{appuser} --> {__name__}: Directory 'Product Info' not found.")
-            return jsonify({"error": "'Product Info' directory not found."}), 404
+            logger.error(f"{appuser} --> {__name__}: Directory 'Project Info' not found.")
+            return jsonify({"error": "'Project Info' directory not found."}), 404
 
-        # Collect metadata for all files in the Product Info directory
+        # Collect metadata for all files in the Project Info directory
         files_data = []
         for root, dirs, files in os.walk(product_info_dir):
             for file in files:
                 file_path = os.path.join(root, file)
                 files_data.append({'filename': file, 'path': file_path})
 
-        logger.debug(f"{appuser} --> {__name__}: Successfully retrieved file metadata from 'Product Info' directory")
+        logger.debug(f"{appuser} --> {__name__}: Successfully retrieved file metadata from 'Project Info' directory")
 
         # If there's a file_path query parameter, send the file
         file_path = request.args.get('file_path')

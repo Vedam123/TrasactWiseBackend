@@ -5,11 +5,11 @@ from config import READ_ACCESS_TYPE
 from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.utilities.logger import logger
 
-file_api = Blueprint('file_api', __name__)
+get_and_download_binary_file_api = Blueprint('get_and_download_binary_file_api', __name__)
 
-@file_api.route('/get_files', methods=['GET'])
+@get_and_download_binary_file_api.route('/get_and_download_binary_file', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE, __file__)
-def get_files():
+def get_and_download_binary_file():
     try:
         # Authenticate user
         authorization_header = request.headers.get('Authorization')
@@ -24,7 +24,7 @@ def get_files():
             logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
             return jsonify({"error": "Unauthorized. Username not found."}), 401
 
-        logger.debug(f"{appuser} --> {__name__}: Entered the 'get_files' function")
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'get_and_download_file' function")
 
         # Determine the directory structure
         curr_dir = os.path.abspath(os.curdir)
@@ -50,8 +50,29 @@ def get_files():
 
         logger.debug(f"{appuser} --> {__name__}: Successfully retrieved file metadata from 'Project Info' directory")
 
+        # If there's a file_path query parameter, send the file as binary
+        file_path = request.args.get('file_path')
+        if file_path:
+            # Check if the file exists
+            if file_path not in [file['path'] for file in files_data]:
+                logger.error(f"{appuser} --> {__name__}: Requested file does not exist.")
+                return jsonify({"error": "File not found."}), 404
+            
+            logger.debug(f"{appuser} --> {__name__}: Sending file {file_path} as binary")
+
+            # Open the file in binary mode and return the content
+            with open(file_path, 'rb') as file:
+                file_content = file.read()
+            
+            # Return the file content along with the filename
+            return jsonify({
+                'filename ': os.path.basename(file_path),
+                'file_content': file_content.decode('latin1')  # Encoding the binary content as text
+            })
+
+        # If no file_path provided, return the list of files
         return jsonify({'files': files_data})
 
     except Exception as e:
-        logger.error(f"Error retrieving files: {str(e)}")
+        logger.error(f"Error retrieving or downloading file: {str(e)}")
         return jsonify({'error': 'Internal Server Error'}), 500
