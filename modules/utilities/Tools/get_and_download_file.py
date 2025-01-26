@@ -7,9 +7,9 @@ from modules.utilities.logger import logger
 
 file_api = Blueprint('file_api', __name__)
 
-@file_api.route('/get_files', methods=['GET'])
+@file_api.route('/get_and_download_file', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE, __file__)
-def get_files():
+def get_and_download_file():
     try:
         # Authenticate user
         authorization_header = request.headers.get('Authorization')
@@ -24,7 +24,7 @@ def get_files():
             logger.error(f"Unauthorized access attempt: {appuser} --> {__name__}: Application user not found.")
             return jsonify({"error": "Unauthorized. Username not found."}), 401
 
-        logger.debug(f"{appuser} --> {__name__}: Entered the 'get_files' function")
+        logger.debug(f"{appuser} --> {__name__}: Entered the 'get_and_download_file' function")
 
         # Determine the directory structure
         curr_dir = os.path.abspath(os.curdir)
@@ -49,8 +49,20 @@ def get_files():
 
         logger.debug(f"{appuser} --> {__name__}: Successfully retrieved file metadata from 'Product Info' directory")
 
+        # If there's a file_path query parameter, send the file
+        file_path = request.args.get('file_path')
+        if file_path:
+            # Check if the file exists
+            if file_path not in [file['path'] for file in files_data]:
+                logger.error(f"{appuser} --> {__name__}: Requested file does not exist.")
+                return jsonify({"error": "File not found."}), 404
+            
+            logger.debug(f"{appuser} --> {__name__}: Downloading file {file_path}")
+            return send_file(file_path, as_attachment=True)
+        
+        # If no file_path provided, return the list of files
         return jsonify({'files': files_data})
 
     except Exception as e:
-        logger.error(f"Error retrieving files: {str(e)}")
+        logger.error(f"Error retrieving or downloading file: {str(e)}")
         return jsonify({'error': 'Internal Server Error'}), 500
