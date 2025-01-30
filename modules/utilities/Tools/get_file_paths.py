@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, jsonify, request, send_file
+from flask import Blueprint, jsonify, request
 from modules.security.permission_required import permission_required
 from config import READ_ACCESS_TYPE
 from modules.security.routines.get_user_and_db_details import get_user_and_db_details
@@ -7,9 +7,9 @@ from modules.utilities.logger import logger
 
 file_api = Blueprint('file_api', __name__)
 
-@file_api.route('/get_files', methods=['GET'])
+@file_api.route('/get_file_paths', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE, __file__)
-def get_files():
+def get_file_paths():
     try:
         # Authenticate user
         authorization_header = request.headers.get('Authorization')

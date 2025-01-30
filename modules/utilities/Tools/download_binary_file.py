@@ -1,15 +1,15 @@
 import os
-from flask import Blueprint, jsonify, request, send_file
+from flask import Blueprint, jsonify, request, make_response
 from modules.security.permission_required import permission_required
 from config import READ_ACCESS_TYPE
 from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.utilities.logger import logger
 
-get_and_download_binary_file_api = Blueprint('get_and_download_binary_file_api', __name__)
+download_binary_file_api = Blueprint('download_binary_file_api', __name__)
 
-@get_and_download_binary_file_api.route('/get_and_download_binary_file', methods=['GET'])
+@download_binary_file_api.route('/download_binary_file', methods=['GET'])
 @permission_required(READ_ACCESS_TYPE, __file__)
-def get_and_download_binary_file():
+def download_binary_file():
     try:
         # Authenticate user
         authorization_header = request.headers.get('Authorization')
@@ -26,22 +26,15 @@ def get_and_download_binary_file():
 
         logger.debug(f"{appuser} --> {__name__}: Entered the 'get_and_download_file' function")
 
-        # Determine the directory structure
+        # Directory structure
         curr_dir = os.path.abspath(os.curdir)
-        par_dir = os.path.dirname(curr_dir)
-        g_par_dir = os.path.dirname(par_dir)
-        gg_par_dir = os.path.dirname(g_par_dir)
-        
-        # Locate the SetupGuides/Project Info directory
-        docu_guides_dir = os.path.join(curr_dir, 'Documents')
-        setup_guides_dir = os.path.join(docu_guides_dir, 'SetupGuides')
-        product_info_dir = os.path.join(setup_guides_dir, 'Project Info')
+        product_info_dir = os.path.join(curr_dir, 'Documents', 'SetupGuides', 'Project Info')
 
         if not os.path.exists(product_info_dir):
             logger.error(f"{appuser} --> {__name__}: Directory 'Project Info' not found.")
             return jsonify({"error": "'Project Info' directory not found."}), 404
 
-        # Collect metadata for all files in the Project Info directory
+        # Collect metadata for all files
         files_data = []
         for root, dirs, files in os.walk(product_info_dir):
             for file in files:
@@ -50,27 +43,31 @@ def get_and_download_binary_file():
 
         logger.debug(f"{appuser} --> {__name__}: Successfully retrieved file metadata from 'Project Info' directory")
 
-        # If there's a file_path query parameter, send the file as binary
+        # Check if a specific file is requested
         file_path = request.args.get('file_path')
         if file_path:
-            # Check if the file exists
-            if file_path not in [file['path'] for file in files_data]:
+            # Validate if the requested file exists
+            matching_file = next((file for file in files_data if file['path'] == file_path), None)
+            if not matching_file:
                 logger.error(f"{appuser} --> {__name__}: Requested file does not exist.")
                 return jsonify({"error": "File not found."}), 404
-            
+
+            # Get file details
+            filename = os.path.basename(file_path)
             logger.debug(f"{appuser} --> {__name__}: Sending file {file_path} as binary")
 
-            # Open the file in binary mode and return the content
+            # Read the binary content of the file
             with open(file_path, 'rb') as file:
                 file_content = file.read()
-            
-            # Return the file content along with the filename
+
+            # Return the filename, file path, and binary content
             return jsonify({
-                'filename ': os.path.basename(file_path),
-                'file_content': file_content.decode('latin1')  # Encoding the binary content as text
+                "filename": filename,
+                "file_path": file_path,
+                "file_content": file_content.decode('latin1')  # Encode binary for transport
             })
 
-        # If no file_path provided, return the list of files
+        # If no file_path is provided, return the list of all files
         return jsonify({'files': files_data})
 
     except Exception as e:
