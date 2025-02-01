@@ -66,7 +66,7 @@ echo Changed directory to WebClient: %webclient_path%
 echo Starting Node.js server with pm2...
 
 :: Ensure that npx is correctly using the local pm2 package
-npx pm2 start "server.js" --name "%company%" --watch
+npx pm2 stop "%company%"
 
 if errorlevel 1 (
     echo ERROR: Failed to start the Node.js server with pm2.

@@ -1,0 +1,138 @@
+Nginx Setups and configure to run Python flask production
+
+Step 1: Install Nginx (if not installed already)
+	Download the Windows version of Nginx from the official website: Nginx Downloads.
+	Extract the ZIP file to a folder, for example: C:\nginx.
+	Inside the folder, you should have the following:
+
+		C:\nginx
+		├── conf
+		├── html
+		├── logs
+		├── nginx.exe
+		├── conf\nginx.conf
+		└── ...
+	
+Step 2: Update Nginx Configuration
+	You’ll configure multiple server blocks in the Nginx configuration file (nginx.conf) to proxy requests to the respective Flask app for each customer. Here's an example setup:
+
+	Open the Nginx configuration file: Navigate to C:\nginx\conf\nginx.conf (or the location where Nginx is installed) and open it with a text editor.
+
+	Define multiple server blocks for each customer app: Each server block will listen on the same domain (or subdomain) but route to different internal Flask apps based on the path.
+
+	Here is an example configuration:
+
+	________________________________________________________________________________________
+
+	worker_processes  1;
+
+	events {
+		worker_connections  1024;
+	}
+
+	http {
+		include       mime.types;
+		default_type  application/octet-stream;
+
+		# Logging settings (optional, can be configured as per your needs)
+		access_log  logs/access.log;
+		error_log   logs/error.log;
+
+		# SSL Settings
+		ssl_protocols       TLSv1.2 TLSv1.3;
+		ssl_ciphers         HIGH:!aNULL:!MD5;
+
+		# Customer 1 App (Flask running on port 8014)
+		server {
+			listen 443 ssl;
+			server_name example.com;  # Adjust to your domain
+
+			ssl_certificate     C:/nginx/certs/server.crt;
+			ssl_certificate_key C:/nginx/certs/server.key;
+
+			# Proxy requests to Customer 1's Flask app (running on port 8014)
+			location /customer1/ {
+				proxy_pass https://127.0.0.1:8014;  # Forward to Customer 1 Flask app
+				proxy_set_header Host $host;
+				proxy_set_header X-Real-IP $remote_addr;
+				proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+				proxy_set_header X-Forwarded-Proto $scheme;
+			}
+		}
+
+		# Customer 2 App (Flask running on port 8015)
+		server {
+			listen 443 ssl;
+			server_name example.com;  # Same domain
+
+			ssl_certificate     C:/nginx/certs/server.crt;
+			ssl_certificate_key C:/nginx/certs/server.key;
+
+			# Proxy requests to Customer 2's Flask app (running on port 8015)
+			location /customer2/ {
+				proxy_pass https://127.0.0.1:8015;  # Forward to Customer 2 Flask app
+				proxy_set_header Host $host;
+				proxy_set_header X-Real-IP $remote_addr;
+				proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+				proxy_set_header X-Forwarded-Proto $scheme;
+			}
+		}
+
+		# Customer 3 App (Flask running on port 8016)
+		server {
+			listen 443 ssl;
+			server_name example.com;  # Same domain
+
+			ssl_certificate     C:/nginx/certs/server.crt;
+			ssl_certificate_key C:/nginx/certs/server.key;
+
+			# Proxy requests to Customer 3's Flask app (running on port 8016)
+			location /customer3/ {
+				proxy_pass https://127.0.0.1:8016;  # Forward to Customer 3 Flask app
+				proxy_set_header Host $host;
+				proxy_set_header X-Real-IP $remote_addr;
+				proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+				proxy_set_header X-Forwarded-Proto $scheme;
+			}
+		}
+
+		# Redirect HTTP to HTTPS (Optional)
+		server {
+			listen 80;
+			server_name example.com;  # Same domain
+
+			location / {
+				return 301 https://$host$request_uri;  # Redirect all HTTP to HTTPS
+			}
+		}
+	}
+	______________________________________________________________________________________________________
+
+	Make sure the paths for the SSL certificates are correct (C:/nginx/certs/server.crt and C:/nginx/certs/server.key). 
+	These should point to your actual certificate files that are used in your Flask app.
+
+Step 3: Start Nginx
+	Open Command Prompt as Administrator.
+
+	Navigate to the directory where you installed Nginx (e.g., C:\nginx):
+
+	cd C:\nginx
+	start nginx
+	Check that Nginx is running by visiting https://localhost in your browser. You should be able to access your Flask application via Nginx's reverse proxy.
+
+Step 4: Verify and Debug Nginx Configuration
+	If Nginx fails to start or if you encounter errors, check the error logs in C:\nginx\logs\error.log.
+	If your app isn't accessible, make sure your Flask app is running properly on port 8014 and that you have configured the Flask app correctly for SSL.
+
+Step 5: Optional - Set Nginx as a Service (Windows)
+	To run Nginx automatically as a service on Windows, you can use NSSM (Non-Sucking Service Manager) to install Nginx as a service. This will make sure Nginx starts automatically when your system boots up.
+
+	Download NSSM from the official website.
+	Extract the files and use NSSM to install Nginx as a service:
+	bash
+	Copy
+	nssm install nginx "C:\nginx\nginx.exe"
+	Now, Nginx will start automatically whenever the system starts. You can manage it with services.msc (e.g., start, stop, restart Nginx).
+Step 6: Test Your Setup
+	Visit https://localhost or your server's IP/domain in a browser. You should be able to access your Flask application via the Nginx reverse proxy.
+	Test that SSL is working by ensuring the connection is secured (look for the padlock icon in the browser address bar).
