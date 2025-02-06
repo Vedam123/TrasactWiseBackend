@@ -13,3 +13,9 @@ __pycache__/
 *.pyc
 
 # Exclude sensitive or environment-specific files
+
+dist/
+templates/
+static/
+
+app.spec
