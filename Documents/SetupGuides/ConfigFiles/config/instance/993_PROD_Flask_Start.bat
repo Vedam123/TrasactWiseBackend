@@ -66,7 +66,7 @@ echo Changed directory to dist in the path: %appservice_path%
 echo Python server
 
 :: Declare SRVNAME and SNAME
-set SRVNAME=FlaskServer
+set SRVNAME=Backend
 set SNAME=!company!_%SRVNAME%
 
 :: Call the vbs script with the SNAME parameter
