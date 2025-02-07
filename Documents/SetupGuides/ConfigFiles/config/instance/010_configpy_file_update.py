@@ -87,7 +87,19 @@ try:
 
     # Convert to a properly formatted Windows path
     BACKEND_APP_ROOT_PATH = BACKEND_APP_ROOT_PATH.replace("\\", "\\\\")
+    
+    # Step 9: Store the word 'Logs' in a variable
+    LOGS_FOLDER = 'Logs'
+    
+    # Step 10: Construct the LOG_FILE_PATH by combining variables
+    LOG_FILE_PATH = os.path.join(PRODUCT_HOME, COMPANY_FOLDER, SYSTEM_FOLDER, LOGS_FOLDER, APPLICATION_ROOT)
 
+    # Step 11: Ensure the path uses forward slashes
+    # Step 11: Ensure the path uses forward slashes and add a trailing slash
+    LOG_FILE_PATH = LOG_FILE_PATH.replace("\\", "/") + "/"
+
+    # Debug: Print the LOG_FILE_PATH
+    print(f"LOG_FILE_PATH: {LOG_FILE_PATH}")
 
     # Debug: Print the extracted valuesyy
     print(f"APP_BACKEND_ENV_TYPE: {APP_BACKEND_ENV_TYPE}")
@@ -128,6 +140,8 @@ config_py_lines = update_config_py(config_py_lines, 'PRODUCT_HOME', PRODUCT_HOME
 
 # Update config.py with the new variable
 config_py_lines = update_config_py(config_py_lines, 'BACKEND_APP_ROOT_PATH', BACKEND_APP_ROOT_PATH)
+
+config_py_lines = update_config_py(config_py_lines, 'LOG_FILE_PATH', LOG_FILE_PATH)
 
 print(f"config.py file updated successfully with FULL_PROJECT_PATH in {APP_ROOT_DIR}")
 
