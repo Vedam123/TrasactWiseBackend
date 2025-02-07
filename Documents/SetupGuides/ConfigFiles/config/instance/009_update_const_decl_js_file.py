@@ -19,9 +19,10 @@ if os.path.exists(cnf_dir):
     if os.path.exists(config_file):
         print(f"{config_file} file exists in the 'cnf' folder.")
 
-        # Parse INSTANCE Folders and INSTANCE Names
+        # Parse INSTANCE Folders, INSTANCE Names, and Company value
         instance_folders = {}
         instance_names = {}
+        company_value = None
         
         with open(config_file, "r") as file:
             current_section = None
@@ -29,6 +30,10 @@ if os.path.exists(cnf_dir):
                 line = line.strip()
                 if line.startswith("[") and line.endswith("]"):
                     current_section = line[1:-1]
+                elif current_section == "MySQL" and "=" in line:
+                    key, value = line.split("=")
+                    if key.strip() == "Company":
+                        company_value = value.strip()
                 elif current_section == "InstanceFolders" and "=" in line:
                     key, value = line.split("=")
                     instance_folders[key.strip()] = value.strip()
@@ -36,7 +41,8 @@ if os.path.exists(cnf_dir):
                     key, value = line.split("=")
                     instance_names[key.strip()] = value.strip()
 
-        # Now we have instance_folders and instance_names dictionaries
+        # Now we have instance_folders, instance_names, and company_value
+        print(f"Parsed Company: {company_value}")
         print(f"Parsed Instance Folders: {instance_folders}")
         print(f"Parsed Instance Names: {instance_names}")
 
@@ -47,7 +53,8 @@ if os.path.exists(cnf_dir):
             instance_name_key = f"INSTANCE_NAME{folder_key[-1]}"  # Assuming the key format is INSTANCE0, INSTANCE1, etc.
             disname = instance_names.get(instance_name_key, "Unknown")
             
-            instances_block += f'  {{ instance: "{folder_value}", company: "Company_4", disname: "{disname}", status: "Active", sequence: {i} }},\n'
+            # Use the dynamically fetched company_value
+            instances_block += f'  {{ instance: "{folder_value}", company: "{company_value}", disname: "{disname}", status: "Active", sequence: {i} }},\n'
         
         instances_block = instances_block.rstrip(',\n') + "\n];"
         
