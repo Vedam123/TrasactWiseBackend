@@ -36,7 +36,7 @@ if __name__ == '__main__':
     key_path = KEY_FILE   # Absolute path to the key file
 
     if BACKEND_ENVIRONMENT == "Production":
-        print(f"Starting server on https://{APP_SERVER_HOST}:{APP_SERVER_PORT} in Production mode with Hypercorn...")
+        print(f"Starting Server on https://{APP_SERVER_HOST}:{APP_SERVER_PORT} in Production mode with Hypercorn...")
 
         config = Config()
         config.bind = [f"{APP_SERVER_HOST}:{APP_SERVER_PORT}"]
