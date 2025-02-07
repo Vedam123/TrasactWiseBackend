@@ -1,20 +1,25 @@
 from flask import Blueprint, jsonify, current_app, request
 import os
 from modules.security.permission_required import permission_required  # Import the decorator
-from config import READ_ACCESS_TYPE  # Import READ_ACCESS_TYPE
+from config import READ_ACCESS_TYPE,BACKEND_APP_ROOT_PATH  # Import READ_ACCESS_TYPE
 from modules.utilities.logger import logger  # Import the logger module
 from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 
 fetch_module_data_api = Blueprint('fetch_module_data_api', __name__)
 
 # Function to fetch folder names
+# Function to fetch folder names
 def get_module_names(appuser, __name__):
     try:
         folder_names = []
-        root_directory = current_app.root_path
-        modules_path = os.path.join(root_directory, 'modules')
+        modules_path = os.path.join(BACKEND_APP_ROOT_PATH, 'modules')  # Use BACKEND_APP_ROOT_PATH
+
         logger.debug(f"{appuser} --> {__name__}: Fetching folder names from path: {modules_path}")
-        
+
+        if not os.path.exists(modules_path):
+            logger.warning(f"{appuser} --> {__name__}: Modules directory does not exist: {modules_path}")
+            return []
+
         for folder in os.listdir(modules_path):
             if os.path.isdir(os.path.join(modules_path, folder)):
                 folder_names.append(folder)
@@ -24,6 +29,7 @@ def get_module_names(appuser, __name__):
     except Exception as e:
         logger.error(f"{appuser} --> {__name__}: Error fetching module names: {e}")
         return []
+
 
 # Function to store folder names in the database
 def store_module_names(folder_names, appuserid, __name__, mydb, appuser):

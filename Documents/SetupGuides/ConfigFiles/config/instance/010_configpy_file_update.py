@@ -67,18 +67,34 @@ try:
     APP_SERVER_HOST = config_ini.get('AppService', 'APP_SERVER_HTTPS_HOST')   
     APP_SERVER_PROTOCOL = config_ini.get('AppService', 'APP_SERVER_PROTOCOL')
     APP_SERVER_PORT = config_ini.get('AppService', 'APP_SERVER_PORT')
-    
+   
     SSL_CRT_FILE = config_ini.get('CERTIFICATES', 'SSL_CRT_FILE')
     SSL_KEY_FILE = config_ini.get('CERTIFICATES', 'SSL_KEY_FILE')
+    
+    COMPANY_FOLDER = config_ini.get('Global', 'company_folder') 
+    SYSTEM_FOLDER = config_ini.get('Global', 'system_folder') 
+    CONFIG_FOLDER = config_ini.get('Global', 'config_folder')
+    PROJECT_ROOT = config_ini.get('Global', 'project_root')
+    APPLICATION_ROOT = config_ini.get('Global', 'app_root')
+    
+    PRODUCT_HOME = config_ini.get('Global', 'BASE_PATH')
+    
+    # Construct the full folder path
+    #BACKEND_APP_ROOT_PATH = os.path.join(PRODUCT_HOME, COMPANY_FOLDER, SYSTEM_FOLDER, PROJECT_ROOT, APPLICATION_ROOT)
+    
+    # Construct the full folder path and ensure it has double backslashes
+    BACKEND_APP_ROOT_PATH = os.path.join(PRODUCT_HOME, COMPANY_FOLDER, SYSTEM_FOLDER, PROJECT_ROOT, APPLICATION_ROOT)
+
+    # Convert to a properly formatted Windows path
+    BACKEND_APP_ROOT_PATH = BACKEND_APP_ROOT_PATH.replace("\\", "\\\\")
+
 
     # Debug: Print the extracted valuesyy
     print(f"APP_BACKEND_ENV_TYPE: {APP_BACKEND_ENV_TYPE}")
     print(f"DB_INSTANCES_BASE_PATH: {DB_INSTANCES_BASE_PATH}")
     print(f"APP_SERVER_HOST: {APP_SERVER_HOST}")
     print(f"APP_SERVER_PROTOCOL: {APP_SERVER_PROTOCOL}")
-    print(f"APP_SERVER_PORT: {APP_SERVER_PORT}")
-    
-    
+    print(f"APP_SERVER_PORT: {APP_SERVER_PORT}") 
     
 
 except configparser.NoOptionError as e:
@@ -102,6 +118,18 @@ config_py_lines = update_config_py(config_py_lines, 'APP_SERVER_HOST', APP_SERVE
 config_py_lines = update_config_py(config_py_lines, 'APP_SERVER_PROTOCOL', APP_SERVER_PROTOCOL)
 config_py_lines = update_config_py(config_py_lines, 'SSL_CRT_FILE', SSL_CRT_FILE)
 config_py_lines = update_config_py(config_py_lines, 'SSL_KEY_FILE', SSL_KEY_FILE)
+
+config_py_lines = update_config_py(config_py_lines, 'COMPANY_FOLDER', COMPANY_FOLDER)
+config_py_lines = update_config_py(config_py_lines, 'SYSTEM_FOLDER', SYSTEM_FOLDER)
+config_py_lines = update_config_py(config_py_lines, 'CONFIG_FOLDER', CONFIG_FOLDER)
+config_py_lines = update_config_py(config_py_lines, 'PROJECT_ROOT', PROJECT_ROOT)
+config_py_lines = update_config_py(config_py_lines, 'APPLICATION_ROOT', APPLICATION_ROOT)
+config_py_lines = update_config_py(config_py_lines, 'PRODUCT_HOME', PRODUCT_HOME)
+
+# Update config.py with the new variable
+config_py_lines = update_config_py(config_py_lines, 'BACKEND_APP_ROOT_PATH', BACKEND_APP_ROOT_PATH)
+
+print(f"config.py file updated successfully with FULL_PROJECT_PATH in {APP_ROOT_DIR}")
 
 def update_config_py1(lines, key, new_value):
     for i, line in enumerate(lines):
