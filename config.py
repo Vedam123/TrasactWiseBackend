@@ -19,7 +19,8 @@ BACKEND_ENVIRONMENT = 'Development'
 ENABLE_DETAILED_LOGS = True
 # Specify the log file path
 #LOG_FILE_PATH = "modules/utilities/logs/"
-LOG_FILE_PATH = "C:/SAS Opera/Companies/Company_3/logs/"
+LOG_FILE_PATH = "C:/SAS Opera/Companies/Company_0/System/Logs/AppService/"
+
 #DB_INSTANCES_PATH = "C:\SAS Opera\Companies\Company_0\system\db_instances\instance1"
 # config.py
 DB_INSTANCES_BASE_PATH = "C:/SAS Opera/Companies"
