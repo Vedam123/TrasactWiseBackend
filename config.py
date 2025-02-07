@@ -15,22 +15,30 @@ APPLICATION_CREDENTIALS = [
    #{"userid":"100-MAX value","username": "admin", "name":"SUPER USER1" ,"password": "$2b$12$gnuMPXgfBzU4HqpUwFEVBu71oTAPPZfgnW0GCi50R0rsxeleIN042"}   
     # Add more username-password pairs as needed the userids must be below 100. This count should match with the SUPER_USERS_COUNT in application
 ]
-BACKEND_ENVIRONMENT = "Production"  ## you can replace this with Test, Production based on the environment type
+BACKEND_ENVIRONMENT = 'Development'
 ENABLE_DETAILED_LOGS = True
 # Specify the log file path
-LOG_FILE_PATH = "modules/utilities/logs/"
+#LOG_FILE_PATH = "modules/utilities/logs/"
+LOG_FILE_PATH = "C:/SAS Opera/Companies/Company_3/logs/"
 #DB_INSTANCES_PATH = "C:\SAS Opera\Companies\Company_0\system\db_instances\instance1"
 # config.py
 DB_INSTANCES_BASE_PATH = "C:/SAS Opera/Companies"
-APP_SERVER_HOST = "0.0.0.0"
-APP_SERVER_PORT = 8014
-APP_SERVER_PROTOCOL = "https"
+APP_SERVER_HOST = '0.0.0.0'
+APP_SERVER_PORT = 3004
+APP_SERVER_PROTOCOL = 'https'
 
-APP_SERVICE_NAME = "Company_0"
-APP_SERVICE_DISP_NAME = "Opera"
+COMPANY_FOLDER = 'Company_0'
+SYSTEM_FOLDER = 'system'
+CONFIG_FOLDER = 'config'
+PROJECT_ROOT = 'application'
+APPLICATION_ROOT = 'AppService'
+PRODUCT_HOME = 'C:\SAS Opera\Companies'
 
-SSL_CRT_FILE = './certs/server.crt'  
-SSL_KEY_FILE = './certs/server.key'  
+BACKEND_APP_ROOT_PATH = 'C:\\SAS Opera\\Companies\\Company_0\\system\\application\\AppService'
+
+
+SSL_CRT_FILE = './certs/server.crt'
+SSL_KEY_FILE = './certs/server.key'
 
 CERT_ABS_PATH1 = "C:\\SAS Opera\\Companies\\Company_0\\system\\application\\AppService\\certs\\server.crt"
 KEY_ABS_PATH1 = "C:\\SAS Opera\\Companies\\Company_0\\system\\application\\AppService\\certs\\server.key"
