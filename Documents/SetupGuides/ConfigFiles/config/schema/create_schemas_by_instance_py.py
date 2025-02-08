@@ -51,9 +51,9 @@ sorted_lines = sorted(lines, key=lambda x: x.split()[0])
 with open(TEMP_FILE, "w") as file:
     file.writelines(sorted_lines)
 
-# Set process_all to 'yes' to automatically process all instances
-process_all = "yes"
-
+# Ask user if they want to process all instances
+process_all = input("Do you want to process all instances? (Yes --YES / Any letter): ")
+   
 def check_tables_exist(MYSQL_USER, MYSQL_PASS, MYSQL_HOST, MYSQL_PORT):
     """Function to check if any tables exist in the MySQL database."""
     # First, select the database
@@ -168,5 +168,94 @@ if process_all.strip().lower() in ["yes", "y"]:
                 print(f"Executed SQL file: {file_path}")
 
         print(f"Disconnected from MySQL for instance {instance_dir}.")
+
+else:
+    # If user does not want to process all instances, ask for specific instance
+    instance_name = input("Enter the instance name to process (e.g., instance0, instance1): ")
+    config_file = os.path.join(INSTANCES_DIR, instance_name, ".instance.cnf")
+
+    if os.path.exists(os.path.join(INSTANCES_DIR, instance_name)):
+        print(f"START Processing the instance ----------------- {instance_name} -------------------")
+        print(f"Config file for instance {instance_name}: {config_file}")
+
+        # Initialize variables for the specified instance
+        MYSQL_USER = None
+        MYSQL_PASS = None
+        MYSQL_HOST = None
+        MYSQL_PORT = None
+
+        # Check if the config file exists before reading it
+        if not os.path.exists(config_file):
+            print(f"Config file {config_file} does not exist, skipping instance {instance_name}...")
+            exit(1)
+
+        # Read the .instance.cnf file and extract the configuration values
+        print(f"Reading database configuration from {config_file}...")
+        with open(config_file, "r") as f:
+            for line in f:
+                if "=" in line:
+                    key, value = line.split("=", 1)
+                    key = key.strip()
+                    value = value.strip()
+                    if key == "user":
+                        MYSQL_USER = value
+                    elif key == "password":
+                        MYSQL_PASS = value
+                    elif key == "host":
+                        MYSQL_HOST = value
+                    elif key == "port":
+                        MYSQL_PORT = value
+
+        # Ensure all MySQL variables are set
+        if not all([MYSQL_USER, MYSQL_PASS, MYSQL_HOST, MYSQL_PORT]):
+            print(f"Error: Missing MySQL configuration for instance {instance_name}.")
+            exit(1)
+
+        # Test MySQL connection (Ping) without --defaults-file
+        print(f"Testing MySQL connection for instance {instance_name}...")
+        mysql_ping = subprocess.run(
+            ["mysqladmin", "-u", MYSQL_USER, "-p" + MYSQL_PASS, "-h", MYSQL_HOST, "-P", str(MYSQL_PORT), "ping"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+
+        if mysql_ping.returncode != 0:
+            print(f"Error: Cannot connect to MySQL for instance {instance_name}.")
+            exit(1)
+
+        # Check if tables exist in the instance's database
+        if check_tables_exist(MYSQL_USER, MYSQL_PASS, MYSQL_HOST, MYSQL_PORT):
+            print(f"Tables already exist in the database for instance {instance_name}. Skipping SQL execution.")
+            exit(0)  # Skip running SQL files if tables exist
+
+        # Execute SQL files in sorted order
+        print(f"Running SQL files for instance {instance_name}...")
+        with open(TEMP_FILE, "r") as temp_file:
+            for line in temp_file:
+                seq_number, file_path = line.split(" ", 1)
+                file_path = file_path.strip()[1:-1]  # Remove surrounding quotes
+
+                print(f"Sequence Number: {seq_number}")
+                print(f"File Path: {file_path}")
+
+                if not os.path.exists(file_path):
+                    print(f"Error: File {file_path} does not exist.")
+                    continue
+
+                # Execute SQL file without using --defaults-file
+                mysql_command = [
+                    "mysql", "-u", MYSQL_USER, "-p" + MYSQL_PASS, "-h", MYSQL_HOST, "-P", str(MYSQL_PORT), "-e", f"source {file_path}"
+                ]
+                result = subprocess.run(mysql_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+                if result.returncode != 0:
+                    with open("error.log", "a") as error_log:
+                        error_log.write(f"Error encountered while executing {file_path}\n")
+                    print(f"Error encountered while executing {file_path}")
+                    continue
+
+                print(f"Executed SQL file: {file_path}")
+    else:
+        print(f"The specified instance directory does not exist: {os.path.join(INSTANCES_DIR, instance_name)}")
 
 print("Process completed successfully.")
