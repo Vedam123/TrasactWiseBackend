@@ -2,14 +2,18 @@
 Set objShell = CreateObject("WScript.Shell")
 
 ' Get the path of the directory containing this VBScript
-scriptPath = CreateObject("Scripting.FileSystemObject").GetParentFolderName(WScript.ScriptFullName)
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+scriptPath = objFSO.GetParentFolderName(WScript.ScriptFullName)
+
+' Ensure scriptPath has a trailing backslash
+If Right(scriptPath, 1) <> "\" Then scriptPath = scriptPath & "\"
 
 ' Total number of batch files to run (in relative paths)
 BatchFiles = Array( _ 
-    scriptPath & "\992_PROD_Flask_Server_Stop.bat", _ 
-    scriptPath & "\991_PROD_WebClient_Stop.bat", _ 
-    scriptPath & "\801_stop_services.bat", _ 
-    scriptPath & "\802_Remove_services.bat", _ 
+    scriptPath & "992_PROD_Flask_Server_Stop.bat", _ 
+    scriptPath & "991_PROD_WebClient_Stop.bat", _ 
+    scriptPath & "801_stop_services.bat", _ 
+    scriptPath & "802_Remove_services.bat" _ 
 )
 
 TotalFiles = UBound(BatchFiles) + 1
