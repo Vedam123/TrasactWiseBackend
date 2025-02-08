@@ -1,47 +1,66 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: Task 1 - Find the paths of the directories
-rem Get current directory and its name
-set "CURR_DIR_PATH=%CD%"
-for %%I in (%CURR_DIR_PATH%) do set "CURR_DIR_NAME=%%~nxI"
+:: Step 1: Find the current directory
+set "CURR_DIR=%CD%"
+for %%a in ("%CURR_DIR%") do set "CURR_DIR_NAME=%%~nxa"
+echo Current Directory Path: %CURR_DIR%
+echo Current Directory Name: %CURR_DIR_NAME%
 
-rem Get parent directory of current directory
-for %%I in (%CURR_DIR_PATH%) do set "PAR_DIR_PATH=%%~dpI"
-for %%I in (%PAR_DIR_PATH%) do set "PAR_DIR_NAME=%%~nxI"
+:: Step 2: Find the Parent directory
+for /D %%a in ("%CURR_DIR%\..") do set "PAR_DIR=%%~fa"
+for %%a in ("%PAR_DIR%") do set "PAR_DIR_NAME=%%~nxa"
+echo Parent Directory Path: %PAR_DIR%
+echo Parent Directory Name: %PAR_DIR_NAME%
 
-rem Get grandparent directory of parent directory
-for %%I in (%PAR_DIR_PATH%) do set "GPAR_DIR_PATH=%%~dpI"
-for %%I in (%GPAR_DIR_PATH%) do set "GPAR_DIR_NAME=%%~nxI"
+:: Step 3: Find the Grandparent directory
+for /D %%a in ("%PAR_DIR%\..") do set "GPAR_DIR=%%~fa"
+for %%a in ("%GPAR_DIR%") do set "GPAR_DIR_NAME=%%~nxa"
+echo Grandparent Directory Path: %GPAR_DIR%
+echo Grandparent Directory Name: %GPAR_DIR_NAME%
 
-:: Task 1 - Run the UNINSTALL.bat
-set "REMOVEFILES_PATH=%GPAR_DIR_PATH%\Companies\%CURR_DIR_NAME%\system\config\instance\REMOVEFILES.bat"
-echo Running REMOVEFILES.bat from: %REMOVEFILES_PATH%
-
-if exist "%REMOVEFILES_PATH%" (
-    call "%REMOVEFILES_PATH%"
-    echo REMOVEFILES.bat executed successfully.
+:: Step 4: Create the required directory structure
+set "TARGET_DIR=%GPAR_DIR%\Companies\%CURR_DIR_NAME%\system\config\instance"
+if not exist "%TARGET_DIR%" (
+    mkdir "%TARGET_DIR%"
+    echo Directory created: %TARGET_DIR%
 ) else (
-    echo REMOVEFILES.bat not found at %REMOVEFILES_PATH%.
+    echo Directory already exists: %TARGET_DIR%
+)
+
+:: Step 5: Switch to the new directory
+cd /d "%TARGET_DIR%"
+if "%CD%"=="%TARGET_DIR%" (
+    call REMOVEFILES.bat
+    echo Successfully switched to: %CD%
+) else (
+    echo Failed to switch to the directory.
     exit /b 1
 )
 
-:: Task 2 - Switch to CURR_DIR_PATH
-echo Switching to directory: %CURR_DIR_PATH%
-cd /d "%CURR_DIR_PATH%"
-if not "%CD%" == "%CURR_DIR_PATH%" (
-    echo Failed to switch to the directory %CURR_DIR_PATH%.
+:: Task 3 - Switch to CURR_DIR_PATH
+echo Switching to directory: %CURR_DIR%
+cd /d "%CURR_DIR%"
+if not "%CD%" == "%CURR_DIR%" (
+    echo Failed to switch to the directory %CURR_DIR%.
     exit /b 1
 )
-echo Successfully switched to: %CURR_DIR_PATH%
+echo Successfully switched to: %CURR_DIR%
 
-:: Task 3 - Delete the directory CURR_DIR_NAME
-echo Deleting directory: %GPAR_DIR_PATH%\Companies\%CURR_DIR_NAME%
-rmdir /s /q "%GPAR_DIR_PATH%\Companies\%CURR_DIR_NAME%"
-if exist "%GPAR_DIR_PATH%\Companies\%CURR_DIR_NAME%" (
-    echo Failed to delete the directory.
-    exit /b 1
+:: Step 6: Delete the DELETE_DIR
+set "DELETE_DIR=%GPAR_DIR%\Companies\%CURR_DIR_NAME%"
+echo Deleting Directory: %DELETE_DIR%
+
+if exist "%DELETE_DIR%" (
+    rmdir /s /q "%DELETE_DIR%"
+    if exist "%DELETE_DIR%" (
+        echo ERROR: Failed to delete the directory.
+        exit /b 1
+    ) else (
+        echo Directory %DELETE_DIR% and its contents have been successfully deleted.
+    )
+) else (
+    echo Directory %DELETE_DIR% does not exist.
 )
-echo Directory %CURR_DIR_NAME% and its contents have been successfully deleted.
 
 pause
