@@ -47,6 +47,10 @@ if errorlevel 1 (
 echo Removing PM2 startup setup...
 npx pm2 unstartup
 
+:: Call the PowerShell script in the same directory and pass the keyword as a parameter
+powershell.exe -ExecutionPolicy Bypass -File "%current_dir%991_PROD_KISS_STUCK_PROCESSES.ps1" -keyword "%company%"
+
+
 echo All PM2 processes stopped and startup settings removed.
 echo Press any key to exit...
 pause >nul
