@@ -286,24 +286,26 @@ pip install requests
 pip install numpy
 echo Dependencies installed successfully.   >> "%LOG_FILE%"
 
-REM Step 26: Move to current directory where it started
+REM Step 27: Deactivate the Python virtual environment
+echo Now python will be deactivated.    >> "%LOG_FILE%"
+echo Deactivating the Python virtual environment...   >> "%LOG_FILE%"
+call deactivate
+echo Python virtual environment deactivated. you can now close this cmd window   >> "%LOG_FILE%"
+
+REM Step 28: Move to current directory where it started
 cd "%GP_DIR%"
 echo Switch to current directory %GP_DIR% where it started   >> "%LOG_FILE%"
-echo Now python will be deactivated.    >> "%LOG_FILE%"
 
-REM Step 27: Deactivate the Python virtual environment
-echo Deactivating the Python virtual environment...   >> "%LOG_FILE%"
-deactivate
-echo Python virtual environment deactivated. you can now close this cmd window   >> "%LOG_FILE%"
+
 
 
 echo ------------------------------------Run the Installation script  -----------------------------------------
 
-REM Step 28: Change directory to the instance directory
+REM Step 29: Change directory to the instance directory
 echo Changing directory to the instance directory...   >> "%LOG_FILE%"
 cd "%GP_DIR%\%MASTER_COMPANY%\%company_folder%\%system_folder%\config\instance"
 
-REM Step 29: Check if INSTALL.bat exists in the instance directory
+REM Step 30: Check if INSTALL.bat exists in the instance directory
 if exist "INSTALL.bat" (
     echo INSTALL.bat found. Running the installation script...   >> "%LOG_FILE%"
     call INSTALL.bat
@@ -318,4 +320,3 @@ cd "%GP_DIR%"
 echo Switch to current directory %GP_DIR% where it started.   >> "%LOG_FILE%"
 echo Setup completed successfully.    >> "%LOG_FILE%"
 
-pause
