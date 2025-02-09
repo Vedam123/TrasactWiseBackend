@@ -35,28 +35,37 @@ for /f "delims=" %%a in ("!company!") do set "company=%%a"
 
 :: Define the PM2 process name (same as in the startup script)
 set "pm2_name=%company%_WebClient"
-call :log "Stopping PM2 process: %pm2_name%..."
+call :log "Stopping PM2 process: %pm2_name%...  and for the %company%  and for the company !company!"
 
+call :log "Stopping PM2 process: %pm2_name%...  and for the %company%  and for the company !company!"
 :: Step 5: Stop and delete the PM2 process
-npx pm2 stop "%pm2_name%" >> "%log_file%" 2>&1
-npx pm2 delete "%pm2_name%" >> "%log_file%" 2>&1
+call :log "Executing: npx pm2 stop %pm2_name%"
+call npx pm2 stop "%pm2_name%" >> "%log_file%" 2>&1
+call :log "After PM2 stop command"
+
+
+call :log "After  PM2 stop : %pm2_name%...  and for the %company%  and for the company !company!"
+call npx pm2 delete "%pm2_name%" >> "%log_file%" 2>&1
+call :log "After  PM2 delete : %pm2_name%...  and for the %company%  and for the company !company!"
+
+call :log "Before error level check %company%  and for the company !company!"
 
 if errorlevel 1 (
     call :log "ERROR: Failed to stop and delete PM2 process: %pm2_name%."
     call :log "Press any key to exit..."
-    pause >nul
-    exit /b 1
 ) else (
     call :log "Successfully stopped and deleted PM2 process: %pm2_name%."
 )
-
+call :log "After  error level check %company%  and for the company !company!"
 :: Optional: Remove PM2 startup script (comment out if you don’t want this)
 call :log "Removing PM2 startup setup..."
-npx pm2 unstartup >> "%log_file%" 2>&1
+call npx pm2 unstartup >> "%log_file%" 2>&1
+
+call :log "Before Powershell call   error level check %company%  and for the company !company!"
 
 :: Call the PowerShell script in the same directory and pass the keyword as a parameter
 call :log "Executing PowerShell script to kill stuck processes..."
-powershell.exe -ExecutionPolicy Bypass -File "%current_dir%991_PROD_KILL_STUCK_PROCESSES.ps1" -keyword "%company%" >> "%log_file%" 2>&1
+call powershell.exe -ExecutionPolicy Bypass -File "%current_dir%991_PROD_KILL_STUCK_PROCESSES.ps1" -keyword "%company%" >> "%log_file%" 2>&1
 
 call :log "All PM2 processes stopped and startup settings removed."
 call :log "Press any key to exit..."
