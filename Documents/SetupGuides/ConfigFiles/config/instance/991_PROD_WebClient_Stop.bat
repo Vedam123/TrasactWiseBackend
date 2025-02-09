@@ -57,19 +57,16 @@ if errorlevel 1 (
     call :log "Successfully stopped and deleted PM2 process: %pm2_name%."
 )
 call :log "After  error level check %company%  and for the company !company!"
-:: Optional: Remove PM2 startup script (comment out if you don’t want this)
-call :log "Removing PM2 startup setup..."
-call npx pm2 unstartup >> "%log_file%" 2>&1
 
-call :log "Before Powershell call   error level check %company%  and for the company !company!"
+call :log "Call Handle exe code to delete stuck process %company%  and for the company !company!"
 
-:: Call the PowerShell script in the same directory and pass the keyword as a parameter
-call :log "Executing PowerShell script to kill stuck processes..."
-call powershell.exe -ExecutionPolicy Bypass -File "%current_dir%991_PROD_KILL_STUCK_PROCESSES.ps1" -keyword "%company%" >> "%log_file%" 2>&1
+:: Step 6: Call 991_PROD_KILL_STUCK_PROCESSES.bat with the extracted company name
+call :log "Executing 991_PROD_KILL_STUCK_PROCESSES.bat with parameter: %company%"
+call "%current_dir%991_PROD_KILL_STUCK_PROCESSES.bat" "%company%" >> "%log_file%" 2>&1
+call :log "Finished executing 991_PROD_KILL_STUCK_PROCESSES.bat with parameter: %company%"
 
 call :log "All PM2 processes stopped and startup settings removed."
 call :log "Press any key to exit..."
-pause >nul
 
 endlocal
 exit /b
