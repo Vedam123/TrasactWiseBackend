@@ -25,7 +25,7 @@ LOG_FILE_PATH = "C:/SAS Opera/Companies/Company_0/System/Logs/AppService/"
 # config.py
 DB_INSTANCES_BASE_PATH = "C:/SAS Opera/Companies"
 APP_SERVER_HOST = '0.0.0.0'
-APP_SERVER_PORT = 3004
+APP_SERVER_PORT = 8014
 APP_SERVER_PROTOCOL = 'https'
 
 COMPANY_FOLDER = 'Company_0'
