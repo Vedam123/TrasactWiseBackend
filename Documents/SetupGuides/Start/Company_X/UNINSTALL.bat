@@ -63,4 +63,6 @@ if exist "%DELETE_DIR%" (
     echo Directory %DELETE_DIR% does not exist.
 )
 
-pause
+echo Successfully Uninsalled all the components exit in 5 secs
+timeout /t 5 /nobreak >nul
+
