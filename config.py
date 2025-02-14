@@ -43,5 +43,3 @@ SSL_KEY_FILE = './certs/server.key'
 
 CERT_ABS_PATH1 = "C:\\SAS Opera\\Companies\\Company_0\\system\\application\\AppService\\certs\\server.crt"
 KEY_ABS_PATH1 = "C:\\SAS Opera\\Companies\\Company_0\\system\\application\\AppService\\certs\\server.key"
-
-
