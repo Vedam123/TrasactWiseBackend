@@ -44,5 +44,8 @@ SSL_KEY_FILE = './certs/server.key'
 CERT_ABS_PATH1 = "C:\\SAS Opera\\Companies\\Company_0\\system\\application\\AppService\\certs\\server.crt"
 KEY_ABS_PATH1 = "C:\\SAS Opera\\Companies\\Company_0\\system\\application\\AppService\\certs\\server.key"
 
+# OpenAI API Key (Consider storing this in environment variables)
+OPENAI_API_KEY = "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"
+
 
 

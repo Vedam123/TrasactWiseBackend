@@ -3,6 +3,7 @@ from modules.utilities.Tools.get_file_paths import get_file_paths
 from modules.utilities.Tools.download_file import download_file
 from modules.utilities.Tools.get_and_download_file import get_and_download_file
 from modules.utilities.Tools.download_binary_file import download_binary_file
+from modules.utilities.genai.chat.generate_response import generate_response
 from modules.utilities.logger import logger  # Import the logger module
 
 
@@ -39,6 +40,14 @@ def download_binary_file_all():
     USER_ID = ""  # Replace with the appropriate user ID or identifier
     logger.debug(f"{USER_ID} --> {MODULE_NAME}: Request to get get_and_download_binary_file")
     return download_binary_file()
+
+# POST routes -----------------------------------------------------
+@get_utility_routes.route('/generate_response', methods=['POST'])
+def chat_completion():
+    MODULE_NAME = __name__
+    USER_ID = ""  # Replace with the appropriate user ID or identifier
+    logger.debug(f"{USER_ID} --> {MODULE_NAME}: AI Chat completion request received")
+    return generate_response()
 
 
 # Register blueprints
