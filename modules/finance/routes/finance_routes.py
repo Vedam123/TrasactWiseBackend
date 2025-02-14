@@ -356,7 +356,7 @@ def delete_journal_line_all():
 @finance_delete_routes.route('/delete_default_accounts', methods=['DELETE'])
 def delete_default_accounts_all():  
     appuser = ""  # Replace with the appropriate user ID or identifier
-    logger.debug(f"{appuser} --> {__name__}: Request to delete_default_accounts")
+    logger.debug(f"{appuser} --> {__name__}: Req esuest to delete_default_accounts")
     return delete_default_accounts()
 
 
