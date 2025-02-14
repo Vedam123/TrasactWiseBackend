@@ -10,7 +10,7 @@ from modules.utilities.logger import logger  # Import the logger module
 
 # Load environment variables
 load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "your-fallback-api-key-here")
 
 # Define Blueprint
 llm_chat_api = Blueprint('llm_chat_api', __name__)
