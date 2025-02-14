@@ -19,3 +19,5 @@ templates/
 static/
 
 app.spec
+
+.env/

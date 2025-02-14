@@ -1,13 +1,16 @@
+import os
 import json
 import openai
 from flask import Blueprint, jsonify, request
+from dotenv import load_dotenv
 from modules.security.routines.get_user_and_db_details import get_user_and_db_details
 from modules.security.permission_required import permission_required
 from config import WRITE_ACCESS_TYPE
-from config import (
-    OPENAI_API_KEY
-)
 from modules.utilities.logger import logger  # Import the logger module
+
+# Load environment variables
+load_dotenv()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Define Blueprint
 llm_chat_api = Blueprint('llm_chat_api', __name__)
@@ -42,6 +45,11 @@ def generate_response():
 
         prompt = data['prompt']
         logger.debug(f"{appuser} --> {__name__}: Received prompt: {prompt}")
+
+        # Check if API key is loaded
+        if not OPENAI_API_KEY:
+            logger.error(f"{appuser} --> {__name__}: OpenAI API Key is missing.")
+            return jsonify({"error": "Server misconfiguration: Missing OpenAI API Key"}), 500
 
         # OpenAI API call
         client = openai.OpenAI(api_key=OPENAI_API_KEY)
