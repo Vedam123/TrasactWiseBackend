@@ -1,0 +1,24 @@
+How to connect to Remote database
+
+Normally when you install the application in the local machine it will create local database in the db_instances folder
+they are like directories in db_instances folder as instance0, instance1 ....
+
+In order to access a remote datase , there is a folder remotedb is created in the db_instances directory 
+you can create two files in it .instance.cnf , root_password.ini 
+
+The .insance.cnf should look like below to access corresponding remote database
+
+[client]
+user = aab_usr0
+password = welcome
+host = 13.60.183.65
+port = 6114
+dbserverip = 13.60.183.65
+
+
+The root_password.ini is optional , contains the below information
+
+password=welcome
+
+
+in the ConstDecl.js file of webclient contains the REMOTEDB entry so when you login to application you can select so it will connect to the above remotedb
