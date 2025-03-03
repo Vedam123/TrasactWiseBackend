@@ -228,7 +228,7 @@ CREATE TABLE sal.sales_order_lines (
 
 CREATE TABLE sal.pick_release_log (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
-    execution_id VARCHAR(50) NOT NULL,
+    execution_id VARCHAR(50) NOT NULL UNIQUE, 
     sales_header_id INT NOT NULL,
     sales_order_line_id INT NOT NULL,
     sales_item_id INT NOT NULL,
@@ -236,10 +236,10 @@ CREATE TABLE sal.pick_release_log (
     sales_uom_id_quantity DECIMAL(10, 2) NOT NULL,
     sales_base_uom_id INT NOT NULL,
     sales_base_uom_quantity DECIMAL(10, 2) NOT NULL,
-    already_picked_quantity DECIMAL(10, 2) ,
+    already_picked_quantity DECIMAL(10, 2),
     sales_line_status VARCHAR(50) NOT NULL,   
     sales_line_new_status VARCHAR(50),
-    inventory_id INT,  -- Allow NULL values by removing the NOT NULL constraint
+    inventory_id INT,  -- NULL allowed
     picked_quantity DECIMAL(10, 2) NOT NULL,
     pick_release_status ENUM('RELEASED', 'REVERSED') DEFAULT 'RELEASED',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -251,18 +251,17 @@ CREATE TABLE sal.pick_release_log (
     INDEX (inventory_id)
 ) AUTO_INCREMENT = 10;
 
-
 -- Table for pick and ship stage
 CREATE TABLE inv.pick_and_ship_stage (
-    pick_id INT  AUTO_INCREMENT PRIMARY KEY,
-    execution_id varchar(50),
-    order_id INT  NOT NULL,
-    line_id INT  NOT NULL,
-    item_id INT  NOT NULL,
-    inventory_id INT  NOT NULL,
+    pick_id INT AUTO_INCREMENT PRIMARY KEY,
+    execution_id VARCHAR(50) NOT NULL,  
+    order_id INT NOT NULL,
+    line_id INT NOT NULL,
+    item_id INT NOT NULL,
+    inventory_id INT NOT NULL,
     picked_quantity INT NOT NULL,
-    pick_date date NOT NULL,
-    picker_id INT  NOT NULL,
+    pick_date DATE NOT NULL,
+    picker_id INT NOT NULL,
     shipping_location_id INT,
     status VARCHAR(50) NOT NULL,
     shipping_method VARCHAR(50),

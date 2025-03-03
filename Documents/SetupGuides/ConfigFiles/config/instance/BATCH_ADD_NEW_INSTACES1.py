@@ -9,7 +9,8 @@ batch_files = [
     "005_initialize_data_folder.bat",
     "006_get_mysql_root_pwd.bat",
     "009_update_const_decl_js_file.bat",
-    "013_instance_file_to_instances.bat"
+    "013_instance_file_to_instances.bat",
+    "015_create_remotedb.bat"
 ]
 
 # Get the current directory where the batch files are located
