@@ -50,6 +50,7 @@ IF EXIST "%PYTHON_FILE%" (
 
     :: Run the Python script
     python "%PYTHON_FILE%"
+	sleep 5
 
     :: Deactivate the virtual environment after execution
     deactivate

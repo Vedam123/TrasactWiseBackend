@@ -1,0 +1,31 @@
+How to create a mysql dump from container mysql 
+
+Create and Export the dump file
+	1. run docker ps and find the mysql database container 
+	2. docker exec -it <container_name> sh
+	3. Run the command : mysqldump -u aab_usr0 -p --databases adm com fin inv pur sal > aab_backupdump.sql
+	4. exit from the container and now you are in the eC2 instance where docker is running
+	5. docker ps and idtify the container id of mysql instance (aab)
+	6. Run the command to copy the file docker cp 748cfceb2f59:/aab_backupdump.sql /aab_backupdump.sql
+		(docker cp container_id: <filepath in the container > <filepath in the host > 
+	7. Now copy the aab_backupdump.sql to local machine (for example windows using winscp to take backup further )
+
+Import the dump file 
+	How to Import it in another database
+	1. Connect to Target database 
+		mysql -u your_username -p -h your_host -P your_port your_database_name < path/to/aap_sqldump.sql
+		Navigate to the directory where the aap_sqldump.sql file is there
+		C:\SAS Opera\Companies\Company_10\system>mysql -u root -p -h localhost -P 5001 < aab_dump.sql
+		Enter password: *******
+		
+		the above will import all the databases which are in the dump file to the database
+		
+		If you want to do individual databases , it can be as below 
+		
+		mysql -u root -p -h localhost -P 5001 adm < aab_dump.sql
+		mysql -u root -p -h localhost -P 5001 com < aab_dump.sql
+		mysql -u root -p -h localhost -P 5001 fin < aab_dump.sql
+		mysql -u root -p -h localhost -P 5001 inv < aab_dump.sql
+		mysql -u root -p -h localhost -P 5001 pur < aab_dump.sql
+		mysql -u root -p -h localhost -P 5001 sal < aab_dump.sql
+	
