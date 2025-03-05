@@ -3,7 +3,7 @@ cd /d "%~dp0"
 
 :: Set variables
 SET VENV_DIR=venv
-SET PYTHON_FILE=202_seed_data_to_db_instances.py
+SET PYTHON_FILE=203_seed_data_to_db_instances.py
 
 :: Check if Python is installed
 python --version >nul 2>&1
@@ -31,7 +31,6 @@ python -m pip install mysql-connector-python configparser
 IF NOT EXIST "%PYTHON_FILE%" (
     echo Error: "%PYTHON_FILE%" not found in the current directory.
     deactivate
-    pause
     exit /b
 )
 
