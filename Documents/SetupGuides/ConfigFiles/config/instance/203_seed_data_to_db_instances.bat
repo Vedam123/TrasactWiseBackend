@@ -5,7 +5,7 @@ cd /d "%~dp0"
 SET VENV_DIR=venv
 SET PYTHON_FILE=203_seed_data_to_db_instances.py
 
-:: Check if Python is installed
+:: Check if Python is ins talled
 python --version >nul 2>&1
 IF ERRORLEVEL 1 (
     echo Python is not installed. Please install Python and try again.

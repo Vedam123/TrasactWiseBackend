@@ -36,4 +36,3 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 echo All checks completed successfully.
-pause

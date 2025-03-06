@@ -1,0 +1,21 @@
+1. After all the installation is complete In order to make use this enviornment as git , meaning any changes to the enviornment 
+to check in with git or sync from git you need to do the following 
+
+For AppService :
+
+    Step1 : Check if remote is properly configured with the command git remote -v 
+        If the output does not show the correct GitHub repository URL (e.g., https://github.com/Vedam123/TrasactWiseBackend.git), then you need to re-add it.
+    Step2 : git remote set-url origin https://github.com/Vedam123/TrasactWiseBackend.git
+    Step3 :  Verify the upstream branch Run:git branch -vv
+    Step4 : Try fetching and pulling Run: git fetch origin
+                                        git pull origin main
+
+For WebClient :
+
+    Step1 : Check if remote is properly configured with the command git remote -v 
+        If the output does not show the correct GitHub repository URL (e.g., https://github.com/Vedam123/TransactWiseFrontend.git), then you need to re-add it.
+    Step2 : git remote set-url origin https://github.com/Vedam123/TransactWiseFrontend.git
+    Step3 :  Verify the upstream branch Run:git branch -vv
+    Step4 : Try fetching and pulling Run: git fetch origin
+                                        git pull origin main
+
