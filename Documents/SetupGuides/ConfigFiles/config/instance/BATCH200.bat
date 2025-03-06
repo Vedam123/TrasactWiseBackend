@@ -12,7 +12,7 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-REM If Python is installed, run the create.py script
+REM If Python is installed, run the create.py script 
 echo Python is installed. Running create_scehmas_py script...
 python "%~dp0BATCH200_PROCESS.py"
 
