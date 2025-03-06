@@ -28,4 +28,6 @@ Import the dump file
 		mysql -u root -p -h localhost -P 5001 inv < aab_dump.sql
 		mysql -u root -p -h localhost -P 5001 pur < aab_dump.sql
 		mysql -u root -p -h localhost -P 5001 sal < aab_dump.sql
+
+-----------------------------------------------
 	
