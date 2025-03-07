@@ -5,6 +5,33 @@ REM Step 1: Identify the current directory and store it in CURR_DIR also identif
 echo Identifying the current directory...
 set CURR_DIR=%cd%
 
+cd %cd%
+
+REM Check if Python is installed
+python --version >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Python is not installed. Please install Python and try again.
+    exit /b
+)
+
+REM Check if config.ini exists
+if not exist "%CURR_DIR%\config.ini" (
+    echo config.ini not found in %CURR_DIR%. Please ensure the file exists.
+    exit /b
+)
+
+REM List of Python scripts to check and run
+set scripts=01_create_initial_dirs.py 02_update_paths_configini.py 03_update_ports_cofigini.py
+
+for %%F in (%scripts%) do (
+    if exist "%CURR_DIR%\%%F" (
+        echo Running %%F...
+        python "%CURR_DIR%\%%F"
+    ) else (
+        echo %%F not found, skipping...
+    )
+)
+
 set LOG_FILE=%CURR_DIR%\setup_log.txt
 echo Logging started at %date% %time% > "%LOG_FILE%"
 
