@@ -317,6 +317,13 @@ if exist "INSTALL.bat" (
 echo Installation script is successfully executed. >> "%LOG_FILE%"
 
 cd "%GP_DIR%"
+
+cd "%CURR_DIR%"
+
+python 04_set_git.py
+
+python 05_final_results.py
+
 echo Switch to current directory %GP_DIR% where it started.   >> "%LOG_FILE%"
 echo Setup completed successfully.    >> "%LOG_FILE%"
 
