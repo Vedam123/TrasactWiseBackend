@@ -1,11 +1,25 @@
 import os
 import configparser
+import logging
+import subprocess
 
-CONFIG_FILE = "config.ini"
-OUTPUT_FILE = "results.txt"
+CONFIG_FILE = "config.ini"  # The path to config.ini in the same directory
+LOG_FILE = "setup_log.txt"  # Log file name
+OUTPUT_FILE = "results.txt"  # Output file name
+
+# Configure logging
+script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the script's directory
+log_file_path = os.path.join(script_dir, LOG_FILE)
+logging.basicConfig(
+    filename=log_file_path,
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    encoding="utf-8",
+)
 
 def read_config():
     """Read config.ini and return a configparser object."""
+    logging.info("Reading config.ini")
     config = configparser.ConfigParser()
     config.optionxform = str  # Preserve case sensitivity
     config.read(CONFIG_FILE, encoding="utf-8")
@@ -13,6 +27,7 @@ def read_config():
 
 def construct_urls(config):
     """Construct UI and API URLs from config.ini."""
+    logging.info("Constructing UI and API URLs")
     web_protocol = config["WebClient"]["WEB_CLIENT_PROTOCOL"].strip()
     web_host = config["AppService"]["APP_SERVER_HOST"].strip()
     web_port = config["WebClient"]["WEB_CLIENT_PORT"].strip()
@@ -30,11 +45,13 @@ def construct_urls(config):
 
 def get_database_details(config):
     """Get database instance details from the db_instances folder."""
+    logging.info("Retrieving database instance details")
     base_path = os.path.normpath(config["Global"]["BASE_PATH"].strip())
     company_folder = config["Global"]["company_folder"].strip()
 
     db_instances_path = os.path.join(base_path, company_folder, "system", "db_instances")
     if not os.path.exists(db_instances_path):
+        logging.warning("Database instances folder not found!")
         return ["Database instances folder not found!"]
 
     instances = int(config["database"]["instances"].strip())
@@ -68,10 +85,12 @@ def get_database_details(config):
                         database_details.append(f"{root_key}:\n{password_content}\n")
                         seen_instances.add(root_key)
 
+    logging.info("Database details retrieved successfully")
     return database_details
 
 def write_results(urls, db_details):
     """Write the URLs and database details to results.txt."""
+    logging.info(f"Writing results to {OUTPUT_FILE}")
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(f"UI_URL1={urls['UI_URL1']}\n")
         f.write(f"UI_URL2={urls['UI_URL2']}\n")
@@ -79,13 +98,15 @@ def write_results(urls, db_details):
         f.write(f"API_URL2={urls['API_URL2']}\n")
         f.write("\nDATABASE_DETAILS:\n")
         f.write("\n".join(db_details))
+    logging.info("Results written successfully")
 
 def main():
+    logging.info("Starting configuration setup")
     config = read_config()
     urls = construct_urls(config)
     db_details = get_database_details(config)
     write_results(urls, db_details)
-    print(f"Results written to {OUTPUT_FILE}")
+    logging.info(f"Process completed. Results stored in {OUTPUT_FILE}")
 
 if __name__ == "__main__":
     main()

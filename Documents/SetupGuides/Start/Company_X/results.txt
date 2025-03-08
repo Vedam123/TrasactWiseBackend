@@ -1,0 +1,38 @@
+UI_URL1=https://172.20.10.4:53678
+UI_URL2=https://localhost:53678
+API_URL1=https://172.20.10.4:53677
+API_URL2=https://localhost:53677
+
+DATABASE_DETAILS:
+Database [instance0_AMS]:
+[client]
+user = nce0usr
+password = inst0welcome
+host = localhost
+port = 53675
+dbserverip = 172.20.10.4
+
+Root Password [instance0_AMS]:
+password=welcome
+
+Database [instance1_MAINT]:
+[client]
+user = nce1usr
+password = inst1welcome
+host = localhost
+port = 53676
+dbserverip = 172.20.10.4
+
+Root Password [instance1_MAINT]:
+password=welcome
+
+Database [remotedb_remotedb]:
+[client]
+user=nce0usr
+password=welcome
+host=localhost
+port=53675
+dbserverip=172.20.10.4
+
+Root Password [remotedb_remotedb]:
+password==J=6=.1>jtHz

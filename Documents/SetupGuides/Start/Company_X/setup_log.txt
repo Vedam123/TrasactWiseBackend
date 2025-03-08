@@ -1,0 +1,115 @@
+Logging started at 08/03/2025 14.38.34,22 
+Current directory is: C:\SAS Opera\start\Company_2  
+Current Directory Name: Company_2  
+Grandparent Directory Name: SAS Opera  
+All ports   
+Full Path of config.ini: C:\SAS Opera\start\Company_2\config.ini  
+File Name of config.ini: config.ini  
+Set company_folder to Company_3  
+Set system_folder to system  
+Set config_folder to config  
+Set project_root to application  
+Set app_root to AppService  
+Set web_root to WebClient  
+Set SOURCE_FILE to C:\ProgramData\MySQL\MySQL Server 8.0\my.ini  
+Set MYSQL_BIN to C:\Program Files\MySQL\MySQL Server 8.0\bin  
+Set SOURCE_MYINI_FILE to C:\ProgramData\MySQL\MySQL Server 8.0\my.ini  
+Set BASE_PATH to C:\SAS Opera\Companies  
+Set MASTER_COMPANY to Companies  
+Set git_user to vedamk@gmail.com  
+Set git_password to "AkaliNano@#12345"  
+Set git_clone_type to Development  
+Set frontend_rep to https://github.com/Vedam123/TransactWiseFrontend  
+Set backend_rep to https://github.com/Vedam123/TrasactWiseBackend  
+Set sms to 00358797975657  
+Set email to v8788@gmail.com  
+Set DB_INSTANCES_BASE_PATH to C:/SAS Opera/Companies  
+Set DB_SERVER_HOST to localhost  
+Set DB_SERVER_HOST_IP to 172.20.10.4  
+Set instances to 1  
+Set ports to 53675,53676  
+Set INSTANCE_NAMES to AMS,MAINT  
+Set ROOT_PASSWORD to welcome  
+Set SEED_DATA to Yes  
+Set APP_SERVER_HOST to 172.20.10.4  
+Set APP_SERVER_HTTPS_HOST to 0.0.0.0  
+Set APP_SERVER_PORT to 53677  
+Set APP_BACKEND_ENV_TYPE to Development  
+Set APP_SERVER_PROTOCOL to https  
+Set WEB_CLIENT_APPLICATION_NAME to Panda Express 36 Company  
+Set WEB_CLIENT_APPLICATION_LEVEL to Development  
+Set WEB_CLIENT_HOST to 0.0.0.0  
+Set WEB_CLIENT_PORT to 53678  
+Set WEB_CLIENT_PROTOCOL to https  
+Set SMTP_HOST to 172.20.10.4  
+Set SMTP_PORT to 53679  
+Set SMTP_EMAIL to smtp_server@flexerp.com  
+Set SSL_CRT_FILE to ./certs/server.crt  
+Set SSL_KEY_FILE to ./certs/server.key  
+Folder Companies already exists.   
+Creating the company folder: Company_3...   
+Creating the system folder: system...  
+Copying INI file to the company folder...  
+INI file copied successfully. 
+Creating the project root folder: application...   
+Creating app root folder: AppService...   
+Creating web root folder: WebClient...   
+CLONE TYPE PUSH AND SYNC  The cloning NON ENVIRONMENT is with without credentials 
+Cloning repositories using default logic for Development...  
+Cloning the frontend repository into "C:\SAS Opera\Companies\Company_3\system\application\WebClient"...   
+Frontend repository: https://github.com/Vedam123/TransactWiseFrontend 
+Cloning the backend repository into "C:\SAS Opera\Companies\Company_3\system\application\AppService"...   
+Backend repository: https://github.com/Vedam123/TrasactWiseBackend  
+Web root cloned successfully with the 'src' folder.   
+App root cloned successfully.  
+Copying config and configfiles directories to system folder...   
+Config and configfiles directories copied successfully.    
+------------------------------------now updating the config and global files -----------------------------------------   
+Changing directory to C:\SAS Opera\Companies\Company_3\system\application\WebClient   
+package.json file found. Installing react-scripts...   
+the npm install for react scripts successful and the child command window is closed   
+Setting up the Python virtual environment in app_root directory...    
+Python virtual environment 'erpenv' created.    
+Activating the virtual environment...    
+Installing dependencies in the virtual environment...   
+Dependencies installed successfully.   
+Now python will be deactivated.    
+Deactivating the Python virtual environment...   
+Python virtual environment deactivated. you can now close this cmd window   
+Switch to current directory C:\SAS Opera where it started   
+Changing directory to the instance directory...   
+INSTALL.bat found. Running the installation script...   
+INSTALL.bat script executed successfully.   
+Installation script is successfully executed. 
+2025-03-08 14:47:10,606 - INFO - Starting Git environment setup.
+2025-03-08 14:47:10,608 - INFO - Setting up Git environment in: C:\SAS Opera\Companies\Company_3\system\application\AppService
+2025-03-08 14:47:10,687 - INFO - Executed command 'git remote -v' in C:\SAS Opera\Companies\Company_3\system\application\AppService. Output: origin	https://github.com/Vedam123/TrasactWiseBackend (fetch)
+origin	https://github.com/Vedam123/TrasactWiseBackend (push)
+2025-03-08 14:47:10,688 - INFO - Git remote is already set correctly for C:\SAS Opera\Companies\Company_3\system\application\AppService.
+2025-03-08 14:47:10,751 - INFO - Executed command 'git branch -vv' in C:\SAS Opera\Companies\Company_3\system\application\AppService. Output: * main 005f3b2 [origin/main] awru
+2025-03-08 14:47:10,751 - INFO - * main 005f3b2 [origin/main] awru
+2025-03-08 14:47:12,005 - INFO - Executed command 'git fetch origin' in C:\SAS Opera\Companies\Company_3\system\application\AppService. Output: 
+2025-03-08 14:47:12,005 - INFO - 
+2025-03-08 14:47:13,320 - INFO - Executed command 'git pull origin main' in C:\SAS Opera\Companies\Company_3\system\application\AppService. Output: Already up to date.
+2025-03-08 14:47:13,320 - INFO - Already up to date.
+2025-03-08 14:47:13,320 - INFO - Setting up Git environment in: C:\SAS Opera\Companies\Company_3\system\application\WebClient
+2025-03-08 14:47:13,370 - INFO - Executed command 'git remote -v' in C:\SAS Opera\Companies\Company_3\system\application\WebClient. Output: origin	https://github.com/Vedam123/TransactWiseFrontend (fetch)
+origin	https://github.com/Vedam123/TransactWiseFrontend (push)
+2025-03-08 14:47:13,370 - INFO - Git remote is already set correctly for C:\SAS Opera\Companies\Company_3\system\application\WebClient.
+2025-03-08 14:47:13,419 - INFO - Executed command 'git branch -vv' in C:\SAS Opera\Companies\Company_3\system\application\WebClient. Output: * main f48f094 [origin/main] createdbsetupsform
+2025-03-08 14:47:13,420 - INFO - * main f48f094 [origin/main] createdbsetupsform
+2025-03-08 14:47:14,716 - INFO - Executed command 'git fetch origin' in C:\SAS Opera\Companies\Company_3\system\application\WebClient. Output: 
+2025-03-08 14:47:14,716 - INFO - 
+2025-03-08 14:47:16,080 - INFO - Executed command 'git pull origin main' in C:\SAS Opera\Companies\Company_3\system\application\WebClient. Output: Already up to date.
+2025-03-08 14:47:16,080 - INFO - Already up to date.
+2025-03-08 14:47:16,080 - INFO - Git environment setup completed.
+2025-03-08 14:47:16,208 - INFO - Starting configuration setup
+2025-03-08 14:47:16,208 - INFO - Reading config.ini
+2025-03-08 14:47:16,209 - INFO - Constructing UI and API URLs
+2025-03-08 14:47:16,209 - INFO - Retrieving database instance details
+2025-03-08 14:47:16,213 - INFO - Database details retrieved successfully
+2025-03-08 14:47:16,213 - INFO - Writing results to results.txt
+2025-03-08 14:47:16,214 - INFO - Results written successfully
+2025-03-08 14:47:16,214 - INFO - Process completed. Results stored in results.txt
+Switch to current directory C:\SAS Opera where it started.   
+Setup completed successfully.    
