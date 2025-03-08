@@ -19,23 +19,23 @@ BACKEND_ENVIRONMENT = 'Development'
 ENABLE_DETAILED_LOGS = True
 # Specify the log file path
 #LOG_FILE_PATH = "modules/utilities/logs/"
-LOG_FILE_PATH = 'C:/SAS Opera/Companies/Company_0/system/Logs/AppService/'
+LOG_FILE_PATH = 'C:/SAS Opera/Companies/Company_3/system/Logs/AppService/'
 
 #DB_INSTANCES_PATH = "C:\SAS Opera\Companies\Company_0\system\db_instances\instance1"
 # config.py
 DB_INSTANCES_BASE_PATH = "C:/SAS Opera/Companies"
 APP_SERVER_HOST = '0.0.0.0'
-APP_SERVER_PORT = 5003
+APP_SERVER_PORT = 53677
 APP_SERVER_PROTOCOL = 'https'
 
-COMPANY_FOLDER = 'Company_0'
+COMPANY_FOLDER = 'Company_3'
 SYSTEM_FOLDER = 'system'
 CONFIG_FOLDER = 'config'
 PROJECT_ROOT = 'application'
 APPLICATION_ROOT = 'AppService'
 PRODUCT_HOME = 'C:\SAS Opera\Companies'
 
-BACKEND_APP_ROOT_PATH = 'C:\\SAS Opera\\Companies\\Company_0\\system\\application\\AppService'
+BACKEND_APP_ROOT_PATH = 'C:\\SAS Opera\\Companies\\Company_3\\system\\application\\AppService'
 
 
 SSL_CRT_FILE = './certs/server.crt'
