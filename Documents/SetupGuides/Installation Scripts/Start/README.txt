@@ -43,11 +43,6 @@ CHANGES IN CONFIG FILES
 			APP_SERVER_HOST=172.31.41.61
 			SMTP_HOST=172.31.41.61'
 
-CERTIFICATE PATHS UPDATE
-
-	1. In the AppServer open the config file to update the proper company folder in the below paths
-		CERT_ABS_PATH1 = "C:\\SAS Opera\\Companies\\Company_1\\system\\application\\AppService\\certs\\server.crt"
-		KEY_ABS_PATH1 = "C:\\SAS Opera\\Companies\\Company_1\\system\\application\\AppService\\certs\\server.key"
 
 
 AFTER EC2 is LAUNCHED
@@ -59,4 +54,14 @@ AFTER EC2 is LAUNCHED
 					Select IE Enhanced Security Configuration Off
 	2. Add Ports to Inbound Rules in eC2 firewall
 		Go to Windows defender firewall and all the ports of the company
-	3. Check the eC2 Instance Security groups and add all the https ports of that company
+	3. Check the eC2 Instance Security groups and add all the https ports of that compan
+
+Development Instance setup
+
+	1. copy the Installation Scripts folder to local machine to one of the directory
+	2. Open the config.ini file and make changes like company_folder and  WEB_CLIENT_APPLICATION_NAME save it
+	3. Run the file Install_dev_system , after close to 30 min later it will generate a results.txt file in the directory Start with all the necessary connection URLs and database details.
+
+
+
+
