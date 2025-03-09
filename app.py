@@ -12,7 +12,7 @@ from hypercorn.asyncio import serve
 from hypercorn.config import Config
 import asyncio
 
-# Type-cast APP_SERVER_PORT to an integer
+# Type-cast APP_SERVER_PORT to an in teger
 APP_SERVER_PORT = int(APP_SERVER_PORT)
 
 app = Flask(__name__)

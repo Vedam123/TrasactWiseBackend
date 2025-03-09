@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: Step 1: Get the path of the batch file
+:: Step 1: Get the pa th of the batch file
 set "current_dir=%~dp0"
 echo Debug: The batch file is located at: %current_dir%
 

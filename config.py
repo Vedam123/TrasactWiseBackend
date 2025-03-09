@@ -17,7 +17,7 @@ APPLICATION_CREDENTIALS = [
 ]
 BACKEND_ENVIRONMENT = 'Development'
 ENABLE_DETAILED_LOGS = True
-# Specify the log file path
+# Specify the lo g file path
 #LOG_FILE_PATH = "modules/utilities/logs/"
 LOG_FILE_PATH = 'C:/SAS Opera/Companies/Company_2/system/Logs/AppService/'
 

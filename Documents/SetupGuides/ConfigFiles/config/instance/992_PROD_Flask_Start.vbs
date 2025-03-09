@@ -4,7 +4,7 @@ Set WshShell = CreateObject("WScript.Shell")
 ' Get the command-line arguments
 Set args = WScript.Arguments
 
-' Check if an argument was provided
+' Check if an ar gument was provided
 If args.Count > 0 Then
     processName = args(0)
 Else

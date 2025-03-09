@@ -1,7 +1,7 @@
 import os
 import configparser
 
-# Step 1: Find the current directory and store its path in a variable CURR_DIR
+# Step1: Find the current directory and store its path in a variable CURR_DIR
 CURR_DIR = os.getcwd()  # Current working directory
 CURR_DIR_NAME = os.path.basename(CURR_DIR)  # Current directory name
 print(f"Current Directory: {CURR_DIR}")
