@@ -75,6 +75,8 @@ if errorlevel 1 (
 
 echo Python virtual environment activated successfully.
 
+
+
 echo The current directory is: %CD%
 
 cd /d "%appservice_path%"
@@ -94,6 +96,23 @@ if not exist "static" (
 ) else (
     echo "'static' directory already exists."
 )
+
+:: Step 8.1: Install dependencies from requirements.txt
+set "requirements_file=%appservice_path%\requirements.txt"
+if not exist "%requirements_file%" (
+    echo ERROR: requirements.txt file not found at %requirements_file%
+    exit /b 1
+)
+
+echo Installing dependencies from requirements.txt...
+pip install -r "%requirements_file%"
+if errorlevel 1 (
+    echo ERROR: Failed to install dependencies from requirements.txt
+    exit /b 1
+)
+
+echo Dependencies installed successfully.
+
 
 :: Step 9: Run PyInstaller Commands
 echo Running PyInstaller first command...
@@ -132,6 +151,17 @@ if errorlevel 1 (
 set SRVNAME=FlaskServer
 set SNAME=!company!_%SRVNAME%
 
+echo Curren directory before runing VB script  "%~dp0"
+echo Also the curret directory to prefixed with vb script "%current_dir%"
+
+echo Attempting to run VBScript: "%current_dir%992_PROD_Flask_Start.vbs" "!SNAME!"
+echo Verifying VBScript exists...
+if not exist "%current_dir%992_PROD_Flask_Start.vbs" (
+    echo ERROR: VBScript file not found at %current_dir%992_PROD_Flask_Start.vbs
+    exit /b 1
+)
+echo VBScript found. Executing now...
+
 wscript.exe "%current_dir%992_PROD_Flask_Start.vbs" "!SNAME!"
 if errorlevel 1 (
     echo ERROR: Failed to start Python - Flask Server.
@@ -140,7 +170,7 @@ if errorlevel 1 (
 )
 
 echo Successfully started Python - Flask Server.
-timeout /t 5 /nobreak >nul
-exit
+::timeout /t 5 /nobreak >nul
+::exit
 
 endlocal

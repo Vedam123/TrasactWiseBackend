@@ -68,8 +68,8 @@ try:
     APP_SERVER_PROTOCOL = config_ini.get('AppService', 'APP_SERVER_PROTOCOL')
     APP_SERVER_PORT = config_ini.get('AppService', 'APP_SERVER_PORT')
    
-    SSL_CRT_FILE = config_ini.get('CERTIFICATES', 'SSL_CRT_FILE')
-    SSL_KEY_FILE = config_ini.get('CERTIFICATES', 'SSL_KEY_FILE')
+    SSL_CRT_FILE = config_ini.get('CERTIFICATES', 'BACKEND_SSL_CRT_FILE')
+    SSL_KEY_FILE = config_ini.get('CERTIFICATES', 'BACKEND_SSL_KEY_FILE')
     
     COMPANY_FOLDER = config_ini.get('Global', 'company_folder') 
     SYSTEM_FOLDER = config_ini.get('Global', 'system_folder') 
@@ -123,6 +123,23 @@ def update_config_py(lines, key, new_value):
         if line.strip().startswith(key):
             lines[i] = f"{key} = '{new_value}'\n"
     return lines
+    
+# Construct the SSL paths by using BACKEND_APP_ROOT_PATH
+def construct_ssl_path(ssl_file_path, backend_app_root_path):
+    # If the ssl_file_path starts with './', remove it and join it with BACKEND_APP_ROOT_PATH
+    if ssl_file_path.startswith('./'):
+        ssl_file_path = ssl_file_path[2:]  # Remove './'
+    
+    # Join the base path with the SSL file path
+    return os.path.join(backend_app_root_path, ssl_file_path)
+
+# Update SSL_CRT_FILE and SSL_KEY_FILE paths
+SSL_CRT_FILE = construct_ssl_path(config_ini.get('CERTIFICATES', 'BACKEND_SSL_CRT_FILE'), BACKEND_APP_ROOT_PATH)
+SSL_KEY_FILE = construct_ssl_path(config_ini.get('CERTIFICATES', 'BACKEND_SSL_KEY_FILE'), BACKEND_APP_ROOT_PATH)
+
+# Debug: Print the new SSL paths
+print(f"SSL_CRT_FILE Path: {SSL_CRT_FILE}")
+print(f"SSL_KEY_FILE Path: {SSL_KEY_FILE}")
 
 # Update config.py file with new values
 config_py_lines = update_config_py(config_py_lines, 'BACKEND_ENVIRONMENT', APP_BACKEND_ENV_TYPE)
@@ -144,6 +161,7 @@ config_py_lines = update_config_py(config_py_lines, 'BACKEND_APP_ROOT_PATH', BAC
 config_py_lines = update_config_py(config_py_lines, 'LOG_FILE_PATH', LOG_FILE_PATH)
 
 print(f"config.py file updated successfully with FULL_PROJECT_PATH in {APP_ROOT_DIR}")
+
 
 def update_config_py1(lines, key, new_value):
     for i, line in enumerate(lines):

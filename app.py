@@ -6,7 +6,7 @@ from flask_jwt_extended import JWTManager
 from blueprints import register_blueprints
 from config import (
     JWT_SECRET_KEY, JWT_ACCESS_TOKEN_EXPIRES, APP_SERVER_HOST, APP_SERVER_PORT, 
-    SSL_CRT_FILE, SSL_KEY_FILE, BACKEND_ENVIRONMENT, CERT_ABS_PATH1, KEY_ABS_PATH1
+    SSL_CRT_FILE, SSL_KEY_FILE, BACKEND_ENVIRONMENT,
 )
 from hypercorn.asyncio import serve
 from hypercorn.config import Config
@@ -24,8 +24,8 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = JWT_ACCESS_TOKEN_EXPIRES
 
 jwt = JWTManager(app)
 
-CERT_FILE = os.path.abspath(CERT_ABS_PATH1)
-KEY_FILE = os.path.abspath(KEY_ABS_PATH1)
+CERT_FILE = os.path.abspath(SSL_CRT_FILE)
+KEY_FILE = os.path.abspath(SSL_KEY_FILE)
 
 if __name__ == '__main__':
     register_blueprints(app)
